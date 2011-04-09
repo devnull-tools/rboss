@@ -22,6 +22,7 @@ class JBossXADatasource < JBossDatasource
 
   def initialize jboss, logger, config
     super jboss, logger, config
+    @type << "-xa"
   end
 
   def configure_datasource xml

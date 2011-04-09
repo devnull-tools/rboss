@@ -67,6 +67,11 @@ class JBossDatasource
   end
 
   def process
+    if @encrypt
+      @user = @attributes.delete :user
+      @user = @attributes.delete :user_name unless @user
+      @password = encrypt @attributes.delete :password
+    end
     processor = create_file_processor
     processor.with @jboss.docs.examples.jca("#{@type}-ds.xml"), :xml do |action|
       action.to_process do |xml, jboss|
@@ -86,8 +91,10 @@ class JBossDatasource
     end
     @logger.info "Creating datasource #{@name}"
     processor.process
-    create_login_module if @encrypt
-    update_login_config if @encrypt
+    if @encrypt
+      create_login_module
+      update_login_config
+    end
   end
 
   def find xml, key
@@ -110,7 +117,7 @@ class JBossDatasource
       @service = "LocalTxCM"
     end
     @attributes.each do |key, value|
-      element = find(xml, key) {|k| "//#{k}"}
+      element = find(xml, key) { |k| "//#{k}" }
 
       if element
         element.text = value
@@ -128,7 +135,7 @@ class JBossDatasource
       @service = "XATxCM"
     end
     @attributes.each do |key, value|
-      element = find(xml, key) {|k| "//xa-datasource-property[@name='#{k}']"}
+      element = find(xml, key) { |k| "//xa-datasource-property[@name='#{k}']" }
 
       if element
         element.text = value
@@ -160,19 +167,15 @@ class JBossDatasource
   end
 
   def create_login_module
-    user = @attributes.delete :user
-    user = @attributes.delete :user_name unless user
-    password = encrypt @attributes.delete :password
-
     @login_module = Document::new <<XML
 <application-policy name='#{@name}'>
   <authentication>
     <login-module code='org.jboss.resource.security.SecureIdentityLoginModule' flag='required'>
       <module-option name='username'>
-        #{user}
+        #{@user}
       </module-option>
       <module-option name='password'>
-        #{password}
+        #{@password}
       </module-option>
       <module-option name='managedConnectionFactoryName'>
         jboss.jca:name=#{@jndi_name},service=#{@service}

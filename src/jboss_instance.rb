@@ -9,6 +9,7 @@ require_relative "jboss_resource"
 require_relative "jboss_slimming"
 require_relative "jboss_deploy_folder"
 require_relative "jboss_datasource"
+require_relative "jboss_xadatasource"
 require_relative "jboss_hypersonic_replacer"
 require_relative "jboss_mod_cluster"
 require_relative "jboss_run_conf"
@@ -135,6 +136,12 @@ class JBossInstance < ComponentProcessor
     register :datasource,
 
              :type => JBossDatasource,
+             :priority => @@setup,
+             :multiple_instances => true
+
+    register :xa_datasource,
+
+             :type => JBossXADatasource,
              :priority => @@setup,
              :multiple_instances => true
 

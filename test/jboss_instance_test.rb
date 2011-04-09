@@ -6,8 +6,8 @@ jboss_instance = JBossInstance::new jboss_home
 `rm -rf #{jboss_home.instance}`
 `rm -f #{jboss_home.bin}/jboss_init_#{jboss_home.instance_name}.sh`
 
-jboss_instance.add :datasource,
-                   :type => :oracle_xa,
+jboss_instance.add :xa_datasource,
+                   :type => :oracle,
                    :name => "production",
                    :folder => "#{jboss_home.instance.deploy.custom.datasource}",
                    :encrypt => true,
