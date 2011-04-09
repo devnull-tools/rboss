@@ -80,3 +80,10 @@ class FileProcessor
   end
 
 end
+
+module FileProcessorBuilder
+  # Creates a file processor with logger and jboss variable setted
+  def create_file_processor
+    FileProcessor::new :logger => @logger, :var => @jboss
+  end
+end
