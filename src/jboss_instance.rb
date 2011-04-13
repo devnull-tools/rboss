@@ -68,7 +68,7 @@ class JBossInstance < ComponentProcessor
     @component_processor.register component, params
   end
 
-  def add component, params
+  def add component, params = {}
     @component_processor.add component, params
   end
 
