@@ -40,6 +40,10 @@ class FileProcessor
     @actions = {}
   end
 
+  def register type, actions
+    @handlers[type] = actions
+  end
+
   def with file, type = :plain
     @current_file = file.to_s
     @actions[@current_file] = {}

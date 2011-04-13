@@ -1,5 +1,14 @@
 class ComponentProcessor
 
+  def initialize params
+    params = {
+      :process => lambda do |component_type, config|
+        component_type::new(config).process
+      end
+    }.merge! params
+    @process = params[:process]
+  end
+
   def register component, params
     @components ||= {}
     params[:configs] ||= [] if params[:multiple_instances]
@@ -67,12 +76,12 @@ class ComponentProcessor
     return unless component[:type]
     if component[:multiple_instances]
       component[:configs].each do |config|
-        component[:type]::new(@jboss, @logger, config).process
+        @process.call component[:type], config
       end
     else
       config = component[:config]
       config ||= component[:defaults]
-      component[:type]::new(@jboss, @logger, config).process
+      @process.call component[:type], config
     end
   end
 
@@ -84,6 +93,5 @@ class ComponentProcessor
     end
     component_config.merge! config if component_config.is_a? Hash
   end
-
 
 end

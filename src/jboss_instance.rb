@@ -22,7 +22,7 @@ require "fileutils"
 # A Class to configure a JBoss Instance
 #
 # author Marcelo Guimaraes <ataxexe@gmail.com>
-class JBossInstance < ComponentProcessor
+class JBossInstance
   include FileProcessorBuilder, CommandInvoker
 
   # Priorities for components
@@ -46,6 +46,11 @@ class JBossInstance < ComponentProcessor
   attr_reader :home
 
   def initialize jboss_home, opts = {}
+    process = lambda do |type, config|
+      type.new(@jboss, @logger, config).process
+    end
+    @component_processor = ComponentProcessor::new :process => process
+
     @base_dir = FilePathBuilder::new File.dirname(__FILE__)
     @opts = {
       :base_instance => :production,
@@ -60,12 +65,22 @@ class JBossInstance < ComponentProcessor
     initialize_components
   end
 
+  def register component, params
+    @component_processor.register component, params
+  end
+
+  def add component, params
+    @component_processor.add component, params
+  end
+
   def create
     create_instance
     configure
   end
 
-  alias configure process_components
+  def configure
+    @component_processor.process_components
+  end
 
   private
 
