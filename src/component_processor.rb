@@ -1,12 +1,7 @@
 class ComponentProcessor
 
-  def initialize params
-    params = {
-      :process => lambda do |component_type, config|
-        component_type::new(config).process
-      end
-    }.merge! params
-    @process = params[:process]
+  def initialize &block
+    @process = block
   end
 
   def register component, params
