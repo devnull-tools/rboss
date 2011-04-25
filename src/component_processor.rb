@@ -1,4 +1,5 @@
 # A main class to process components based on a highly customizable set of parameters.
+# A processable component is anything that can be configurated by a Hash.
 #
 # 1. Creating a ComponentProcessor
 #   A ComponentProcessor needs a block that defines how to process a component. The block
@@ -29,7 +30,14 @@
 #     }
 #     The :foo config will be moved to the component :bar_service using :bar as the configuration key and to the component
 #     :foo_service using the same name as the key.
-#   :move_config => the same as for :send_config, but the configurations moved will not be processed by this component.
+#   :move_config => the same as for :send_config, but the configurations moved will not be passed to the block for this
+#   component.
+#
+# 3. Adding a component
+#
+# A component should be added by add method. You only need to specify the component id and the configuration (if needed).
+# When a component is added, it will be processed for sending or moving configurations and, if the component has a type,
+# it will be passed to the block for processing.
 #
 # author: Marcelo Guimaraes <ataxexe@gmail.com>
 class ComponentProcessor
