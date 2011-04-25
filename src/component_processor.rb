@@ -1,14 +1,54 @@
+# A main class to process components based on a highly customizable set of parameters.
+#
+# 1. Creating a ComponentProcessor
+#   A ComponentProcessor needs a block that defines how to process a component. The block
+#   will receive the component type and the configuration.
+#
+#   Example: ComponentProcessor::new do |component_type, configuration|
+#              component_type.new(configuration).process
+#            end
+#
+# 2. Registering a component
+#   Components need to be registered in the processor. The registration uses an id and a hash
+#   of parameters described bellow:
+#
+#   :type => the type of the component. Only components with a defined type will be passed to the processor block
+#   :multiple_instances => a flag to indicate if this component can be added more than once
+#   :priority => a number defining a priority for this component to be processed
+#   :enabled => a flag to indicate if this component is enabled for processing by default
+#   :defaults => a hash containing the default config parameters for this component
+#   :send_config => a hash for sending the configurations at process time to another component.
+#
+#     The configuration keys are sending using the pattern :to_$COMPONENT_ID and supports key overriding
+#     Example:
+#     :send_config => {
+#       :to_bar_service => {
+#         :foo => :bar
+#       }
+#       :to_foo_service => [:foo]
+#     }
+#     The :foo config will be moved to the component :bar_service using :bar as the configuration key and to the component
+#     :foo_service using the same name as the key.
+#   :move_config => the same as for :send_config, but the configurations moved will not be processed by this component.
+#
+# author: Marcelo Guimaraes <ataxexe@gmail.com>
 class ComponentProcessor
 
   def initialize &block
     @process = block
   end
 
-  def register component, params
+  def register component_id, params
+    params = {
+      :type => nil,
+      :multiple_instances => false,
+      :priority => 0,
+      :enabled => false
+    }.merge! params
     @components ||= {}
     params[:configs] ||= [] if params[:multiple_instances]
     params[:defaults] ||= {}
-    @components[component] = params unless @components.has_key? component
+    @components[component_id] = params unless @components.has_key? component_id
   end
 
   def add component, config = {}
@@ -25,8 +65,8 @@ class ComponentProcessor
   end
 
   def process_components
-    (@components.sort_by { |key, value| value[:priority] }).each do |key, component|
-      next unless component[:enabled]
+    enabled_components = @components.find_all {|component_id, params| params[:enabled]}
+    (enabled_components.sort_by { |key, value| value[:priority] }).each do |key, component|
       process_component component
     end
   end
