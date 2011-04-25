@@ -2,13 +2,9 @@ require_relative "file_processor"
 require_relative "jboss"
 require_relative "jboss_datasource"
 require_relative "command_invoker"
-require_relative "file_path_builder"
 require_relative "utils"
 
 require "logger"
-require "rexml/document"
-
-include REXML
 
 # A class to replace the shipped Hypersonic datasource for a JBoss instance.
 #
@@ -23,8 +19,8 @@ class JBossHypersonicReplacer
   def initialize jboss, logger, config
     @jboss = jboss
     @logger = logger
-    @datasource = config if config.is_a? JBossDatasource
-    @datasource ||= JBossDatasource::new(@jboss, @logger, config) if config.is_a? Hash
+    @datasource = config unless config.is_a? Hash
+    @datasource ||= JBossDatasource::new(@jboss, @logger, config)
   end
 
   def process
@@ -32,7 +28,6 @@ class JBossHypersonicReplacer
     invoke "rm -f #{@jboss.instance.deploy 'hsqldb-ds.xml'}"
     invoke "rm -f #{@jboss.instance.deploy.messaging 'hsqldb-persistence-service.xml'}"
 
-    @datasource
     @datasource.jndi_name = "DefaultDS"
 
     @datasource.process

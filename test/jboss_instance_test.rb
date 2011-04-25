@@ -3,9 +3,6 @@ require_relative '../src/jboss_instance'
 jboss_home = JBoss::new "/home/ataxexe/jboss/eap/jboss-eap-5.1/jboss-as"
 jboss_instance = JBossInstance::new jboss_home
 
-`rm -rf #{jboss_home.instance}`
-`rm -f #{jboss_home.bin}/jboss_init_#{jboss_home.instance_name}.sh`
-
 jboss_instance.add :xa_datasource,
                    :type => :oracle,
                    :name => "production",
@@ -54,5 +51,3 @@ jboss_instance.add :deploy_folder,
                    :folder => "custom/datasource"
 
 jboss_instance.create
-
-#TODO make the assertions

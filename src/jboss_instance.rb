@@ -85,6 +85,10 @@ class JBossInstance < ComponentProcessor
 
   # Creates the instance using the base instance for copying
   def create_instance
+    if File.exists? @jboss.instance.to_s
+      @logger.info "Removing installed instance"
+      invoke "rm -rf #{@jboss.instance}"
+    end
     @logger.info "Copying #{@base_instance} to #{@custom_instance}..."
     invoke "cp -r #{@jboss.server @base_instance} #{@jboss.instance}"
   end
