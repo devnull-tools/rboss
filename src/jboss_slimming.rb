@@ -46,53 +46,59 @@ class JBossSlimming
   end
 
   def remove_hot_deploy
-    invoke "rm -f #{@jboss.instance.deploy 'hdscanner-jboss-beans.xml'}"
+    reject(@jboss.instance.deploy "hdscanner-jboss-beans.xml")
   end
 
   def remove_juddi
-    invoke "rm -rf #{@jboss.instance.deploy 'juddi-service.sar'}"
+    reject(@jboss.instance.deploy 'juddi-service.sar')
   end
 
   def remove_key_generator
-    invoke "rm -rf #{@jboss.instance.deploy 'uuid-key-generator.sar'}"
+    reject(@jboss.instance.deploy 'uuid-key-generator.sar')
   end
 
   def remove_mail
-    invoke "rm -rf #{@jboss.instance.deploy 'mail-ra.rar'}"
+    reject(@jboss.instance.deploy 'mail-ra.rar')
   end
 
   def remove_scheduling
     %w{scheduler-manager-service.xml scheduler-service.xml}.each do |file|
-      invoke "rm -f #{@jboss.instance.deploy file}"
+      reject(@jboss.instance.deploy file)
     end
   end
 
   def remove_bsh_deployer
-    invoke "rm -rf #{@jboss.instance.deployers 'bsh.deployer'}"
+    reject(@jboss.instance.deployers 'bsh.deployer')
   end
 
   def remove_jboss_ws
-    invoke "rm -f #{@jboss.instance.conf 'jax-ws-catalog.xml'}"
-    invoke "rm -f #{@jboss.instance.conf.props 'jbossws-users.properties'}"
-    invoke "rm -f #{@jboss.instance.conf.props 'jbossws-roles.properties'}"
-    invoke "rm -rf #{@jboss.instance.deploy 'jbossws.sar'}"
-    invoke "rm -rf #{@jboss.instance.deployers 'jbossws.deployer'}"
+    reject(@jboss.instance.conf 'jax-ws-catalog.xml')
+    reject(@jboss.instance.conf.props 'jbossws-users.properties')
+    reject(@jboss.instance.conf.props 'jbossws-roles.properties')
+    reject(@jboss.instance.deploy 'jbossws.sar')
+    reject(@jboss.instance.deployers 'jbossws.deployer')
   end
 
   def remove_jmx_console
-    invoke "rm -rf #{@jboss.instance.deploy 'jmx-console.war'}"
+    reject(@jboss.instance.deploy 'jmx-console.war')
   end
 
   def remove_admin_console
-    invoke "rm -rf #{@jboss.instance.deploy 'admin-console.war'}"
+    reject(@jboss.instance.deploy 'admin-console.war')
   end
 
   def remove_web_console
-    invoke "rm -rf #{@jboss.instance.deploy 'management'}"
+    reject(@jboss.instance.deploy 'management')
   end
 
   def remove_jmx_remoting
-    invoke "rm -rf #{@jboss.instance.deploy 'jmx-remoting.sar'}"
+    reject(@jboss.instance.deploy 'jmx-remoting.sar')
+  end
+
+  private
+
+  def reject file
+    invoke "mv #{file} #{file}.rej"
   end
 
 end
