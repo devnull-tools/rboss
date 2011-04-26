@@ -5,6 +5,15 @@ require_relative "utils"
 
 require "logger"
 
+# A class to add resources to a JBoss Profile
+#
+# Any resource can be added using the following structure:
+#
+# absolute_path => [resource_a_path, resource_b_path, ...],
+# relative_path => resource_c_path
+#
+# Relative paths are based on the profile path (example: "lib" is $JBOSS_HOME/server/$JBOSS_PROFILE/lib)
+#
 # author: Marcelo Guimaraes <ataxexe@gmail.com>
 class JBossResource
   include FileProcessorBuilder, CommandInvoker
