@@ -46,6 +46,7 @@ class ComponentProcessor
     @process = block
   end
 
+  # Register a component using the given id (which must be used for adding it to process) and parameters
   def register component_id, params
     params = {
       :type => nil,
