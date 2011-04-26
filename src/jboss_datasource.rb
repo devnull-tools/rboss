@@ -184,9 +184,11 @@ XML
     end
 
     # Encrypts the given password using the SecureIdentityLoginModule
-    # TODO make it compatible with JBoss EAP 5.0 (works only in JBoss EAP 5.1)
     def encrypt password
-      encrypted = invoke "java -cp #{@jboss.home}/client/jboss-logging-spi.jar:#{@jboss.home}/lib/jbosssx.jar org.jboss.resource.security.SecureIdentityLoginModule #{password}"
+      # In jboss EAP 5.1, the jbosssx.jar was moved to this path
+      jbosssx_lib_path = "#{@jboss.home}/lib/jbosssx.jar"
+      jbosssx_lib_path = "#{@jboss.home}/common/lib/jbosssx.jar" unless File.exist? jbosssx_lib_path
+      encrypted = invoke "java -cp #{@jboss.home}/client/jboss-logging-spi.jar:#{jbosssx_lib_path} org.jboss.resource.security.SecureIdentityLoginModule #{password}"
       encrypted.chomp.split(/:/)[1].strip
     end
 
