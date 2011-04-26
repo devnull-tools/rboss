@@ -1,5 +1,5 @@
 require_relative "file_processor"
-require_relative "jboss"
+require_relative "jboss_path"
 require_relative "command_invoker"
 require_relative "file_path_builder"
 require_relative "utils"

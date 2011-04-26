@@ -1,5 +1,4 @@
 # A main class to process components based on a highly customizable set of parameters.
-# A processable component is anything that can be configurated by a Hash.
 #
 # 1. Creating a ComponentProcessor
 #   A ComponentProcessor needs a block that defines how to process a component. The block
@@ -14,11 +13,16 @@
 #   of parameters described bellow:
 #
 #   :type => the type of the component. Only components with a defined type will be passed to the processor block
+#
 #   :multiple_instances => a flag to indicate if this component can be added more than once
 #   :priority => a number defining a priority for this component to be processed
+#
 #   :enabled => a flag to indicate if this component is enabled for processing by default
-#   :defaults => a hash containing the default config parameters for this component
-#   :send_config => a hash for sending the configurations at process time to another component.
+#
+#   :defaults => a hash containing the default config parameters for this component (only if the configuration is a Hash)
+#
+#   :send_config => a hash for sending the configurations at process time to another component (only if the configuration
+#   is a Hash).
 #
 #     The configuration keys are sending using the pattern :to_$COMPONENT_ID and supports key overriding
 #     Example:
@@ -30,6 +34,7 @@
 #     }
 #     The :foo config will be moved to the component :bar_service using :bar as the configuration key and to the component
 #     :foo_service using the same name as the key.
+#
 #   :move_config => the same as for :send_config, but the configurations moved will not be passed to the block for this
 #   component.
 #
@@ -52,11 +57,11 @@ class ComponentProcessor
       :type => nil,
       :multiple_instances => false,
       :priority => 0,
-      :enabled => false
+      :enabled => false,
+      :defaults => {}
     }.merge! params
     @components ||= {}
     params[:configs] ||= [] if params[:multiple_instances]
-    params[:defaults] ||= {}
     @components[component_id] = params unless @components.has_key? component_id
   end
 
@@ -65,7 +70,7 @@ class ComponentProcessor
     return unless registered_component
     defaults = registered_component[:defaults]
     registered_component[:enabled] = true
-    config = defaults.merge config
+    config = defaults.merge config if config.is_a? Hash
     if registered_component[:multiple_instances]
       registered_component[:configs] << config
     else
@@ -84,23 +89,23 @@ class ComponentProcessor
 
   def process_component component
     #TODO refactor this -----------------------------------
-    if component[:send_config]
+    if component[:send_config] and component[:config].is_a? Hash
       component[:send_config].each do |to, keys|
         destination = to.to_s.gsub(/^to_/, '').to_sym
         config = {}
         if keys.is_a? Array
           keys.each do |key|
-            config[key] = component[:defaults][key] if component[:defaults].has_key? key
+            config[key] = component[:config][key] if component[:config].has_key? key
           end
         elsif keys.is_a? Hash
           keys.each do |k, v|
-            config[v] = component[:defaults][k] if component[:defaults].has_key? k
+            config[v] = component[:config][k] if component[:config].has_key? k
           end
         end
         send_config destination, config
       end
     end
-    if component[:move_config]
+    if component[:move_config] and component[:config].is_a? Hash
       component[:move_config].each do |to, keys|
         destination = to.to_s.gsub(/^to_/, '').to_sym
         config = {}

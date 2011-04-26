@@ -3,7 +3,7 @@ require_relative "file_path_builder"
 require_relative "utils"
 require_relative "component_processor"
 require_relative "command_invoker"
-require_relative "jboss"
+require_relative "jboss_path"
 require_relative "jboss_jmx"
 require_relative "jboss_resource"
 require_relative "jboss_slimming"
@@ -94,7 +94,7 @@ module JBoss
     def initialize_components
       @component_processor.register :deploy_folder,
 
-                                    :type => JBossDeployFolder,
+                                    :type => JBoss::DeployFolder,
                                     :priority => @@install,
                                     :multiple_instances => true
 
@@ -144,9 +144,13 @@ module JBoss
                                     :priority => @@setup,
                                     :send_config => {
                                       :to_init_script => {
-                                        :password => :jmx_user_password,
+                                        :password => :jmx_password,
                                         :user => :jmx_user
                                       }
+                                    },
+                                    :defaults => {
+                                      :user => "admin",
+                                      :password => "admin"
                                     }
 
       @component_processor.register :datasource,
@@ -157,7 +161,7 @@ module JBoss
 
       @component_processor.register :xa_datasource,
 
-                                    :type => JBossXADatasource,
+                                    :type => JBoss::XADatasource,
                                     :priority => @@setup,
                                     :multiple_instances => true
 

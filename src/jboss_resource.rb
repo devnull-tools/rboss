@@ -1,5 +1,5 @@
 require_relative "command_invoker"
-require_relative "jboss"
+require_relative "jboss_path"
 
 require "logger"
 

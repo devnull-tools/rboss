@@ -34,6 +34,9 @@ jboss_profile.add :bind,
                   :ports => 'ports-01',
                   :address => 'localhost'
 
+jboss_profile.add :jmx,
+                  :password => "jmx_admin_password"
+
 jboss_profile.add :init_script,
                   :jboss_user => 'ataxexe'
 
@@ -44,10 +47,8 @@ jboss_profile.add :slimming, :remove => [
 jboss_profile.add :jms,
                   :peer_id => 2
 
-jboss_profile.add :deploy_folder,
-                  :folder => "custom/apps"
+jboss_profile.add :deploy_folder, "custom/apps"
 
-jboss_profile.add :deploy_folder,
-                  :folder => "custom/datasource"
+jboss_profile.add :deploy_folder, "custom/datasource"
 
 jboss_profile.create

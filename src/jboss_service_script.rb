@@ -1,5 +1,5 @@
 require_relative "file_processor"
-require_relative "jboss"
+require_relative "jboss_path"
 require_relative "command_invoker"
 require_relative "file_path_builder"
 require_relative "utils"
@@ -36,7 +36,7 @@ class JBossServiceScript
           :configuration,
           :bind_address]
         .each do |arg|
-          @logger.debug "run.conf: #{arg} -> #{@config[arg]}"
+          @logger.debug "init script: #{arg} -> #{@config[arg]}"
           content.gsub! /\[#{arg.to_s.upcase}\]/, @config[arg].to_s if @config.has_key? arg
         end
         content
