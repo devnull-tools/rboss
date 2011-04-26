@@ -1,7 +1,7 @@
 require_relative '../src/jboss_profile'
 
-jboss_home = JBoss::new "/home/ataxexe/jboss/eap/jboss-eap-5.1/jboss-as"
-jboss_profile = JBossProfile::new jboss_home
+jboss_home = JBoss::Path::new "/home/ataxexe/jboss/eap/jboss-eap-5.1/jboss-as"
+jboss_profile = JBoss::Profile::new jboss_home
 
 jboss_profile.add :xa_datasource,
                   :type => :oracle,

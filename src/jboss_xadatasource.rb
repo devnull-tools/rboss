@@ -17,7 +17,7 @@ include REXML
 # Configuration attributes are the same as for a JBossDatasource
 #
 # author: Marcelo Guimaraes <ataxexe@gmail.com>
-class JBossXADatasource < JBossDatasource
+class JBossXADatasource < JBoss::Datasource
   include FileProcessorBuilder, CommandInvoker
 
   def initialize jboss, logger, config

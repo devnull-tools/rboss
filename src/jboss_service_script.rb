@@ -17,7 +17,7 @@ class JBossServiceScript
     @jboss = jboss
     @template_path = config.delete :path
     @config = config
-    @config[:configuration] = @jboss.instance_name
+    @config[:configuration] = @jboss.profile_name
     @config[:jboss_home] = @jboss.home
   end
 
@@ -41,7 +41,7 @@ class JBossServiceScript
         end
         content
       end
-      processor.copy_to @jboss.bin("jboss_init_#{@jboss.instance_name}.sh")
+      processor.copy_to @jboss.bin("jboss_init_#{@jboss.profile_name}.sh")
     end
     processor.process
   end

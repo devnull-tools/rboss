@@ -19,206 +19,209 @@ require "logger"
 require "ostruct"
 require "fileutils"
 
-# A Class to configure a JBoss Profile
-#
-# author Marcelo Guimaraes <ataxexe@gmail.com>
-class JBossProfile < ComponentProcessor
-  include FileProcessorBuilder, CommandInvoker
+module JBoss
 
-  # Priorities for components
-  @@install = 0
-  @@after_install = 5
+  # A Class to configure a JBoss Profile
+  #
+  # author Marcelo Guimaraes <ataxexe@gmail.com>
+  class Profile < ComponentProcessor
+    include FileProcessorBuilder, CommandInvoker
 
-  @@before_setup = 10
-  @@setup = 15
-  @@after_setup = 20
+    # Priorities for components
+    @@install = 0
+    @@after_install = 5
 
-  @@before_tunning = 25
-  @@tunning = 30
-  @@after_tunning = 35
+    @@before_setup = 10
+    @@setup = 15
+    @@after_setup = 20
 
-  @@before_slimming = 40
-  @@slimming = 45
-  @@after_slimming = 50
+    @@before_tunning = 25
+    @@tunning = 30
+    @@after_tunning = 35
 
-  @@final = 55
+    @@before_slimming = 40
+    @@slimming = 45
+    @@after_slimming = 50
 
-  attr_reader :home
+    @@final = 55
 
-  def initialize jboss_home, opts = {}
-    @component_processor = ComponentProcessor::new do |type, config|
-      type.new(@jboss, @logger, config).process
+    attr_reader :home
+
+    def initialize jboss_home, opts = {}
+      @component_processor = ComponentProcessor::new do |type, config|
+        type.new(@jboss, @logger, config).process
+      end
+
+      @base_dir = FilePathBuilder::new File.dirname(__FILE__)
+      @opts = {
+        :base_profile => :production,
+        :profile => :custom,
+        :logger => Logger::new(STDOUT),
+      }.merge! opts
+      @logger = @opts[:logger]
+      @base_profile = @opts[:base_profile].to_s
+      @profile = @opts[:profile].to_s
+      @jboss = JBoss::Path::new jboss_home, @profile
+      @home = @jboss.home
+      initialize_components
     end
 
-    @base_dir = FilePathBuilder::new File.dirname(__FILE__)
-    @opts = {
-      :base_profile => :production,
-      :profile => :custom,
-      :logger => Logger::new(STDOUT),
-    }.merge! opts
-    @logger = @opts[:logger]
-    @base_profile = @opts[:base_profile].to_s
-    @profile = @opts[:profile].to_s
-    @jboss = JBoss::new jboss_home, @profile
-    @home = @jboss.home
-    initialize_components
-  end
-
-  def add component, params = {}
-    @component_processor.add component, params
-  end
-
-  def create
-    create_profile
-    configure_profile
-  end
-
-  def configure_profile
-    @component_processor.process_components
-  end
-
-  private
-
-  # Creates the profile using the base profile for copying
-  def create_profile
-    if File.exists? @jboss.profile.to_s
-      @logger.info "Removing installed profile"
-      invoke "rm -rf #{@jboss.profile}"
+    def add component, params = {}
+      @component_processor.add component, params
     end
-    @logger.info "Copying #{@base_profile} to #{@profile}..."
-    invoke "cp -r #{@jboss.server @base_profile} #{@jboss.profile}"
-  end
 
-  def initialize_components
-    @component_processor.register :deploy_folder,
+    def create
+      create_profile
+      configure_profile
+    end
 
-                                  :type => JBossDeployFolder,
-                                  :priority => @@install,
-                                  :multiple_instances => true
+    def configure_profile
+      @component_processor.process_components
+    end
 
-    @component_processor.register :cluster,
+    private
 
-                                  :priority => @@install,
-                                  :send_config => {
-                                    :to_run_conf => [:multicast_ip, :partition_name]
-                                  },
-                                  :defaults => {
-                                    :multicast_ip => "239.255.0.1",
-                                    :partition_name => "custom-partition"
-                                  }
+    # Creates the profile using the base profile for copying
+    def create_profile
+      if File.exists? @jboss.profile.to_s
+        @logger.info "Removing installed profile"
+        invoke "rm -rf #{@jboss.profile}"
+      end
+      @logger.info "Copying #{@base_profile} to #{@profile}..."
+      invoke "cp -r #{@jboss.server @base_profile} #{@jboss.profile}"
+    end
 
-    @component_processor.register :jms,
+    def initialize_components
+      @component_processor.register :deploy_folder,
 
-                                  :priority => @@install,
-                                  :send_config => {
-                                    :to_run_conf => [:peer_id]
-                                  }
+                                    :type => JBossDeployFolder,
+                                    :priority => @@install,
+                                    :multiple_instances => true
 
-    @component_processor.register :bind,
+      @component_processor.register :cluster,
 
-                                  :priority => @@install,
-                                  :send_config => {
-                                    :to_init_script => {
-                                      :address => :bind_address
+                                    :priority => @@install,
+                                    :send_config => {
+                                      :to_run_conf => [:multicast_ip, :partition_name]
                                     },
-                                    :to_run_conf => {
-                                      :ports => :service_binding
+                                    :defaults => {
+                                      :multicast_ip => "239.255.0.1",
+                                      :partition_name => "custom-partition"
                                     }
-                                  },
-                                  :defaults => {
-                                    :address => 'localhost'
-                                  }
 
-    @component_processor.register :resource,
+      @component_processor.register :jms,
 
-                                  :type => JBossResource,
-                                  :priority => @@after_install,
-                                  :multiple_instances => true
-
-    @component_processor.register :jmx,
-
-                                  :type => JBossJMX,
-                                  :enabled => true,
-                                  :priority => @@setup,
-                                  :send_config => {
-                                    :to_init_script => {
-                                      :password => :jmx_user_password,
-                                      :user => :jmx_user
+                                    :priority => @@install,
+                                    :send_config => {
+                                      :to_run_conf => [:peer_id]
                                     }
-                                  }
 
-    @component_processor.register :datasource,
+      @component_processor.register :bind,
 
-                                  :type => JBossDatasource,
-                                  :priority => @@setup,
-                                  :multiple_instances => true
+                                    :priority => @@install,
+                                    :send_config => {
+                                      :to_init_script => {
+                                        :address => :bind_address
+                                      },
+                                      :to_run_conf => {
+                                        :ports => :service_binding
+                                      }
+                                    },
+                                    :defaults => {
+                                      :address => 'localhost'
+                                    }
 
-    @component_processor.register :xa_datasource,
+      @component_processor.register :resource,
 
-                                  :type => JBossXADatasource,
-                                  :priority => @@setup,
-                                  :multiple_instances => true
+                                    :type => JBossResource,
+                                    :priority => @@after_install,
+                                    :multiple_instances => true
 
-    @component_processor.register :default_ds,
+      @component_processor.register :jmx,
 
-                                  :type => JBossHypersonicReplacer,
-                                  :priority => @@setup
+                                    :type => JBossJMX,
+                                    :enabled => true,
+                                    :priority => @@setup,
+                                    :send_config => {
+                                      :to_init_script => {
+                                        :password => :jmx_user_password,
+                                        :user => :jmx_user
+                                      }
+                                    }
 
-    @component_processor.register :mod_cluster,
+      @component_processor.register :datasource,
 
-                                  :type => JBossModCluster,
-                                  :priority => @@setup,
-                                  :move_config => {
-                                    :to_run_conf => [
-                                      :advertise,
-                                      :advertise_group_address,
-                                      :advertise_port,
-                                      :proxy_list,
-                                      :excluded_contexts,
-                                      :auto_enable_contexts
-                                    ]
-                                  },
-                                  :defaults => {
-                                    :path => @base_dir.resources('mod_cluster.sar'),
-                                  }
+                                    :type => JBoss::Datasource,
+                                    :priority => @@setup,
+                                    :multiple_instances => true
 
-    @component_processor.register :run_conf,
+      @component_processor.register :xa_datasource,
 
-                                  :type => JBossRunConf,
-                                  :priority => @@after_setup,
-                                  :enabled => true,
-                                  :send_config => {
-                                    :to_init_script => [:service_binding]
-                                  },
-                                  :defaults => {
-                                    :path => @base_dir.resources('run.conf'),
-                                    :stack_size => '128k',
-                                    :heap_size => '2048m',
-                                    :perm_size => '256m',
-                                  }
+                                    :type => JBossXADatasource,
+                                    :priority => @@setup,
+                                    :multiple_instances => true
 
-    @component_processor.register :slimming,
+      @component_processor.register :default_ds,
 
-                                  :type => JBossSlimming,
-                                  :priority => @@slimming,
-                                  :defaults => {
-                                    :hot_deploy => true
-                                  }
+                                    :type => JBossHypersonicReplacer,
+                                    :priority => @@setup
 
-    @component_processor.register :init_script,
+      @component_processor.register :mod_cluster,
 
-                                  :type => JBossServiceScript,
-                                  :priority => @@final,
-                                  :defaults => {
-                                    :path => @base_dir.resources('jboss_init_redhat.sh'),
-                                    :jmx_user => "admin",
-                                    :jmx_password => "admin",
-                                    :bind_address => "0.0.0.0",
-                                    :java_path => "/usr/java/default",
-                                    :jnp_port => 1099,
-                                    :jboss_user => "RUNASIS"
-                                  }
+                                    :type => JBossModCluster,
+                                    :priority => @@setup,
+                                    :move_config => {
+                                      :to_run_conf => [
+                                        :advertise,
+                                        :advertise_group_address,
+                                        :advertise_port,
+                                        :proxy_list,
+                                        :excluded_contexts,
+                                        :auto_enable_contexts
+                                      ]
+                                    },
+                                    :defaults => {
+                                      :path => @base_dir.resources('mod_cluster.sar'),
+                                    }
+
+      @component_processor.register :run_conf,
+
+                                    :type => JBossRunConf,
+                                    :priority => @@after_setup,
+                                    :enabled => true,
+                                    :send_config => {
+                                      :to_init_script => [:service_binding]
+                                    },
+                                    :defaults => {
+                                      :path => @base_dir.resources('run.conf'),
+                                      :stack_size => '128k',
+                                      :heap_size => '2048m',
+                                      :perm_size => '256m',
+                                    }
+
+      @component_processor.register :slimming,
+
+                                    :type => JBossSlimming,
+                                    :priority => @@slimming,
+                                    :defaults => {
+                                      :hot_deploy => true
+                                    }
+
+      @component_processor.register :init_script,
+
+                                    :type => JBossServiceScript,
+                                    :priority => @@final,
+                                    :defaults => {
+                                      :path => @base_dir.resources('jboss_init_redhat.sh'),
+                                      :jmx_user => "admin",
+                                      :jmx_password => "admin",
+                                      :bind_address => "0.0.0.0",
+                                      :java_path => "/usr/java/default",
+                                      :jnp_port => 1099,
+                                      :jboss_user => "RUNASIS"
+                                    }
+    end
+
   end
 
 end
-

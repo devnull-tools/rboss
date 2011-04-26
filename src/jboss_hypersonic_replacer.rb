@@ -20,7 +20,7 @@ class JBossHypersonicReplacer
     @jboss = jboss
     @logger = logger
     @datasource = config unless config.is_a? Hash
-    @datasource ||= JBossDatasource::new(@jboss, @logger, config)
+    @datasource ||= JBoss::Datasource::new(@jboss, @logger, config)
   end
 
   def process
