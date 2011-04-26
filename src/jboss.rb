@@ -8,13 +8,13 @@ require "logger"
 # author Marcelo Guimaraes <ataxexe@gmail.com>
 class JBoss < FilePathBuilder
 
-  attr_reader :instance, :instance_name, :home
+  attr_reader :profile, :profile_name, :home
 
-  def initialize jboss_home, instance_name = :custom
+  def initialize jboss_home, profile = :custom
     super jboss_home
     @home = FilePathBuilder::new jboss_home
-    @instance = FilePathBuilder::new "#{jboss_home}/server/#{instance_name}"
-    @instance_name = instance_name.to_s
+    @profile = FilePathBuilder::new "#{jboss_home}/server/#{profile}"
+    @profile_name = profile.to_s
   end
 
 end
