@@ -133,13 +133,13 @@ module JBoss
 
       @component_processor.register :resource,
 
-                                    :type => JBossResource,
+                                    :type => JBoss::Resource,
                                     :priority => @@after_install,
                                     :multiple_instances => true
 
       @component_processor.register :jmx,
 
-                                    :type => JBossJMX,
+                                    :type => JBoss::JMX,
                                     :enabled => true,
                                     :priority => @@setup,
                                     :send_config => {
@@ -167,12 +167,12 @@ module JBoss
 
       @component_processor.register :default_ds,
 
-                                    :type => JBossHypersonicReplacer,
+                                    :type => JBoss::HypersonicReplacer,
                                     :priority => @@setup
 
       @component_processor.register :mod_cluster,
 
-                                    :type => JBossModCluster,
+                                    :type => JBoss::ModCluster,
                                     :priority => @@setup,
                                     :move_config => {
                                       :to_run_conf => [
@@ -190,7 +190,7 @@ module JBoss
 
       @component_processor.register :run_conf,
 
-                                    :type => JBossRunConf,
+                                    :type => JBoss::RunConf,
                                     :priority => @@after_setup,
                                     :enabled => true,
                                     :send_config => {
@@ -205,7 +205,7 @@ module JBoss
 
       @component_processor.register :slimming,
 
-                                    :type => JBossSlimming,
+                                    :type => JBoss::Slimming,
                                     :priority => @@slimming,
                                     :defaults => {
                                       :hot_deploy => true
@@ -213,7 +213,7 @@ module JBoss
 
       @component_processor.register :init_script,
 
-                                    :type => JBossServiceScript,
+                                    :type => JBoss::ServiceScript,
                                     :priority => @@final,
                                     :defaults => {
                                       :path => @base_dir.resources('jboss_init_redhat.sh'),
