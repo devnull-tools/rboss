@@ -37,7 +37,7 @@ class JBossRunConf
         end
         content
       end
-      processor.copy_to "#{@jboss.instance}/run.conf"
+      processor.copy_to "#{@jboss.profile}/run.conf"
     end
     processor.process
   end

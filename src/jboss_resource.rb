@@ -1,7 +1,5 @@
-require_relative "file_processor"
 require_relative "command_invoker"
 require_relative "jboss"
-require_relative "utils"
 
 require "logger"
 
@@ -16,7 +14,7 @@ require "logger"
 #
 # author: Marcelo Guimaraes <ataxexe@gmail.com>
 class JBossResource
-  include FileProcessorBuilder, CommandInvoker
+  include CommandInvoker
 
   def initialize jboss, logger, resources
     @jboss = jboss

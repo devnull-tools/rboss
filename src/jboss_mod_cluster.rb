@@ -9,7 +9,7 @@ require "rexml/document"
 
 include REXML
 
-# A class to install and configure a mod_cluster service in a JBoss instance
+# A class to install and configure a mod_cluster service in a JBoss profile
 #
 # Configuration:
 #
@@ -24,7 +24,7 @@ class JBossModCluster
     @jboss = jboss
     @logger = logger
     config = {
-      :folder => @jboss.instance.deploy
+      :folder => @jboss.profile.deploy
     }.merge! config
     @path = config.delete :path
     @folder = config.delete :folder

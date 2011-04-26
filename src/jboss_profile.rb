@@ -79,14 +79,14 @@ class JBossProfile < ComponentProcessor
 
   private
 
-  # Creates the instance using the base instance for copying
+  # Creates the profile using the base profile for copying
   def create_profile
-    if File.exists? @jboss.instance.to_s
-      @logger.info "Removing installed instance"
-      invoke "rm -rf #{@jboss.instance}"
+    if File.exists? @jboss.profile.to_s
+      @logger.info "Removing installed profile"
+      invoke "rm -rf #{@jboss.profile}"
     end
     @logger.info "Copying #{@base_profile} to #{@profile}..."
-    invoke "cp -r #{@jboss.server @base_profile} #{@jboss.instance}"
+    invoke "cp -r #{@jboss.server @base_profile} #{@jboss.profile}"
   end
 
   def initialize_components

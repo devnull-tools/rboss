@@ -50,7 +50,7 @@ class JBossDatasource
 
   def initialize jboss, logger, config
     config = {
-      :folder => jboss.instance.deploy,
+      :folder => jboss.profile.deploy,
       :encrypt => false,
       :attributes => {}
     }.merge! config
@@ -60,7 +60,7 @@ class JBossDatasource
     @name = config[:name]
     @name ||= @type.to_s
     @folder = config[:folder].to_s
-    @folder = @jboss.instance.deploy @folder unless @folder.start_with? '/'
+    @folder = @jboss.profile.deploy @folder unless @folder.start_with? '/'
     @attributes = config[:attributes]
     @encrypt = config[:encrypt]
     @jndi_name = @attributes.delete :jndi_name
@@ -157,7 +157,7 @@ class JBossDatasource
 
   def update_login_config
     processor = create_file_processor
-    processor.with @jboss.instance.conf('login-config.xml'), :xml do |action|
+    processor.with @jboss.profile.conf('login-config.xml'), :xml do |action|
       action.to_process do |xml, jboss|
         xml.root << @login_module
         xml

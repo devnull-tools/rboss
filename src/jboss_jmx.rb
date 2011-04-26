@@ -4,7 +4,7 @@ require_relative "utils"
 
 require "logger"
 
-# This class configures the JXM user for a JBoss instance.
+# This class configures the JXM user for a JBoss profile.
 #
 # Configuration:
 #
@@ -36,7 +36,7 @@ class JBossJMX
 
   def configure_users
     processor = create_file_processor
-    processor.with @jboss.instance.conf.props "jmx-console-users.properties" do |action|
+    processor.with @jboss.profile.conf.props "jmx-console-users.properties" do |action|
       action.to_process do |content, jboss|
         [@user, @password].join '='
       end
@@ -46,7 +46,7 @@ class JBossJMX
 
   def configure_roles
     processor = create_file_processor
-    processor.with @jboss.instance.conf.props "jmx-console-roles.properties" do |action|
+    processor.with @jboss.profile.conf.props "jmx-console-roles.properties" do |action|
       action.to_process do |content, jboss|
         [@user, @roles].join '='
       end
