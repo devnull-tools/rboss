@@ -65,8 +65,8 @@ class ComponentProcessor
     @components[component_id] = params unless @components.has_key? component_id
   end
 
-  def add component, config = {}
-    registered_component = @components[component]
+  def add component_id, config = {}
+    registered_component = @components[component_id]
     return unless registered_component
     defaults = registered_component[:defaults]
     registered_component[:enabled] = true
@@ -76,6 +76,11 @@ class ComponentProcessor
     else
       registered_component[:config] = config
     end
+  end
+
+  def defaults component_id, defaults
+    registered_component = @components[component_id]
+    registered_component[:defaults] = defaults if registered_component
   end
 
   def process_components
