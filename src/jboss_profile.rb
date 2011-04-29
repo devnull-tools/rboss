@@ -48,10 +48,8 @@ module JBoss
     attr_reader :home
 
     def initialize jboss_home, opts = {}
-      @component_processor = ComponentProcessor::new do |type, config|
-        type.new(@jboss, @logger, config).process
-      end
-
+      block = lambda { |type, config| type.new(@jboss, @logger, config).process }
+      super &block
       @base_dir = FilePathBuilder::new File.dirname(__FILE__)
       @opts = {
         :base_profile => :production,
@@ -66,17 +64,13 @@ module JBoss
       initialize_components
     end
 
-    def add component, params = {}
-      @component_processor.add component, params
-    end
-
     def create
       create_profile
       configure_profile
     end
 
     def configure_profile
-      @component_processor.process_components
+      process_components
     end
 
     private
@@ -92,138 +86,138 @@ module JBoss
     end
 
     def initialize_components
-      @component_processor.register :deploy_folder,
+      register :deploy_folder,
 
-                                    :type => JBoss::DeployFolder,
-                                    :priority => @@install,
-                                    :multiple_instances => true
+               :type => JBoss::DeployFolder,
+               :priority => @@install,
+               :multiple_instances => true
 
-      @component_processor.register :cluster,
+      register :cluster,
 
-                                    :priority => @@install,
-                                    :send_config => {
-                                      :to_run_conf => [:multicast_ip, :partition_name]
-                                    },
-                                    :defaults => {
-                                      :multicast_ip => "239.255.0.1",
-                                      :partition_name => "custom-partition"
-                                    }
+               :priority => @@install,
+               :send_config => {
+                 :to_run_conf => [:multicast_ip, :partition_name]
+               },
+               :defaults => {
+                 :multicast_ip => "239.255.0.1",
+                 :partition_name => "custom-partition"
+               }
 
-      @component_processor.register :jms,
+      register :jms,
 
-                                    :priority => @@install,
-                                    :send_config => {
-                                      :to_run_conf => [:peer_id]
-                                    }
+               :priority => @@install,
+               :send_config => {
+                 :to_run_conf => [:peer_id]
+               }
 
-      @component_processor.register :bind,
+      register :bind,
 
-                                    :priority => @@install,
-                                    :send_config => {
-                                      :to_init_script => {
-                                        :address => :bind_address
-                                      },
-                                      :to_run_conf => {
-                                        :ports => :service_binding
-                                      }
-                                    },
-                                    :defaults => {
-                                      :address => 'localhost'
-                                    }
+               :priority => @@install,
+               :send_config => {
+                 :to_init_script => {
+                   :address => :bind_address
+                 },
+                 :to_run_conf => {
+                   :ports => :service_binding
+                 }
+               },
+               :defaults => {
+                 :address => 'localhost'
+               }
 
-      @component_processor.register :resource,
+      register :resource,
 
-                                    :type => JBoss::Resource,
-                                    :priority => @@after_install,
-                                    :multiple_instances => true
+               :type => JBoss::Resource,
+               :priority => @@after_install,
+               :multiple_instances => true
 
-      @component_processor.register :jmx,
+      register :jmx,
 
-                                    :type => JBoss::JMX,
-                                    :enabled => true,
-                                    :priority => @@setup,
-                                    :send_config => {
-                                      :to_init_script => {
-                                        :password => :jmx_password,
-                                        :user => :jmx_user
-                                      }
-                                    },
-                                    :defaults => {
-                                      :user => "admin",
-                                      :password => "admin"
-                                    }
+               :type => JBoss::JMX,
+               :enabled => true,
+               :priority => @@setup,
+               :send_config => {
+                 :to_init_script => {
+                   :password => :jmx_password,
+                   :user => :jmx_user
+                 }
+               },
+               :defaults => {
+                 :user => "admin",
+                 :password => "admin"
+               }
 
-      @component_processor.register :datasource,
+      register :datasource,
 
-                                    :type => JBoss::Datasource,
-                                    :priority => @@setup,
-                                    :multiple_instances => true
+               :type => JBoss::Datasource,
+               :priority => @@setup,
+               :multiple_instances => true
 
-      @component_processor.register :xa_datasource,
+      register :xa_datasource,
 
-                                    :type => JBoss::XADatasource,
-                                    :priority => @@setup,
-                                    :multiple_instances => true
+               :type => JBoss::XADatasource,
+               :priority => @@setup,
+               :multiple_instances => true
 
-      @component_processor.register :default_ds,
+      register :default_ds,
 
-                                    :type => JBoss::HypersonicReplacer,
-                                    :priority => @@setup
+               :type => JBoss::HypersonicReplacer,
+               :priority => @@setup
 
-      @component_processor.register :mod_cluster,
+      register :mod_cluster,
 
-                                    :type => JBoss::ModCluster,
-                                    :priority => @@setup,
-                                    :move_config => {
-                                      :to_run_conf => [
-                                        :advertise,
-                                        :advertise_group_address,
-                                        :advertise_port,
-                                        :proxy_list,
-                                        :excluded_contexts,
-                                        :auto_enable_contexts
-                                      ]
-                                    },
-                                    :defaults => {
-                                      :path => @base_dir.resources('mod_cluster.sar'),
-                                    }
+               :type => JBoss::ModCluster,
+               :priority => @@setup,
+               :move_config => {
+                 :to_run_conf => [
+                   :advertise,
+                   :advertise_group_address,
+                   :advertise_port,
+                   :proxy_list,
+                   :excluded_contexts,
+                   :auto_enable_contexts
+                 ]
+               },
+               :defaults => {
+                 :path => @base_dir.resources('mod_cluster.sar'),
+               }
 
-      @component_processor.register :run_conf,
+      register :run_conf,
 
-                                    :type => JBoss::RunConf,
-                                    :priority => @@after_setup,
-                                    :enabled => true,
-                                    :send_config => {
-                                      :to_init_script => [:service_binding]
-                                    },
-                                    :defaults => {
-                                      :path => @base_dir.resources('run.conf'),
-                                      :stack_size => '128k',
-                                      :heap_size => '2048m',
-                                      :perm_size => '256m',
-                                    }
+               :type => JBoss::RunConf,
+               :priority => @@after_setup,
+               :enabled => true,
+               :send_config => {
+                 :to_init_script => [:service_binding]
+               },
+               :defaults => {
+                 :path => @base_dir.resources('run.conf'),
+                 :stack_size => '128k',
+                 :heap_size => '2048m',
+                 :perm_size => '256m',
+               }
 
-      @component_processor.register :slimming,
+      register :slimming,
 
-                                    :type => JBoss::Slimming,
-                                    :priority => @@slimming,
-                                    :defaults => {
-                                      :hot_deploy => true
-                                    }
+               :type => JBoss::Slimming,
+               :priority => @@slimming,
+               :defaults => {
+                 :hot_deploy => true
+               }
 
-      @component_processor.register :init_script,
+      register :init_script,
 
-                                    :type => JBoss::ServiceScript,
-                                    :priority => @@final,
-                                    :defaults => {
-                                      :path => @base_dir.resources('jboss_init_redhat.sh'),
-                                      :jmx_user => "admin",
-                                      :jmx_password => "admin",
-                                      :bind_address => "0.0.0.0",
-                                      :java_path => "/usr/java/default",
-                                      :jnp_port => 1099,
-                                      :jboss_user => "RUNASIS"
-                                    }
+               :type => JBoss::ServiceScript,
+               :priority => @@final,
+               :defaults => {
+                 :path => @base_dir.resources('jboss_init_redhat.sh'),
+                 :jmx_user => "admin",
+                 :jmx_password => "admin",
+                 :bind_address => "0.0.0.0",
+                 :java_path => "/usr/java/default",
+                 :jnp_port => 1099,
+                 :jboss_user => "RUNASIS"
+               }
     end
 
   end
