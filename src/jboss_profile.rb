@@ -259,10 +259,7 @@ module JBoss
       register :slimming,
 
                :type => JBoss::Slimming,
-               :priority => @@slimming,
-               :defaults => {
-                 :hot_deploy => true
-               }
+               :priority => @@slimming
 
       register :init_script,
 
