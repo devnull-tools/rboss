@@ -23,6 +23,65 @@ module JBoss
 
   # A Class to configure a JBoss Profile
   #
+  # Basically, this class is a Component Processor with some components added to configure a JBoss profile, the built-in
+  # components are:
+  #
+  # :deploy_folder  => binded to a JBoss::DeployFolder
+  #
+  # :cluster        => a shortcut component for :run_conf, sends these attributes to it:
+  #   :multicast_ip   => default "239.255.0.1"
+  #   :partition_name => default "${profile name}-partition
+  #
+  # :jms            => a shortcut component for :run_conf, sends these attributes to it:
+  #   :peer_id
+  #
+  # :bind           => a shortcut component, sends these attributes:
+  #   To :run_conf
+  #     :ports        => sends as :service_binding
+  #   To :init_script
+  #     :address      => default "localhost", sends as :bind_address
+  #
+  # :resource       => binded to a JBoss::Resource
+  #
+  # :jmx            => binded to a JBoss::JMX, enabled by default and sends user and password
+  #                    values to :init_script
+  #
+  # :datasource     => binded to a JBoss::Datasource
+  #
+  # :xa_datasource  => binded to a JBoss::XADatasource
+  #
+  # :default_ds     => binded to a JBoss::HypersonicReplacer
+  #
+  # :mod_cluster    => binded to a JBoss::ModCluster
+  #   Defaults:
+  #     :path => "resources/mod_cluster.sar"
+  #   Move to :run_conf (for externalizing mod_cluster configuration)
+  #     :advertise
+  #     :advertise_group_address
+  #     :advertise_port
+  #     :proxy_list
+  #     :excluded_contexts
+  #     :auto_enable_contexts
+  #
+  # :run_conf       => binded to a JBoss::RunConf
+  #   Defaults:
+  #     :path => 'resources/run.conf'
+  #     :stack_size => '128k'
+  #     :heap_size => '2048m'
+  #     :perm_size => '256m'
+  #
+  # :slimming       => binded to a JBoss::Slimming
+  #
+  # :init_script    => binded to a JBoss::ServiceScritp
+  #   Defaults:
+  #     :path => 'resources/jboss_init_redhat.sh'
+  #     :jmx_user => "admin"
+  #     :jmx_password => "admin"
+  #     :bind_address => "0.0.0.0"
+  #     :java_path => "/usr/java/default"
+  #     :jnp_port => 1099
+  #     :jboss_user => "RUNASIS"
+  #
   # author Marcelo Guimaraes <ataxexe@gmail.com>
   class Profile < ComponentProcessor
     include CommandInvoker
@@ -100,7 +159,7 @@ module JBoss
                },
                :defaults => {
                  :multicast_ip => "239.255.0.1",
-                 :partition_name => "custom-partition"
+                 :partition_name => "#{@profile}-partition"
                }
 
       register :jms,
