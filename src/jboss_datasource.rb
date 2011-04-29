@@ -1,7 +1,6 @@
-require_relative "file_processor"
+require_relative "jboss_component"
 require_relative "jboss_path"
 require_relative "command_invoker"
-require_relative "file_path_builder"
 require_relative "utils"
 
 require "logger"
@@ -40,7 +39,7 @@ module JBoss
   #
   # author: Marcelo Guimaraes <ataxexe@gmail.com>
   class Datasource
-    include FileProcessorBuilder, CommandInvoker
+    include Component, CommandInvoker
 
     attr_reader :attributes, :type, :name
     attr_accessor :jndi_name

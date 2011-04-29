@@ -25,7 +25,7 @@ module JBoss
   #
   # author Marcelo Guimaraes <ataxexe@gmail.com>
   class Profile < ComponentProcessor
-    include FileProcessorBuilder, CommandInvoker
+    include CommandInvoker
 
     # Priorities for components
     @@install = 0

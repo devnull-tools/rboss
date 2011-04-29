@@ -1,5 +1,5 @@
 require_relative "file_processor"
-require_relative "jboss_path"
+require_relative "jboss_component"
 require_relative "command_invoker"
 require_relative "file_path_builder"
 require_relative "utils"
@@ -18,7 +18,7 @@ module JBoss
   #
   # author: Marcelo Guimaraes <ataxexe@gmail.com>
   class DeployFolder
-    include CommandInvoker, FileProcessorBuilder
+    include CommandInvoker, Component
 
     def initialize jboss, logger, folder
       @jboss = jboss

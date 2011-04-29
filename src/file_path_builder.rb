@@ -1,3 +1,13 @@
+# A simple class to build a path based on method_missing.
+#
+# Every call to a method will create a path appended to the last one.
+# Example:
+#   path = FilePathBuilder::new "/home/user"
+#   path.download.jboss
+#   => /home/user/download/jboss
+# Any argument passed will be added as a method call
+#
+# author: Marcelo Guimaraes <ataxexe@gmail.com>
 class FilePathBuilder
 
   def initialize path

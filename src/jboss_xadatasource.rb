@@ -1,9 +1,6 @@
 require_relative "jboss_datasource"
-require_relative "file_processor"
-require_relative "jboss_path"
+require_relative "jboss_component"
 require_relative "command_invoker"
-require_relative "file_path_builder"
-require_relative "utils"
 
 require "logger"
 require "rexml/document"
@@ -19,8 +16,8 @@ module JBoss
   # Configuration attributes are the same as for a JBoss::Datasource
   #
   # author: Marcelo Guimaraes <ataxexe@gmail.com>
-  class XADatasource < JBoss::Datasource
-    include FileProcessorBuilder, CommandInvoker
+  class XADatasource < Datasource
+    include Component, CommandInvoker
 
     def initialize jboss, logger, config
       super jboss, logger, config

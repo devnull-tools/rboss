@@ -1,4 +1,4 @@
-require_relative "file_processor"
+require_relative "jboss_component"
 
 module JBoss
   # This class configures the JXM user for a JBoss profile.
@@ -11,7 +11,7 @@ module JBoss
   #
   # author: Marcelo Guimaraes <ataxexe@gmail.com>
   class JMX
-    include FileProcessorBuilder
+    include Component
 
     def initialize jboss, logger, config
       config = {

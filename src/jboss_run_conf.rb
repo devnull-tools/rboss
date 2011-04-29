@@ -1,9 +1,9 @@
-require_relative "file_processor"
+require_relative "jboss_component"
 
 module JBoss
 
-  class JBoss::RunConf
-    include FileProcessorBuilder
+  class RunConf
+    include Component
 
     def initialize jboss, logger, config
       @logger = logger

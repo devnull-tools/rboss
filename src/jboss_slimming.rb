@@ -1,4 +1,3 @@
-require_relative "file_processor"
 require_relative "command_invoker"
 
 module JBoss
@@ -22,7 +21,7 @@ module JBoss
   #
   # author: Marcelo Guimaraes <ataxexe@gmail.com>
   class Slimming
-    include CommandInvoker, FileProcessorBuilder
+    include CommandInvoker
 
     def initialize jboss, logger, config
       @jboss = jboss
