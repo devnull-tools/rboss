@@ -47,7 +47,7 @@ module JBoss
         action.to_process do |xml, jboss|
           config = XPath.first(xml, "//bean[@name='ModClusterConfig']")
           @config.each do |property, value|
-            element = XPath.first config, "property[@name='#{property.to_s.to_jboss_property.uncapitalize}']"
+            element = XPath.first config, "property[@name='#{property.to_s.camelize.uncapitalize}']"
             if element
               @logger.debug "Configuring #{element.attribute('name').value} to \"#{value}\""
               element.text = value

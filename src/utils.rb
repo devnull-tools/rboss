@@ -1,7 +1,8 @@
 require_relative "file_processor"
 
 class String
-  def to_jboss_property
+
+  def camelize
     (self.split(/_/).collect { |n| n.capitalize }).join
   end
 

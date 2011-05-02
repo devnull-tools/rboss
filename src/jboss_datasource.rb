@@ -96,7 +96,7 @@ module JBoss
     def find xml, key
       if key.is_a? Symbol
         key = key.to_s
-        [key, key.gsub(/_/, '-'), key.to_jboss_property, key.upcase].each do |k|
+        [key, key.gsub(/_/, '-'), key.camelize, key.upcase].each do |k|
           element = XPath.first xml, yield(k)
           return element if element
         end
