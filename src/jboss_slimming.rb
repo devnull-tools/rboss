@@ -23,10 +23,10 @@ module JBoss
   class Slimming
     include CommandInvoker
 
-    def initialize jboss, logger, config
+    def initialize jboss, logger, services_to_remove
       @jboss = jboss
       @logger = logger
-      @services_to_remove = config[:remove]
+      @services_to_remove = services_to_remove
     end
 
     def process

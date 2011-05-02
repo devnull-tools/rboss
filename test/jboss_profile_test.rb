@@ -40,7 +40,7 @@ jboss_profile.add :jmx,
 jboss_profile.add :init_script,
                   :jboss_user => 'ataxexe'
 
-jboss_profile.add :slimming, :remove => [
+jboss_profile.add :slimming, [
   :hot_deploy, :bsh_deployer, :jboss_ws, :mail, :juddi, :admin_console, :web_console, :jmx_console
 ]
 
