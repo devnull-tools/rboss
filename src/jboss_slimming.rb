@@ -5,7 +5,7 @@ module JBoss
   #
   # Configuration:
   #
-  # :remove => array with the services to remove, the current supported are:
+  # Pass an array with the services to remove, the current supported are:
   #
   #   Admin Console       => :admin_console
   #   Web Console         => :web_console
@@ -18,6 +18,9 @@ module JBoss
   #   JMX Console         => :jmx_console
   #   JBoss WS            => :jboss_ws
   #   JMX Remoting        => :jmx_remoting
+  #
+  # Each service is binded to a remove_$SERVICE_ID method so you can easily add
+  # more services by modifying this class
   #
   # author: Marcelo Guimaraes <ataxexe@gmail.com>
   class Slimming

@@ -17,7 +17,10 @@ module JBoss
   # :path => where the mod_cluster.sar is located
   # :folder => where the mod_cluster.sar should be installed (default: $JBOSS_HOME/server/$CONFIG/deploy)
   #
+  # The additional configurations are the entries in the bean ModClusterConfig (mod_cluster-jboss-beans.xml)
+  # and can be in a String form (using the entry name) or in a Symbol form (using ruby nomenclature - :sticky_session)
   #
+  # author: Marcelo Guimarães <ataxexe@gmail.com>
   class ModCluster
     include CommandInvoker, Component
 
