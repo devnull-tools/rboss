@@ -7,7 +7,7 @@
 #   => /home/user/download/jboss
 # Any argument passed will be added as a method call
 #
-# author: Marcelo Guimaraes <ataxexe@gmail.com>
+# author: Marcelo Guimarães <ataxexe@gmail.com>
 class FilePathBuilder
 
   def initialize path

@@ -82,7 +82,7 @@ module JBoss
   #     :jnp_port => 1099
   #     :jboss_user => "RUNASIS"
   #
-  # author Marcelo Guimaraes <ataxexe@gmail.com>
+  # author Marcelo Guimarães <ataxexe@gmail.com>
   class Profile < ComponentProcessor
     include CommandInvoker
 

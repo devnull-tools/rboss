@@ -16,7 +16,7 @@ module JBoss
   #
   #
   #
-  # author: Marcelo Guimaraes <ataxexe@gmail.com>
+  # author: Marcelo Guimarães <ataxexe@gmail.com>
   class DeployFolder
     include CommandInvoker, Component
 

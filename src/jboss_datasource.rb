@@ -37,7 +37,7 @@ module JBoss
   # :attributes => a Hash with the attributes that will be changed in template (the only required is :jndi_name)
   #   Any attribute that is not present in datasource xml will be created using this template: <key>value</key>.
   #
-  # author: Marcelo Guimaraes <ataxexe@gmail.com>
+  # author: Marcelo Guimarães <ataxexe@gmail.com>
   class Datasource
     include Component, CommandInvoker
 

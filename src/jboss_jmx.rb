@@ -9,7 +9,7 @@ module JBoss
   # :password => the jmx user password (default: 'admin')
   # :roles => the roles mapped for the user (default: 'JBossAdmin,HttpInvoker')
   #
-  # author: Marcelo Guimaraes <ataxexe@gmail.com>
+  # author: Marcelo Guimarães <ataxexe@gmail.com>
   class JMX
     include Component
 

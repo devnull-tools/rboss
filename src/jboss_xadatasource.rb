@@ -15,7 +15,7 @@ module JBoss
   #
   # Configuration attributes are the same as for a JBoss::Datasource
   #
-  # author: Marcelo Guimaraes <ataxexe@gmail.com>
+  # author: Marcelo Guimarães <ataxexe@gmail.com>
   class XADatasource < Datasource
     include Component, CommandInvoker
 

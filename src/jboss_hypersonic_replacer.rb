@@ -9,7 +9,7 @@ module JBoss
   #
   # The configuration can be a JBossDatasource or a Hash to configure a JBossDatasource.
   #
-  # author: Marcelo Guimaraes <ataxexe@gmail.com>
+  # author: Marcelo Guimarães <ataxexe@gmail.com>
   class HypersonicReplacer
     include CommandInvoker
 

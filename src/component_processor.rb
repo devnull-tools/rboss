@@ -44,7 +44,7 @@
 # When a component is added, it will be processed for sending or moving configurations and, if the component has a type,
 # it will be passed to the block for processing.
 #
-# author: Marcelo Guimaraes <ataxexe@gmail.com>
+# author: Marcelo Guimarães <ataxexe@gmail.com>
 class ComponentProcessor
 
   def initialize &block

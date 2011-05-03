@@ -22,7 +22,7 @@ module JBoss
   # Each service is binded to a remove_$SERVICE_ID method so you can easily add
   # more services by modifying this class
   #
-  # author: Marcelo Guimaraes <ataxexe@gmail.com>
+  # author: Marcelo Guimarães <ataxexe@gmail.com>
   class Slimming
     include CommandInvoker
 

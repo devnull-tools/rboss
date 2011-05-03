@@ -7,7 +7,7 @@ module JBoss
 
   # A class that represents the JBoss structure.
   #
-  # author Marcelo Guimaraes <ataxexe@gmail.com>
+  # author Marcelo Guimarães <ataxexe@gmail.com>
   class Path < FilePathBuilder
 
     attr_reader :profile, :profile_name, :home

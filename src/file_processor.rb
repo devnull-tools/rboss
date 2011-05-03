@@ -3,8 +3,6 @@ require "fileutils"
 require "ostruct"
 require "logger"
 
-include REXML
-
 class FileProcessor
 
   def initialize opts = {}
@@ -25,7 +23,7 @@ class FileProcessor
       :xml => {
         :load => lambda do |file|
           @logger.info "Parsing file #{file}"
-          Document::new File::new(file)
+          REXML::Document::new File::new(file)
         end,
 
         :store => lambda do |file, xml|

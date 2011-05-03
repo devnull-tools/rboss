@@ -11,7 +11,7 @@ module JBoss
   #
   # Relative paths are based on the profile path (example: "lib" is $JBOSS_HOME/server/$JBOSS_PROFILE/lib)
   #
-  # author: Marcelo Guimaraes <ataxexe@gmail.com>
+  # author: Marcelo Guimarães <ataxexe@gmail.com>
   class Resource
     include CommandInvoker
 
