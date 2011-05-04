@@ -20,8 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# A class that extends the
-#
+# A class that extends the default JMX component
+# for compatibillity with JBoss SOA-P
 #
 # author: Marcelo Guimarães <ataxexe@gmail.com>
 module JBoss

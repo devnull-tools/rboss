@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="RUBY_MODULE" version="4">
+  <component name="GemRequirementsHolder" version="3">
+    <requirement>
+      <requirement>
+        <dependency name="test-unit" version="0" bound="GREATER_OR_EQUAL" git="false" path="false" doRequire="true" />
+      </requirement>
+      <source manual="true" />
+    </requirement>
+  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
@@ -14,7 +22,8 @@
     <orderEntry type="library" scope="PROVIDED" name="[gem] ruby-debug-base19 (v0.11.24, /home/ataxexe/.rvm/gems/ruby-1.9.2-p180/gems/ruby-debug-base19-0.11.24)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] ruby-debug19 (v0.11.6, /home/ataxexe/.rvm/gems/ruby-1.9.2-p180/gems/ruby-debug19-0.11.6)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] ruby_core_source (v0.1.4, /home/ataxexe/.rvm/gems/ruby-1.9.2-p180/gems/ruby_core_source-0.1.4)" level="application" />
-    <orderEntry type="library" name="[gem] ruby-debug-base19x (v0.11.26, null)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] test-unit (v2.3.0, /home/ataxexe/.rvm/gems/ruby-1.9.2-p180/gems/test-unit-2.3.0)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] ruby-debug-base19x (v0.11.26, /home/ataxexe/.rvm/gems/ruby-1.9.2-p180/gems/ruby-debug-base19x-0.11.26)" level="application" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

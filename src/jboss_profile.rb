@@ -125,7 +125,7 @@ module JBoss
 
     @@final = 55
 
-    attr_reader :home
+    attr_reader :jboss
 
     def initialize jboss_home, opts = {}
       block = lambda { |type, config| type.new(@jboss, @logger, config).process }
@@ -142,17 +142,21 @@ module JBoss
       @base_profile = @opts[:base_profile].to_s
       @profile = @opts[:profile].to_s
       @jboss = JBoss::Path::new jboss_home, @profile, @opts[:type], @opts[:version]
-      @home = @jboss.home
       initialize_components
     end
 
     def create
       create_profile
-      configure_profile
+      configure
     end
 
-    def configure_profile
+    def configure
       process_components
+    end
+
+    def remove
+      @logger.info "Removing installed profile"
+      invoke "rm -rf #{@jboss.profile}"
     end
 
     private
@@ -160,8 +164,7 @@ module JBoss
     # Creates the profile using the base profile for copying
     def create_profile
       if File.exists? @jboss.profile
-        @logger.info "Removing installed profile"
-        invoke "rm -rf #{@jboss.profile}"
+        remove
       end
       @logger.info "Copying #{@base_profile} to #{@profile}..."
       invoke "cp -r #{@jboss}/server/#{@base_profile} #{@jboss.profile}"
@@ -301,9 +304,11 @@ module JBoss
       # loads extensions to components based on the type of jboss (eap, soa-p, org, epp...)
       unless @jboss.type == :undefined
         dir = File.join(@base_dir, @jboss.type.to_s.gsub(/_/, '-'))
-        scripts = Dir.entries(dir).find_all { |f| f.end_with? '.rb' }
-        scripts.each do |script|
-          require_relative File.join(dir, script.gsub(/\.rb/, ''))
+        if File.exists? dir
+          scripts = Dir.entries(dir).find_all { |f| f.end_with? '.rb' }
+          scripts.each do |script|
+            require_relative File.join(dir, script.gsub(/\.rb/, ''))
+          end
         end
       end
     end

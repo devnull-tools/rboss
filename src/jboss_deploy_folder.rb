@@ -34,9 +34,6 @@ module JBoss
 
   # A class to add deploy folders to a JBoss Profile.
   #
-  #
-  #
-  #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class DeployFolder
     include CommandInvoker, Component
@@ -45,11 +42,13 @@ module JBoss
       @jboss = jboss
       @logger = logger
       @folder = folder.to_s
+      @configure_vsf_and_profile = @folder.start_with?('/') or @folder.start_with?('deploy')
+
       @absolute_path = @folder.start_with? '/'
       if @absolute_path
         @path = @folder
       else
-        @path = @jboss.profile.deploy @folder
+        @path = "#{@jboss.profile}/deploy/#{@folder}"
         @folder = "${jboss.server.home.url}#{@folder}" unless @folder.start_with? '/'
       end
     end

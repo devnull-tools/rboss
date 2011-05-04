@@ -238,7 +238,6 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/jboss/jboss.iml" filepath="$PROJECT_DIR$/jboss/jboss.iml" />
       <module fileurl="file://$PROJECT_DIR$/rboss.iml" filepath="$PROJECT_DIR$/rboss.iml" />
     </modules>
   </component>
