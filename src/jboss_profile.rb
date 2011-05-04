@@ -297,6 +297,15 @@ module JBoss
                  :jnp_port => 1099,
                  :jboss_user => "RUNASIS"
                }
+
+      # loads extensions to components based on the type of jboss (eap, soa-p, org, epp...)
+      unless @jboss.type == :undefined
+        dir = File.join(@base_dir, @jboss.type.to_s.gsub(/_/, '-'))
+        scripts = Dir.entries(dir).find_all { |f| f.end_with? '.rb' }
+        scripts.each do |script|
+          require_relative File.join(dir, script.gsub(/\.rb/, ''))
+        end
+      end
     end
 
   end
