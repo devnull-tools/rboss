@@ -34,6 +34,8 @@ module JBoss
       @config = config
       @config[:configuration] = @jboss.profile_name
       @config[:jboss_home] = @jboss.home
+      @name = @config[:name]
+      @name ||= "jboss_init_#{@jboss.profile_name}.sh"
     end
 
     def process
@@ -55,7 +57,7 @@ module JBoss
           end
           content
         end
-        processor.copy_to @jboss.bin("jboss_init_#{@jboss.profile_name}.sh")
+        processor.copy_to "#{@jboss}/bin/#{@name}"
       end
       processor.process
     end

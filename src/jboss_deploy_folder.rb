@@ -23,7 +23,6 @@
 require_relative "file_processor"
 require_relative "jboss_component"
 require_relative "command_invoker"
-require_relative "file_path_builder"
 require_relative "utils"
 
 require "logger"
@@ -58,6 +57,7 @@ module JBoss
     def process
       @logger.info "Creating deploy folder: #{@path}"
       invoke "mkdir -p #{@path}"
+      # TODO improve this check for folders inside profile
       if @absolute_path
         configure_vfs
         configure_profile
@@ -69,7 +69,7 @@ module JBoss
     def configure_profile
       @logger.info "Updating profile.xml"
       processor = create_file_processor
-      processor.with @jboss.profile.conf.bootstrap('profile.xml'), :xml do |action|
+      processor.with "#{@jboss.profile}/conf/bootstrap/profile.xml", :xml do |action|
         action.to_process do |xml, jboss|
           element = XPath.first xml, "//property[@name='applicationURIs']"
           element = XPath.first element, "//list[@elementClass='java.net.URI']"
@@ -86,7 +86,7 @@ module JBoss
     def configure_vfs
       @logger.info "Updating vfs.xml"
       processor = create_file_processor
-      processor.with @jboss.profile.conf.bootstrap('vfs.xml'), :xml do |action|
+      processor.with "#{@jboss.profile}/conf/bootstrap/vfs.xml", :xml do |action|
         action.to_process do |xml, jboss|
           map = XPath.first xml, "//map[@keyClass='java.net.URL']"
           entry = Document::new <<XML

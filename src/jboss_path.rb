@@ -20,9 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative "file_path_builder"
-
-require "ostruct"
 require "logger"
 
 module JBoss
@@ -30,15 +27,20 @@ module JBoss
   # A class that represents the JBoss structure.
   #
   # author Marcelo Guimarães <ataxexe@gmail.com>
-  class Path < FilePathBuilder
+  class Path
 
-    attr_reader :profile, :profile_name, :home
+    attr_reader :profile, :profile_name, :home, :type, :version
 
-    def initialize jboss_home, profile = :custom
-      super jboss_home
-      @home = FilePathBuilder::new jboss_home
-      @profile = FilePathBuilder::new "#{jboss_home}/server/#{profile}"
+    def initialize jboss_home, profile = :custom, type = :undefined, version = :undefined
+      @home = jboss_home
+      @profile ="#{jboss_home}/server/#{profile}"
       @profile_name = profile.to_s
+      @type = type
+      @version = version
+    end
+
+    def to_s
+      @home
     end
 
   end

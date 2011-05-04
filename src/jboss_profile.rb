@@ -21,7 +21,6 @@
 # THE SOFTWARE.
 
 require_relative "file_processor"
-require_relative "file_path_builder"
 require_relative "utils"
 require_relative "component_processor"
 require_relative "command_invoker"
@@ -131,16 +130,18 @@ module JBoss
     def initialize jboss_home, opts = {}
       block = lambda { |type, config| type.new(@jboss, @logger, config).process }
       super &block
-      @base_dir = FilePathBuilder::new File.dirname(__FILE__)
+      @base_dir = File.dirname(__FILE__)
       @opts = {
         :base_profile => :production,
         :profile => :custom,
         :logger => Logger::new(STDOUT),
+        :type => :undefined,
+        :version => :undefined
       }.merge! opts
       @logger = @opts[:logger]
       @base_profile = @opts[:base_profile].to_s
       @profile = @opts[:profile].to_s
-      @jboss = JBoss::Path::new jboss_home, @profile
+      @jboss = JBoss::Path::new jboss_home, @profile, @opts[:type], @opts[:version]
       @home = @jboss.home
       initialize_components
     end
@@ -158,12 +159,12 @@ module JBoss
 
     # Creates the profile using the base profile for copying
     def create_profile
-      if File.exists? @jboss.profile.to_s
+      if File.exists? @jboss.profile
         @logger.info "Removing installed profile"
         invoke "rm -rf #{@jboss.profile}"
       end
       @logger.info "Copying #{@base_profile} to #{@profile}..."
-      invoke "cp -r #{@jboss.server @base_profile} #{@jboss.profile}"
+      invoke "cp -r #{@jboss}/server/#{@base_profile} #{@jboss.profile}"
     end
 
     def initialize_components
@@ -260,7 +261,7 @@ module JBoss
                  ]
                },
                :defaults => {
-                 :path => @base_dir.resources('mod_cluster.sar'),
+                 :path => "#{@base_dir}/resources/mod_cluster.sar",
                }
 
       register :run_conf,
@@ -272,7 +273,7 @@ module JBoss
                  :to_init_script => [:service_binding]
                },
                :defaults => {
-                 :path => @base_dir.resources('run.conf'),
+                 :path => "#{@base_dir}/resources/run.conf",
                  :stack_size => '128k',
                  :heap_size => '2048m',
                  :perm_size => '256m',
@@ -288,7 +289,7 @@ module JBoss
                :type => JBoss::ServiceScript,
                :priority => @@final,
                :defaults => {
-                 :path => @base_dir.resources('jboss_init_redhat.sh'),
+                 :path => "#{@base_dir}/resources/jboss_init_redhat.sh",
                  :jmx_user => "admin",
                  :jmx_password => "admin",
                  :bind_address => "0.0.0.0",

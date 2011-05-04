@@ -36,16 +36,20 @@ module JBoss
     include Component
 
     def initialize jboss, logger, config
-      config = {
-        :user => "admin",
-        :password => "admin",
-        :roles => "JBossAdmin,HttpInvoker"
-      }.merge! config
+      config = defaults.merge! config
       @jboss = jboss
       @logger = logger
       @password = config[:password]
       @user = config[:user]
       @roles = config[:roles]
+    end
+
+    def defaults
+      {
+        :user => "admin",
+        :password => "admin",
+        :roles => "JBossAdmin,HttpInvoker"
+      }
     end
 
     def process
@@ -55,7 +59,7 @@ module JBoss
 
     def configure_users
       processor = create_file_processor
-      processor.with @jboss.profile.conf.props "jmx-console-users.properties" do |action|
+      processor.with "#{@jboss.profile}/conf/props/#{users_properties}" do |action|
         action.to_process do |content, jboss|
           [@user, @password].join '='
         end
@@ -65,12 +69,20 @@ module JBoss
 
     def configure_roles
       processor = create_file_processor
-      processor.with @jboss.profile.conf.props "jmx-console-roles.properties" do |action|
+      processor.with "#{@jboss.profile}/conf/props/#{roles_properties}" do |action|
         action.to_process do |content, jboss|
           [@user, @roles].join '='
         end
       end
       processor.process
+    end
+
+    def users_properties
+      "jmx-console-users.properties"
+    end
+
+    def roles_properties
+      "jmx-console-roles.properties"
     end
 
   end
