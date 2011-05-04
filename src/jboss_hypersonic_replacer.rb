@@ -31,15 +31,16 @@ module JBoss
   #
   # The configuration can be a JBossDatasource or a Hash to configure a JBossDatasource.
   #
+  # TODO: make an extension for SOA-P to execute the ANT script for schema generation
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class HypersonicReplacer
-    include CommandInvoker
+    include CommandInvoker, Component
 
     def initialize jboss, logger, config
       @jboss = jboss
       @logger = logger
       @datasource = config unless config.is_a? Hash
-      @datasource ||= JBoss::Datasource::new(@jboss, @logger, config)
+      @datasource ||= Datasource::new(@jboss, @logger, config)
     end
 
     def process

@@ -9,19 +9,23 @@ module TestHelper
     ENV["JBOSS_DIR"] or File.expand_path "~/jboss"
   end
 
-  def create_eap version = "5.1", base_profile = :all
-    @jboss_profile = Profile::new "#{jboss_dir}/eap/jboss-eap-#{version}/jboss-as",
-                          :type => :eap,
-                          :base_profile => base_profile,
-                          :profile => :rboss
+  def with type, version, base_profile = :all
+    map ||= {
+      :eap => "#{jboss_dir}/eap/jboss-eap-#{version}/jboss-as",
+      :soa_p => "#{jboss_dir}/soa-p/jboss-soa-p-#{version}/jboss-as",
+      :org => "#{jboss_dir}/org/jboss-#{version}"
+    }
+
+    @jboss_profile = Profile::new map[type],
+                                  :type => :eap,
+                                  :base_profile => base_profile,
+                                  :profile => :rboss
     @jboss = @jboss_profile.jboss
-    if block_given?
-      yield @jboss_profile
-      @jboss_profile.create
-    end
+    yield @jboss_profile
+    @jboss_profile.create
   end
 
-  def assertions
+  def for_assertions
     yield
     @jboss_profile.remove
   end
