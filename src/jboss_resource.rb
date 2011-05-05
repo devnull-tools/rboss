@@ -48,7 +48,7 @@ module JBoss
       @resources.each do |to_path, resources|
         resources = [resources] unless resources.is_a? Array
         resources.each do |resource|
-          to_path = "#{@jboss.profile}/#{to_path}" unless to_path.start_with? '/'
+          to_path = "#{@jboss.profile}/#{to_path}" unless to_path.to_s.start_with? '/'
           invoke "cp #{resource} #{to_path}"
         end
       end

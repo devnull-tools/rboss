@@ -68,7 +68,7 @@ module JBoss
 
     def initialize jboss, logger, config
       config = {
-        :folder => jboss.profile.deploy,
+        :folder => "#{jboss.profile}/deploy",
         :encrypt => false,
         :attributes => {}
       }.merge! config
@@ -91,7 +91,7 @@ module JBoss
         @password = encrypt @attributes.delete :password
       end
       processor = create_file_processor
-      processor.with @jboss.docs.examples.jca("#{@type}-ds.xml"), :xml do |action|
+      processor.with "#{@jboss.home}/docs/examples/jca/#{@type}-ds.xml", :xml do |action|
         action.to_process do |xml, jboss|
           element = XPath.first xml, "//jndi-name"
           element.text = @jndi_name
@@ -175,7 +175,7 @@ module JBoss
 
     def update_login_config
       processor = create_file_processor
-      processor.with @jboss.profile.conf('login-config.xml'), :xml do |action|
+      processor.with "#{@jboss.profile}/conf/login-config.xml", :xml do |action|
         action.to_process do |xml, jboss|
           xml.root << @login_module
           xml
