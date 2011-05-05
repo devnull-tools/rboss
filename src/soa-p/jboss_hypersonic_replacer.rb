@@ -24,47 +24,29 @@ module JBoss
 
   class HypersonicReplacer
 
-    alias_method :old_process, :process
-    alias_method :old_initialize, :initialize
-
-
     def initialize jboss, logger, config
-      soa_p = config[:soa_p]
-      @source_dir = soa_p[:source_dir]
-      @db_name = soa_p[:db_name]
-      @db_hostname = soa_p[:db_hostname]
-      @db_port = soa_p[:db_port]
-
-      old_initialize jboss, logger, config
+      @build_properties = {
+        "db.minpoolsize" => 15,
+        "db.maxpoolsize" => 50
+      }.merge! config
     end
 
     def process
-      old_process
-
-      # TODO: create a build.properties temp file inside tools/schema based on datasource config
-      # and invoke the ant script
-      build_properties = <<BUILD_PROPERTIES
+      build_properties_content = <<BUILD_PROPERTIES
 org.jboss.esb.server.home=#{@jboss.home}
 org.jboss.esb.server.clustered=#{File.exists? "#{@jboss.profile}/farm"}
 org.jboss.esb.server.config=#{@jboss.profile_name}
 
-db.username=#{@datasource.attributes[:user]}
-db.password=#{@datasource.attributes[:password]}
-
-source.dir=#{@source_dir}
-
-db.name=#{@db_name}
-db.hostname=#{@db_hostname}
-db.port=#{@db_port}
-
-db.minpoolsize=15
-db.maxpoolsize=50
 BUILD_PROPERTIES
+
+      @build_properties.each do |key, value|
+        build_properties_content << ([key, value].join "=") << "\n"
+      end
 
       # make a backup of build.properties
       invoke "mv #{@jboss.home}/tools/schema/build.properties #{@jboss.home}/tools/schema/build.properties~"
 
-      File.open("#{@jboss.home}/tools/schema/build.properties", 'w+') { |f| f.write build_properties }
+      File.open("#{@jboss.home}/tools/schema/build.properties", 'w+') { |f| f.write build_properties_content }
 
       invoke "cd #{@jboss.home}/tools/schema; ant"
 
