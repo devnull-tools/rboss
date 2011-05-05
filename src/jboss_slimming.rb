@@ -76,6 +76,7 @@ module JBoss
 
     def remove_mail
       reject("#{@jboss.profile}/deploy/mail-ra.rar")
+      reject("#{@jboss.profile}/deploy/mail-service.xml")
     end
 
     def remove_scheduling
