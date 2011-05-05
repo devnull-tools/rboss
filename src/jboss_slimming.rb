@@ -63,53 +63,52 @@ module JBoss
     end
 
     def remove_hot_deploy
-      reject(@jboss.profile.deploy "hdscanner-jboss-beans.xml")
+      reject("#{@jboss.profile}/deploy/hdscanner-jboss-beans.xml")
     end
 
     def remove_juddi
-      reject(@jboss.profile.deploy 'juddi-service.sar')
+      reject("#{@jboss.profile}/deploy/juddi-service.sar")
     end
 
     def remove_key_generator
-      reject(@jboss.profile.deploy 'uuid-key-generator.sar')
+      reject("#{@jboss.profile}/deploy/uuid-key-generator.sar")
     end
 
     def remove_mail
-      reject(@jboss.profile.deploy 'mail-ra.rar')
+      reject("#{@jboss.profile}/deploy/mail-ra.rar")
     end
 
     def remove_scheduling
-      %w{scheduler-manager-service.xml scheduler-service.xml}.each do |file|
-        reject(@jboss.profile.deploy file)
-      end
+      reject("#{@jboss.profile}/deploy/scheduler-manager-service.xml")
+      reject("#{@jboss.profile}/deploy/scheduler-service.xml")
     end
 
     def remove_bsh_deployer
-      reject(@jboss.profile.deployers 'bsh.deployer')
+      reject("#{@jboss.profile}/deployers/bsh.deployer")
     end
 
     def remove_jboss_ws
-      reject(@jboss.profile.conf 'jax-ws-catalog.xml')
-      reject(@jboss.profile.conf.props 'jbossws-users.properties')
-      reject(@jboss.profile.conf.props 'jbossws-roles.properties')
-      reject(@jboss.profile.deploy 'jbossws.sar')
-      reject(@jboss.profile.deployers 'jbossws.deployer')
+      reject("#{@jboss.profile}/conf/jax-ws-catalog.xml")
+      reject("#{@jboss.profile}/conf/props/jbossws-users.properties")
+      reject("#{@jboss.profile}/conf/props/jbossws-roles.properties")
+      reject("#{@jboss.profile}/deploy/jbossws.sar")
+      reject("#{@jboss.profile}/deployers/jbossws.deployer")
     end
 
     def remove_jmx_console
-      reject(@jboss.profile.deploy 'jmx-console.war')
+      reject("#{@jboss.profile}/deploy/jmx-console.war")
     end
 
     def remove_admin_console
-      reject(@jboss.profile.deploy 'admin-console.war')
+      reject("#{@jboss.profile}/deploy/admin-console.war")
     end
 
     def remove_web_console
-      reject(@jboss.profile.deploy 'management')
+      reject("#{@jboss.profile}/deploy/management")
     end
 
     def remove_jmx_remoting
-      reject(@jboss.profile.deploy 'jmx-remoting.sar')
+      reject("#{@jboss.profile}/deploy/jmx-remoting.sar")
     end
 
     private
