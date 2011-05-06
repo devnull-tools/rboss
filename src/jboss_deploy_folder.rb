@@ -42,22 +42,23 @@ module JBoss
       @jboss = jboss
       @logger = logger
       @folder = folder.to_s
-      @configure_vsf_and_profile = @folder.start_with?('/') or @folder.start_with?('deploy')
 
       @absolute_path = @folder.start_with? '/'
-      if @absolute_path
-        @path = @folder
-      else
-        @path = "#{@jboss.profile}/deploy/#{@folder}"
-        @folder = "${jboss.server.home.url}#{@folder}" unless @folder.start_with? '/'
-      end
+      @outside_deploy = !@folder.start_with?('deploy') and not @absolute_path
+
+      @configure_vsf_and_profile = @absolute_path or @outside_deploy
+
+      @path = @folder if @absolute_path
+      @path = "#{@jboss.profile}/#{@folder}" if @outside_deploy
+
+      @folder = "${jboss.server.home.url}#{@folder}" if @outside_deploy
     end
 
     def process
       @logger.info "Creating deploy folder: #{@path}"
       invoke "mkdir -p #{@path}"
-      # TODO improve this check for folders inside profile
-      if @absolute_path
+
+      if @configure_vsf_and_profile
         configure_vfs
         configure_profile
       end
