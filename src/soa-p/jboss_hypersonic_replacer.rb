@@ -22,6 +22,22 @@
 
 module JBoss
 
+  # A class to replace Hypersonic in SOA-P. This class makes a build.properties file
+  # and calls the ant script present in $JBOSS_HOME/tools/schema/build.xml since this
+  # script does everything we need to replace Hypersonic.
+  #
+  # The configuration must be in a form key => value and the keys needs to be
+  # in the $JBOSS_HOME/tools/schema/build.properties file.
+  #
+  # The ant script minimal keys are:
+  #   - db.name
+  #   - db.hostname
+  #   - db.port
+  #   - db.username
+  #   - db.password
+  #   - source.dir (the directory in $JBOSS_HOME/tools/schema/ that matches the database type)
+  #
+  # author: Marcelo Guimarães <ataxexe@gmail.com>
   class HypersonicReplacer
 
     def initialize jboss, logger, config
