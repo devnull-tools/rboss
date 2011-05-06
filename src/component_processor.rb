@@ -71,6 +71,7 @@ class ComponentProcessor
 
   def initialize &block
     @process = block
+    @process ||= lambda { |type, config| type.new(config).process }
   end
 
   # Register a component using the given id (which must be used for adding it to process) and parameters
