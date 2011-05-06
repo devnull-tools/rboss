@@ -25,28 +25,25 @@ module JBoss
   class HypersonicReplacer
 
     def initialize jboss, logger, config
+      @jboss = jboss
+      @logger = logger
       @build_properties = {
+        "org.jboss.esb.server.home" => "#{@jboss.home}",
+        "org.jboss.esb.server.clustered" => "#{File.exists? "#{@jboss.profile}/farm"}",
+        "org.jboss.esb.server.config" => "#{@jboss.profile_name}",
+
         "db.minpoolsize" => 15,
         "db.maxpoolsize" => 50
       }.merge! config
     end
 
     def process
-      build_properties_content = <<BUILD_PROPERTIES
-org.jboss.esb.server.home=#{@jboss.home}
-org.jboss.esb.server.clustered=#{File.exists? "#{@jboss.profile}/farm"}
-org.jboss.esb.server.config=#{@jboss.profile_name}
-
-BUILD_PROPERTIES
-
-      @build_properties.each do |key, value|
-        build_properties_content << ([key, value].join "=") << "\n"
-      end
+      properties = @build_properties.collect {|key, value| "#{key} = #{value}" }
 
       # make a backup of build.properties
       invoke "mv #{@jboss.home}/tools/schema/build.properties #{@jboss.home}/tools/schema/build.properties~"
 
-      File.open("#{@jboss.home}/tools/schema/build.properties", 'w+') { |f| f.write build_properties_content }
+      File.open("#{@jboss.home}/tools/schema/build.properties", 'w+') { |f| f.write properties.join("\n") }
 
       invoke "cd #{@jboss.home}/tools/schema; ant"
 
