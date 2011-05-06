@@ -20,10 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative "file_processor"
 require_relative "jboss_component"
-require_relative "command_invoker"
-require_relative "utils"
 
 require "logger"
 require "rexml/document"
@@ -36,7 +33,7 @@ module JBoss
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class DeployFolder
-    include CommandInvoker, Component
+    include Component
 
     def initialize jboss, logger, folder
       @jboss = jboss
@@ -48,8 +45,7 @@ module JBoss
 
       @configure_vsf_and_profile = @absolute_path or @outside_deploy
 
-      @path = @folder if @absolute_path
-      @path = "#{@jboss.profile}/#{@folder}" if @outside_deploy
+      @path = @absolute_path ? @folder : "#{@jboss.profile}/#{@folder}"
 
       @folder = "${jboss.server.home.url}#{@folder}" if @outside_deploy
     end

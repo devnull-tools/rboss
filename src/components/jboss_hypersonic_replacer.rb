@@ -20,38 +20,38 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative "command_invoker"
+require_relative "jboss_datasource"
+require_relative "jboss_component"
 
 module JBoss
-
-  # A class to add resources to a JBoss Profile
+  # A class to replace the shipped Hypersonic datasource for a JBoss profile.
   #
-  # Any resource can be added using the following structure:
+  # Configuration:
   #
-  # absolute_path => [resource_a_path, resource_b_path, ...],
-  # relative_path => resource_c_path
-  #
-  # Relative paths are based on the profile path (example: "lib" is $JBOSS_HOME/server/$JBOSS_PROFILE/lib)
+  # The configuration can be a JBossDatasource or a Hash to configure a JBossDatasource.
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
-  class Resource
-    include CommandInvoker
+  class HypersonicReplacer
+    include Component
 
-    def initialize jboss, logger, resources
+    def initialize jboss, logger, config
       @jboss = jboss
       @logger = logger
-      @resources = resources
+      @datasource = config if config.is_a? Datasource
+      @datasource ||= Datasource::new(@jboss, @logger, config)
     end
 
     def process
-      @logger.info "Including resources..." unless @resources.empty?
-      @resources.each do |to_path, resources|
-        resources = [resources] unless resources.is_a? Array
-        resources.each do |resource|
-          to_path = "#{@jboss.profile}/#{to_path}" unless to_path.to_s.start_with? '/'
-          invoke "cp #{resource} #{to_path}"
-        end
-      end
+      @logger.info "Removing Hypersonic..."
+      invoke "rm -f #{@jboss.profile}/deploy/hsqldb-ds.xml"
+      invoke "rm -f #{@jboss.profile}/deploy/messaging/hsqldb-persistence-service.xml"
+
+      @datasource.jndi_name = "DefaultDS"
+
+      @datasource.process
+
+      @logger.info "Copying persistence service template for #{@datasource.type}..."
+      invoke "cp #{@jboss.home}/docs/examples/jms/#{@datasource.type}-persistence-service.xml #{@jboss.profile}/deploy/messaging"
     end
 
   end

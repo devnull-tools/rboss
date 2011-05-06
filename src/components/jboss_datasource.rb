@@ -21,9 +21,6 @@
 # THE SOFTWARE.
 
 require_relative "jboss_component"
-require_relative "jboss_path"
-require_relative "command_invoker"
-require_relative "utils"
 
 require "logger"
 require "rexml/document"

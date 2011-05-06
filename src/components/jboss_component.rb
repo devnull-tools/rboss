@@ -20,49 +20,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative "jboss_datasource"
-require_relative "jboss_component"
-require_relative "command_invoker"
-
-require "logger"
-require "rexml/document"
-
-include REXML
+require_relative "../file_processor"
+require_relative "../jboss_path"
+require_relative "../utils"
 
 module JBoss
 
-  # A class to configure a JBoss XADatasource.
-  #
-  # The configuration will change a <xa-datasource-property> value.
-  #
-  # Configuration attributes are the same as for a JBoss::Datasource
+  # A base helper module for JBoss Components
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
-  class XADatasource < Datasource
-    include Component, CommandInvoker
+  module Component
 
-    def initialize jboss, logger, config
-      super jboss, logger, config
-      @type << "-xa"
+    # Creates a FileProcessor using the same logger and
+    # jboss path as the variable
+    def create_file_processor
+      FileProcessor::new :logger => @logger, :var => @jboss
     end
 
-    def configure_datasource xml
-      if @encrypt
-        xml.delete_element "//xa-datasource-property[@name='User']"
-        xml.delete_element "//xa-datasource-property[@name='Password']"
-        @service = "XATxCM"
-      end
-      @attributes.each do |key, value|
-        element = find(xml, key) {|k| "//xa-datasource-property[@name='#{k}']"}
-
-        if element
-          element.text = value
-        else
-          insert_attribute xml, key, value
-        end
-      end
+    def invoke command
+      @logger.debug "Command: #{command}"
+      `#{command}`
     end
 
   end
-
 end

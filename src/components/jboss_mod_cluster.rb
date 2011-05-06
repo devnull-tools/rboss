@@ -21,9 +21,7 @@
 # THE SOFTWARE.
 
 require_relative "jboss_component"
-require_relative "jboss_path"
-require_relative "command_invoker"
-require_relative "utils"
+require_relative "../jboss_path"
 
 require "logger"
 require "rexml/document"
@@ -43,7 +41,7 @@ module JBoss
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class ModCluster
-    include CommandInvoker, Component
+    include Component
 
     def initialize jboss, logger, config
       @jboss = jboss

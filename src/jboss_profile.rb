@@ -25,16 +25,6 @@ require_relative "utils"
 require_relative "component_processor"
 require_relative "command_invoker"
 require_relative "jboss_path"
-require_relative "jboss_jmx"
-require_relative "jboss_resource"
-require_relative "jboss_slimming"
-require_relative "jboss_deploy_folder"
-require_relative "jboss_datasource"
-require_relative "jboss_xadatasource"
-require_relative "jboss_hypersonic_replacer"
-require_relative "jboss_mod_cluster"
-require_relative "jboss_run_conf"
-require_relative "jboss_service_script"
 
 require "logger"
 require "ostruct"
@@ -131,6 +121,7 @@ module JBoss
       block = lambda { |type, config| type.new(@jboss, @logger, config).process }
       super &block
       @base_dir = File.dirname(__FILE__)
+
       @opts = {
         :base_profile => :production,
         :profile => :custom,
@@ -171,6 +162,7 @@ module JBoss
     end
 
     def initialize_components
+      load_scripts
       register :deploy_folder,
 
                :type => JBoss::DeployFolder,
@@ -303,16 +295,26 @@ module JBoss
 
       # loads extensions to components based on the type of jboss (eap, soa-p, org, epp...)
       unless @jboss.type == :undefined
-        dir = File.join(@base_dir, @jboss.type.to_s.gsub(/_/, '-'))
+        dir = File.join(@base_dir, "components" , @jboss.type.to_s.gsub(/_/, '-'))
         if File.exists? dir
           scripts = Dir.entries(dir).find_all { |f| f.end_with? '.rb' }
           scripts.each do |script|
-            require_relative File.join(dir, script.gsub(/\.rb/, ''))
+            load File.join(dir, script)
           end
         end
       end
     end
 
+  end
+
+  private
+
+  # Loads manually every script related to jboss. This is necessary to reset the components to this natural state
+  def load_scripts
+    scripts = Dir.entries("#{@base_dir}/components").find_all { |f| f.end_with?('.rb') }
+    scripts.each do |script|
+      load File.expand_path(@base_dir) + "/components/" + script
+    end
   end
 
 end

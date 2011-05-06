@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative "command_invoker"
+require_relative 'jboss_component'
 
 module JBoss
   # A class for slimming a JBoss profile
@@ -46,7 +46,7 @@ module JBoss
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class Slimming
-    include CommandInvoker
+    include Component
 
     def initialize jboss, logger, services_to_remove
       @jboss = jboss
