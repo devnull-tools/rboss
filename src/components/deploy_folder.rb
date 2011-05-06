@@ -41,13 +41,14 @@ module JBoss
       @folder = folder.to_s
 
       @absolute_path = @folder.start_with? '/'
-      @outside_deploy = !@folder.start_with?('deploy') and not @absolute_path
+      @outside_deploy = (!@folder.start_with?('deploy') and not @absolute_path)
 
-      @configure_vsf_and_profile = @absolute_path or @outside_deploy
+      @configure_vsf_and_profile = (@absolute_path or @outside_deploy)
 
       @path = @absolute_path ? @folder : "#{@jboss.profile}/#{@folder}"
 
       @folder = "${jboss.server.home.url}#{@folder}" if @outside_deploy
+      @folder = "file://#{@folder}" if @absolute_path
     end
 
     def process
@@ -74,7 +75,6 @@ module JBoss
           element << deploy
           xml
         end
-        action.return
       end
       processor.process
     end

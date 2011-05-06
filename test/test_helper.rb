@@ -1,8 +1,12 @@
 require 'test/unit'
-require_relative '../src/jboss_profile'
 require 'logger'
+require 'rexml/document'
+
+require_relative '../src/jboss_profile'
+require_relative '../src/file_processor'
 
 include JBoss
+include REXML
 
 module TestHelper
 
@@ -32,13 +36,13 @@ module TestHelper
       :soa_p => "#{jboss_dir}/soa-p/jboss-soa-p-#{version}/jboss-as",
       :org => "#{jboss_dir}/org/jboss-#{version}"
     }
-    logger = Logger::new STDOUT
-    logger.level = Logger::INFO
+    @logger = Logger::new STDOUT
+    @logger.level = Logger::INFO
     @jboss_profile = Profile::new map[type],
                                   :type => type,
                                   :base_profile => base_profile,
                                   :profile => :rboss,
-                                  :logger => logger
+                                  :logger => @logger
     @jboss = @jboss_profile.jboss
     yield @jboss, @jboss_profile
   end
@@ -52,7 +56,13 @@ module TestHelper
     end
     @jboss_profile.create
     yield
-    @jboss_profile.remove
+    #@jboss_profile.remove
+  end
+
+  alias_method :for_assertions_with, :for_assertions
+
+  def create_file_processor
+    FileProcessor::new :logger => @logger, :var => @jboss
   end
 
 end
