@@ -20,8 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative "jboss_datasource"
-require_relative "jboss_component"
+require_relative "datasource"
+require_relative "component"
 
 module JBoss
   # A class to replace the shipped Hypersonic datasource for a JBoss profile.

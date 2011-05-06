@@ -20,36 +20,44 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative "jboss_component"
+require_relative "datasource"
+require_relative "component"
+
+require "logger"
+require "rexml/document"
+
+include REXML
 
 module JBoss
 
-  # A class to add resources to a JBoss Profile
+  # A class to configure a JBoss XADatasource.
   #
-  # Any resource can be added using the following structure:
+  # The configuration will change a <xa-datasource-property> value.
   #
-  # absolute_path => [resource_a_path, resource_b_path, ...],
-  # relative_path => resource_c_path
-  #
-  # Relative paths are based on the profile path (example: "lib" is $JBOSS_HOME/server/$JBOSS_PROFILE/lib)
+  # Configuration attributes are the same as for a JBoss::Datasource
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
-  class Resource
+  class XADatasource < Datasource
     include Component
 
-    def initialize jboss, logger, resources
-      @jboss = jboss
-      @logger = logger
-      @resources = resources
+    def initialize jboss, logger, config
+      super jboss, logger, config
+      @type << "-xa"
     end
 
-    def process
-      @logger.info "Including resources..." unless @resources.empty?
-      @resources.each do |to_path, resources|
-        resources = [resources] unless resources.is_a? Array
-        resources.each do |resource|
-          to_path = "#{@jboss.profile}/#{to_path}" unless to_path.to_s.start_with? '/'
-          invoke "cp #{resource} #{to_path}"
+    def configure_datasource xml
+      if @encrypt
+        xml.delete_element "//xa-datasource-property[@name='User']"
+        xml.delete_element "//xa-datasource-property[@name='Password']"
+        @service = "XATxCM"
+      end
+      @attributes.each do |key, value|
+        element = find(xml, key) {|k| "//xa-datasource-property[@name='#{k}']"}
+
+        if element
+          element.text = value
+        else
+          insert_attribute xml, key, value
         end
       end
     end

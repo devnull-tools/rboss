@@ -20,71 +20,47 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative "jboss_component"
+require_relative "component"
 
 module JBoss
-  # This class configures the JXM user for a JBoss profile.
-  #
-  # Configuration:
-  #
-  # :user => the jxm user (default: 'admin')
-  # :password => the jmx user password (default: 'admin')
-  # :roles => the roles mapped for the user (default: 'JBossAdmin,HttpInvoker')
-  #
-  # author: Marcelo Guimarães <ataxexe@gmail.com>
-  class JMX
+
+  class ServiceScript
     include Component
 
     def initialize jboss, logger, config
-      config = defaults.merge! config
-      @jboss = jboss
       @logger = logger
-      @password = config[:password]
-      @user = config[:user]
-      @roles = config[:roles]
-    end
-
-    def defaults
-      {
-        :user => "admin",
-        :password => "admin",
-        :roles => "JBossAdmin,HttpInvoker"
-      }
+      @jboss = jboss
+      @template_path = config.delete :path
+      @config = config
+      @config[:configuration] = @jboss.profile_name
+      @config[:jboss_home] = @jboss.home
+      @name = @config[:name]
+      @name ||= "jboss_init_#{@jboss.profile_name}.sh"
     end
 
     def process
-      configure_users
-      configure_roles
-    end
-
-    def configure_users
+      @logger.info "Configuring service script..."
       processor = create_file_processor
-      processor.with "#{@jboss.profile}/conf/props/#{users_properties}" do |action|
-        action.to_process do |content, jboss|
-          [@user, @password].join '='
+      processor.with @template_path do |action|
+        action.to_process do |content|
+          [
+            :jmx_user,
+            :jmx_password,
+            :jnp_port,
+            :jboss_home,
+            :jboss_user,
+            :java_path,
+            :configuration,
+            :bind_address].each do |arg|
+            @logger.debug "init script: #{arg} -> #{@config[arg]}"
+            content.gsub! /\[#{arg.to_s.upcase}\]/, @config[arg].to_s if @config.has_key? arg
+          end
+          content
         end
+        processor.copy_to "#{@jboss}/bin/#{@name}"
       end
       processor.process
-    end
-
-    def configure_roles
-      processor = create_file_processor
-      processor.with "#{@jboss.profile}/conf/props/#{roles_properties}" do |action|
-        action.to_process do |content, jboss|
-          [@user, @roles].join '='
-        end
-      end
-      processor.process
-    end
-
-    def users_properties
-      "jmx-console-users.properties"
-    end
-
-    def roles_properties
-      "jmx-console-roles.properties"
     end
 
   end
-
 end

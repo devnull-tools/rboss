@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'jboss_component'
+require_relative 'component'
 
 module JBoss
   # A class for slimming a JBoss profile

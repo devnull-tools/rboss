@@ -20,44 +20,36 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative "jboss_datasource"
-require_relative "jboss_component"
-
-require "logger"
-require "rexml/document"
-
-include REXML
+require_relative "component"
 
 module JBoss
 
-  # A class to configure a JBoss XADatasource.
+  # A class to add resources to a JBoss Profile
   #
-  # The configuration will change a <xa-datasource-property> value.
+  # Any resource can be added using the following structure:
   #
-  # Configuration attributes are the same as for a JBoss::Datasource
+  # absolute_path => [resource_a_path, resource_b_path, ...],
+  # relative_path => resource_c_path
+  #
+  # Relative paths are based on the profile path (example: "lib" is $JBOSS_HOME/server/$JBOSS_PROFILE/lib)
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
-  class XADatasource < Datasource
+  class Resource
     include Component
 
-    def initialize jboss, logger, config
-      super jboss, logger, config
-      @type << "-xa"
+    def initialize jboss, logger, resources
+      @jboss = jboss
+      @logger = logger
+      @resources = resources
     end
 
-    def configure_datasource xml
-      if @encrypt
-        xml.delete_element "//xa-datasource-property[@name='User']"
-        xml.delete_element "//xa-datasource-property[@name='Password']"
-        @service = "XATxCM"
-      end
-      @attributes.each do |key, value|
-        element = find(xml, key) {|k| "//xa-datasource-property[@name='#{k}']"}
-
-        if element
-          element.text = value
-        else
-          insert_attribute xml, key, value
+    def process
+      @logger.info "Including resources..." unless @resources.empty?
+      @resources.each do |to_path, resources|
+        resources = [resources] unless resources.is_a? Array
+        resources.each do |resource|
+          to_path = "#{@jboss.profile}/#{to_path}" unless to_path.to_s.start_with? '/'
+          invoke "cp #{resource} #{to_path}"
         end
       end
     end
