@@ -10,27 +10,43 @@ include REXML
 
 module TestHelper
 
+  attr_accessor :all
+
   def jboss_dir
     ENV["JBOSS_DIR"] or File.expand_path "~/jboss"
   end
 
-  def for_test &block
-    @test_block = block
+  def for_test_with type, version = nil, &block
+    @test_blocks ||= {}
+    if type == :all
+      all.each do |key, value|
+        set_block key, value, :configure, block
+      end
+    else
+      set_block type, version, :configure, block
+    end
   end
 
-  def do_test_with_all
-    do_test_with :org, "5.1.0.GA"
-    do_test_with :eap, "5.1"
-    do_test_with :eap, "5.0"
-    do_test_with :soa_p, 5
-    do_test_with :soa_p, "5.0.0"
+  def for_assertions_with type, version = nil, &block
+    @assertion_blocks ||= {}
+    if type == :all
+      all.each do |key, value|
+        set_block key, value, :assertion, block
+      end
+    else
+      set_block type, version, :assertion, block
+    end
   end
 
-  def do_test_with type, version, base_profile = :all
-    with type, version, base_profile, &@test_block
+  def do_test
+    @test_blocks.each do |type, versions|
+      versions.each do |version, blocks|
+        do_test_with type, version, blocks
+      end
+    end
   end
 
-  def with type, version, base_profile
+  def do_test_with type, version, blocks
     map ||= {
       :eap => "#{jboss_dir}/eap/jboss-eap-#{version}/jboss-as",
       :soa_p => "#{jboss_dir}/soa-p/jboss-soa-p-#{version}/jboss-as",
@@ -40,29 +56,33 @@ module TestHelper
     @logger.level = Logger::INFO
     @jboss_profile = Profile::new map[type],
                                   :type => type,
-                                  :base_profile => base_profile,
+                                  :base_profile => :all,
                                   :profile => :rboss,
                                   :logger => @logger
     @jboss = @jboss_profile.jboss
-    yield @jboss, @jboss_profile
-  end
-
-  def for_assertions type = nil, version = nil
-    if type
-      return if @jboss.type != type
-      if version
-        return if @jboss.version != version
-      end
-    end
+    blocks[:configure].call @jboss_profile
     @jboss_profile.create
-    yield
+    blocks[:assertion].call @jboss
     #@jboss_profile.remove
   end
 
-  alias_method :for_assertions_with, :for_assertions
-
   def create_file_processor
     FileProcessor::new :logger => @logger, :var => @jboss
+  end
+
+  private
+
+  def set_block(type, version, key, block)
+    @test_blocks[type] ||= {}
+    if version.kind_of? Array
+      version.each do |v|
+        @test_blocks[type][v] ||= {}
+        @test_blocks[type][v][key] = block
+      end
+    else
+      @test_blocks[type][version] ||= {}
+      @test_blocks[type][version][key] = block
+    end
   end
 
 end
