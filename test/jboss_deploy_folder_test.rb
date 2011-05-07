@@ -4,9 +4,9 @@ class DeployFolderTest < Test::Unit::TestCase
 
   def setup
     @all= {
-      :org    =>  "5.1.0.GA",
-      :eap    => ["5.0", "5.1"],
-      :soa_p  => ["5", "5.0.0"]
+      :org => "5.1.0.GA",
+      :eap => ["5.0", "5.1"],
+      :soa_p => ["5", "5.0.0"]
     }
   end
 
@@ -40,6 +40,7 @@ class DeployFolderTest < Test::Unit::TestCase
 
       #TODO check vfs.xml
       check_profile_xml "${jboss.server.home.url}rboss-deploy", "${jboss.server.home.url}rboss/deploy"
+      check_vfs_xml "${jboss.server.home.url}rboss-deploy", "${jboss.server.home.url}rboss/deploy"
     end
 
     do_test
@@ -59,6 +60,7 @@ class DeployFolderTest < Test::Unit::TestCase
 
       #TODO check vfs.xml
       check_profile_xml 'file:///tmp/rboss-deploy', 'file:///tmp/rboss/deploy'
+      check_vfs_xml 'file:///tmp/rboss-deploy', 'file:///tmp/rboss/deploy'
     end
 
     do_test
@@ -68,17 +70,27 @@ class DeployFolderTest < Test::Unit::TestCase
 
   def check_profile_xml *names
     xml = REXML::Document::new File::new("#{@jboss.profile}/conf/bootstrap/profile.xml")
-
     element = XPath.first xml, "//property[@name='applicationURIs']"
     element = XPath.first element, "//list[@elementClass='java.net.URI']"
     element.each do |el|
       names.delete el.text.strip if el.respond_to? :text
     end
-    assert(names.empty?, "#{@jboss.profile}/conf/bootstrap/profile.xml does not contains #{names}")
+    assert(names.empty?)
   end
 
   def check_vfs_xml *names
-
+    xml = REXML::Document::new File::new("#{@jboss.profile}/conf/bootstrap/vfs.xml")
+    element = XPath.first xml, "//property[@name='permanentRoots']"
+    element = XPath.first element, "//map[@keyClass='java.net.URL']"
+    XPath.each element, "//key" do |el|
+      if el.respond_to? :text
+        names.delete el.text.strip
+        value = XPath.first el.parent, "//value"
+        inject = XPath.first value, "//inject"
+        assert(inject.attributes["bean"] == "VfsNamesExceptionHandler")
+      end
+    end
+    assert(names.empty?)
   end
 
 end

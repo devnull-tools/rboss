@@ -63,7 +63,7 @@ module TestHelper
     blocks[:configure].call @jboss_profile
     @jboss_profile.create
     blocks[:assertion].call @jboss
-    #@jboss_profile.remove
+    @jboss_profile.remove
   end
 
   def create_file_processor
