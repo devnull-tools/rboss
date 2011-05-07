@@ -121,7 +121,7 @@ module JBoss
       block = lambda { |type, config| type.new(@jboss, @logger, config).process }
       super &block
       @base_dir = File.dirname(__FILE__)
-
+      @jboss_home = jboss_home
       @opts = {
         :base_profile => :production,
         :profile => :custom,
@@ -130,10 +130,14 @@ module JBoss
         :version => :undefined
       }.merge! opts
       @logger = @opts[:logger]
-      @base_profile = @opts[:base_profile].to_s
       @profile = @opts[:profile].to_s
-      @jboss = JBoss::Path::new jboss_home, @profile, @opts[:type], @opts[:version]
+      self.base_profile = @opts[:base_profile]
       initialize_components
+    end
+
+    def base_profile= base_profile
+      @base_profile = base_profile.to_s
+      @jboss = JBoss::Path::new @jboss_home, @profile, @opts[:type], @opts[:version]
     end
 
     def create
