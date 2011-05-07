@@ -299,12 +299,11 @@ module JBoss
 
       # loads extensions to components based on the type of jboss (eap, soa-p, org, epp...)
       unless @jboss.type == :undefined
-        dir = File.join(@base_dir, "components" , @jboss.type.to_s.gsub(/_/, '-'))
-        if File.exists? dir
-          scripts = Dir.entries(dir).find_all { |f| f.end_with? '.rb' }
-          scripts.each do |script|
-            load File.join(dir, script)
-          end
+        dir = File.join(@base_dir, "components", @jboss.type.to_s.gsub(/_/, '-'))
+        load_scripts_in dir
+        unless @jboss.version == :undefined
+          dir = File.join(dir, @jboss.version)
+          load_scripts_in dir
         end
       end
     end
@@ -312,6 +311,15 @@ module JBoss
   end
 
   private
+
+  def load_scripts_in dir
+    if File.exists? dir
+      scripts = Dir.entries(dir).find_all { |f| f.end_with? '.rb' }
+      scripts.each do |script|
+        load File.join(dir, script)
+      end
+    end
+  end
 
   # Loads manually every script related to jboss. This is necessary to reset the components to this natural state
   def load_scripts

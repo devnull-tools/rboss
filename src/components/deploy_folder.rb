@@ -61,8 +61,6 @@ module JBoss
       end
     end
 
-    private
-
     def configure_profile
       @logger.info "Updating profile.xml"
       processor = create_file_processor
