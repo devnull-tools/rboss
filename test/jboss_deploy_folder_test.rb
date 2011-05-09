@@ -24,15 +24,6 @@ require_relative 'test_helper'
 
 class DeployFolderTest < Test::Unit::TestCase
 
-  def setup
-    @all= {
-      :org   => ["5.1.0.GA", "6.0.0.Final"],
-      :eap   => ["5.0",      "5.1"],
-      :soa_p => ["5",        "5.0.0"],
-      :epp   =>  "5.1"
-    }
-  end
-
   def test_folder_inside_deploy
     for_test_with :all do |profile|
       profile.add :deploy_folder, 'deploy/rboss-deploy'

@@ -32,7 +32,15 @@ include REXML
 
 module TestHelper
 
-  attr_accessor :all
+  def all
+    @all ||= {
+      :org   => ["5.1.0.GA", "6.0.0.Final"],
+      :eap   => ["5.0",      "5.1"],
+      :soa_p => ["5",        "5.0.0"],
+      :epp   =>  "5.1"
+    }
+    @all
+  end
 
   def jboss_dir
     ENV["JBOSS_DIR"] or File.expand_path "~/jboss"
