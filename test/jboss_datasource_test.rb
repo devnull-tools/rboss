@@ -20,15 +20,49 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'test/unit'
-require 'test/unit/testsuite'
-require_relative 'jboss_deploy_folder_test'
-require_relative 'jboss_datasource_test'
+require_relative 'test_helper'
 
-class TestSuite < Test::Unit::TestSuite
+class DatasourceTest < Test::Unit::TestCase
 
-  def initialize
-    self << DeployFolderTest << DatasourceTest
+  def setup
+    @types = %w{mysql oracle postgres hsqldb firebird}
+  end
+
+  def test_datasource_type
+    @types.each do |type|
+      for_test_with :all do |profile|
+        profile.add :datasource,
+                    :type => type
+      end
+
+      for_assertions_with :all do |jboss|
+        file = "#{jboss.profile}/deploy/#{type}-ds.xml"
+        assert File.exists? file
+        datasource_content = File.read file
+        assert datasource_content[type]
+      end
+
+      do_test
+    end
+  end
+
+  def test_datasource_naming
+    @types.each do |type|
+      for_test_with :all do |profile|
+        profile.add :datasource,
+                    :type => type,
+                    :name => 'my-datasource'
+      end
+
+      for_assertions_with :all do |jboss|
+        file = "#{jboss.profile}/deploy/my-datasource-ds.xml"
+        assert File.exists? file
+        datasource_content = File.read file
+        assert datasource_content[type]
+      end
+
+      do_test
+    end
   end
 
 end
