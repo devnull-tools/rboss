@@ -75,7 +75,7 @@ module JBoss
       @name = config[:name]
       @name ||= @type.to_s
       @folder = config[:folder].to_s
-      @folder = "#{@jboss.profile}/deploy/#{@folder}" unless @folder.start_with? '/'
+      @folder = "#{@jboss.profile}/#{@folder}" unless @folder.start_with? '/'
       @attributes = config[:attributes]
       @encrypt = config[:encrypt]
       @jndi_name = @attributes.delete :jndi_name

@@ -65,4 +65,48 @@ class DatasourceTest < Test::Unit::TestCase
     end
   end
 
+  def test_datasource_folder_inside_installation
+    @types.each do |type|
+      for_test_with :all do |profile|
+        profile.add :deploy_folder, 'deploy/datasources'
+
+        profile.add :datasource,
+                    :type => type,
+                    :folder => 'deploy/datasources'
+      end
+
+      for_assertions_with :all do |jboss|
+        file = "#{jboss.profile}/deploy/datasources/#{type}-ds.xml"
+        assert File.exists? file
+        datasource_content = File.read file
+        assert datasource_content[type]
+      end
+
+      do_test
+    end
+  end
+
+  def test_datasource_folder_outside_installation
+    @types.each do |type|
+      for_test_with :all do |profile|
+        profile.add :deploy_folder, '/tmp/datasources'
+
+        profile.add :datasource,
+                    :type => type,
+                    :folder => '/tmp/datasources'
+      end
+
+      for_assertions_with :all do |jboss|
+        file = "/tmp/datasources/#{type}-ds.xml"
+        assert File.exists? file
+        datasource_content = File.read file
+        assert datasource_content[type]
+
+        `rm -rf /tmp/datasources`
+      end
+
+      do_test
+    end
+  end
+
 end
