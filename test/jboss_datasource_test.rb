@@ -25,7 +25,7 @@ require_relative 'test_helper'
 class DatasourceTest < Test::Unit::TestCase
 
   def setup
-    @types = %w{mysql oracle postgres hsqldb firebird}
+    @types = %w{mysql oracle postgres hsqldb}
   end
 
   def test_datasource_type
@@ -107,6 +107,67 @@ class DatasourceTest < Test::Unit::TestCase
 
       do_test
     end
+  end
+
+  def test_datasource_attributes
+    @types.each do |type|
+      for_test_with :all do |profile|
+
+        profile.add :datasource,
+                    :type => type,
+                    :attributes => {
+                      :jndi_name => "#{type}Datasource",
+                      :user_name => "#{type}_user",
+                      :password => "#{type}_password",
+                      :connection_url => "#{type}_connection",
+                      :driver_class => "#{type}_class"
+                    }
+      end
+
+      for_assertions_with :all do |jboss|
+        file = "#{jboss.profile}/deploy/#{type}-ds.xml"
+        xml = REXML::Document::new File::new(file)
+
+        assert_tag xml, "//jndi-name", "#{type}Datasource", "local-tx-datasource"
+        assert_tag xml, "//user-name", "#{type}_user", "local-tx-datasource"
+        assert_tag xml, "//password", "#{type}_password", "local-tx-datasource"
+        assert_tag xml, "//connection-url", "#{type}_connection", "local-tx-datasource"
+        assert_tag xml, "//driver-class", "#{type}_class", "local-tx-datasource"
+      end
+
+      do_test
+    end
+  end
+
+  def test_new_datasource_attributes
+    @types.each do |type|
+      for_test_with :all do |profile|
+
+        profile.add :datasource,
+                    :type => type,
+                    :attributes => {
+                      :min_pool_size => 10,
+                      :max_pool_size => 50,
+                      :use_java_context => true
+                    }
+      end
+
+      for_assertions_with :all do |jboss|
+        file = "#{jboss.profile}/deploy/#{type}-ds.xml"
+        xml = REXML::Document::new File::new(file)
+
+        assert_tag xml, "//min-pool-size", 10, "local-tx-datasource"
+        assert_tag xml, "//max-pool-size", 50, "local-tx-datasource"
+      end
+
+      do_test
+    end
+  end
+
+  def assert_tag xml, path, value, parent_name = nil
+    tag = XPath::first xml, path
+    assert tag.text.strip == value.to_s
+    assert tag.parent.name == parent_name if parent_name
   end
 
 end
