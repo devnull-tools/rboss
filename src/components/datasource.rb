@@ -142,24 +142,6 @@ module JBoss
       end
     end
 
-    #TODO create a :xa_datasource component for this
-    def configure_xa_datasource xml
-      if @encrypt
-        xml.delete_element "//xa-datasource-property[@name='User']"
-        xml.delete_element "//xa-datasource-property[@name='Password']"
-        @service = "XATxCM"
-      end
-      @attributes.each do |key, value|
-        element = find(xml, key) { |k| "//xa-datasource-property[@name='#{k}']" }
-
-        if element
-          element.text = value
-        else
-          insert_attribute xml, key, value
-        end
-      end
-    end
-
     def insert_attribute xml, key, value
       if key.is_a? Symbol
         element = Element::new key.to_s.gsub /_/, '-'
@@ -201,12 +183,21 @@ module JBoss
 XML
     end
 
+    def jboss_logging_lib_path
+      %W{#{@jboss.home}/client/jboss-logging-spi.jar #{@jboss.home}/client/jboss-logging.jar}.each do |path|
+        return path if File.exist? path
+      end
+    end
+
+    def jbosssx_lib_path
+      %W{#{@jboss.home}/lib/jbosssx.jar #{@jboss.home}/common/lib/jbosssx.jar}.each do |path|
+        return path if File.exist? path
+      end
+    end
+
     # Encrypts the given password using the SecureIdentityLoginModule
     def encrypt password
-      # In jboss EAP 5.1, the jbosssx.jar was moved to this path
-      jbosssx_lib_path = "#{@jboss.home}/lib/jbosssx.jar"
-      jbosssx_lib_path = "#{@jboss.home}/common/lib/jbosssx.jar" unless File.exist? jbosssx_lib_path
-      encrypted = invoke "java -cp #{@jboss.home}/client/jboss-logging-spi.jar:#{jbosssx_lib_path} org.jboss.resource.security.SecureIdentityLoginModule #{password}"
+      encrypted = invoke "java -cp #{jboss_logging_lib_path}:#{jbosssx_lib_path} org.jboss.resource.security.SecureIdentityLoginModule #{password}"
       encrypted.chomp.split(/:/)[1].strip
     end
 

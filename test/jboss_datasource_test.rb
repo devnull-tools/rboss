@@ -25,7 +25,7 @@ require_relative 'test_helper'
 class DatasourceTest < Test::Unit::TestCase
 
   def setup
-    @types = %w{mysql oracle postgres hsqldb}
+    @types = %w{mysql oracle postgres}
   end
 
   def test_datasource_type
@@ -158,6 +158,44 @@ class DatasourceTest < Test::Unit::TestCase
 
         assert_tag xml, "//min-pool-size", 10, "local-tx-datasource"
         assert_tag xml, "//max-pool-size", 50, "local-tx-datasource"
+      end
+
+      do_test
+    end
+  end
+
+  def test_datasource_encryption
+    @types.each do |type|
+      for_test_with :all do |profile|
+
+        profile.add :datasource,
+                    :type => type,
+                    :encrypt => true,
+                    :attributes => {
+                      :jndi_name => "MyDatasource",
+                      :user_name => "user-name",
+                      :password => "password"
+                    }
+      end
+
+      for_assertions_with :all do |jboss|
+        file = "#{jboss.profile}/deploy/#{type}-ds.xml"
+        xml = REXML::Document::new File::new(file)
+
+        assert XPath::first(xml, "//user-name").nil?
+        assert XPath::first(xml, "//password").nil?
+
+        assert_tag xml, "//security-domain", type, "local-tx-datasource"
+
+        xml = REXML::Document::new File::new("#{jboss.profile}/conf/login-config.xml")
+
+        application_policy = XPath::first xml, "//application-policy[@name='#{type}']"
+        assert !application_policy.nil?
+        assert application_policy.parent.name == "policy"
+
+        assert_tag application_policy, ".//module-option[@name='username']", "user-name", "login-module"
+        assert_tag application_policy, ".//module-option[@name='password']", "5dfc52b51bd35553df8592078de921bc", "login-module"
+        assert_tag application_policy, ".//module-option[@name='managedConnectionFactoryName']", "jboss.jca:name=MyDatasource,service=LocalTxCM", "login-module"
       end
 
       do_test
