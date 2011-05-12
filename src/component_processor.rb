@@ -99,6 +99,7 @@ class ComponentProcessor
     else
       registered_component[:config] = config
     end
+    send_or_move_configs registered_component
   end
 
   def defaults component_id, defaults
@@ -116,6 +117,19 @@ class ComponentProcessor
   private
 
   def process_component component
+    return unless component[:type]
+    if component[:multiple_instances]
+      component[:configs].each do |config|
+        @process.call component[:type], config
+      end
+    else
+      config = component[:config]
+      config ||= component[:defaults]
+      @process.call component[:type], config
+    end
+  end
+
+  def send_or_move_configs component
     #TODO refactor this -----------------------------------
     if component[:send_config] and component[:config].is_a? Hash
       component[:send_config].each do |to, keys|
@@ -150,25 +164,12 @@ class ComponentProcessor
       end
     end
     #------------------------------------------------------
-    return unless component[:type]
-    if component[:multiple_instances]
-      component[:configs].each do |config|
-        @process.call component[:type], config
-      end
-    else
-      config = component[:config]
-      config ||= component[:defaults]
-      @process.call component[:type], config
-    end
   end
 
   def send_config component, config
-    component_config = @components[component][:config]
-    return unless component_config
-    if component_config.is_a? Array
-      component_config.each { |c| c.merge! config }
-    end
-    component_config.merge! config if component_config.is_a? Hash
+    @components[component][:defaults] ||= {}
+    component_config = @components[component][:defaults]
+    component_config.merge! config
   end
 
 end
