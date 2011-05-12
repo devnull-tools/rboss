@@ -22,6 +22,8 @@
 
 require_relative "component"
 
+require 'yaml'
+
 module JBoss
 
   class RunConf
@@ -60,32 +62,11 @@ module JBoss
     private
 
     def parse_config
-      {
-        :cluster_map => {
-          :partition_name => "jboss.partition.name",
-          :multicast_ip => "jboss.partition.udpGroup"
-        },
-        :mod_cluster_map => {
-          :advertise => "jboss.mod_cluster.advertise",
-          :advertise_group_address => "jboss.mod_cluster.advertise.address",
-          :advertise_port => "jboss.mod_cluster.advertise.port",
-          :proxy_list => "jboss.mod_cluster.proxyList",
-          :excluded_contexts => "jboss.mod_cluster.excludedContexts",
-          :auto_enable_contexts => "jboss.mod_cluster.autoEnableContexts"
-        },
-        :jms_map => {
-          :peer_id => "jboss.messaging.ServerPeerID"
-        },
-        :other => {
-          :service_binding => "jboss.service.binding.set"
-        }
-      }.each { |name, map| merge map }
-    end
+      map = YAML::load File.open(File::join(File.dirname(__FILE__), "run_conf.yaml"))
 
-    def merge map
-      (@config.find_all { |key, value| map.has_key? key }).each do |key, value|
-        @args << "-D#{map[key]}=#{value}"
-        @config.delete key
+      (@config.find_all { |key, value| map.has_key? key.to_s }).each do |key, value|
+        @args << "-D#{map[key.to_s]}=#{value}"
+        @config.delete key.to_s
       end
     end
 

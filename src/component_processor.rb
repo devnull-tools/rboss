@@ -99,7 +99,7 @@ class ComponentProcessor
     else
       registered_component[:config] = config
     end
-    send_or_move_configs registered_component
+    propagate_configs registered_component
   end
 
   def defaults component_id, defaults
@@ -129,7 +129,7 @@ class ComponentProcessor
     end
   end
 
-  def send_or_move_configs component
+  def propagate_configs component
     #TODO refactor this -----------------------------------
     if component[:send_config] and component[:config].is_a? Hash
       component[:send_config].each do |to, keys|
