@@ -297,20 +297,24 @@ module JBoss
                  :jboss_user => "RUNASIS"
                }
 
-      # loads extensions to components based on the type of jboss (eap, soa-p, org, epp...)
-      unless @jboss.type == :undefined
-        dir = File.join(@base_dir, "components", @jboss.type.to_s.gsub(/_/, '-'))
-        load_scripts_in dir
-        unless @jboss.version == :undefined
-          dir = File.join(dir, @jboss.version)
-          load_scripts_in dir
-        end
-      end
+      load_extensions
     end
 
   end
 
   private
+
+  # loads extensions to components based on the type of jboss (eap, soa-p, org, epp...)
+  def load_extensions
+    unless @jboss.type == :undefined
+      dir = File.join(@base_dir, "components", @jboss.type.to_s.gsub(/_/, '-'))
+      load_scripts_in dir
+      unless @jboss.version == :undefined
+        dir = File.join(dir, @jboss.version)
+        load_scripts_in dir
+      end
+    end
+  end
 
   def load_scripts_in dir
     if File.exists? dir
