@@ -22,8 +22,8 @@
 
 require 'test/unit'
 require 'test/unit/testsuite'
-require_relative 'jboss_deploy_folder_test'
-require_relative 'jboss_datasource_test'
+require_relative 'deploy_folder_test'
+require_relative 'datasource_test'
 
 class TestSuite < Test::Unit::TestSuite
 

@@ -98,22 +98,23 @@ module JBoss
     include CommandInvoker
 
     # Priorities for components
-    @@install = 0
-    @@after_install = 5
+    @@pre_install = 0
+    @@install = @@pre_install + 10
+    @@post_install = @@install + 10
 
-    @@before_setup = 10
-    @@setup = 15
-    @@after_setup = 20
+    @@pre_setup = @@post_install + 10
+    @@setup = @@pre_setup + 10
+    @@post_setup = @@setup + 10
 
-    @@before_tunning = 25
-    @@tunning = 30
-    @@after_tunning = 35
+    @@pre_tunning = @@post_setup + 10
+    @@tunning = @@pre_tunning + 10
+    @@post_tunning = @@tunning + 10
 
-    @@before_slimming = 40
-    @@slimming = 45
-    @@after_slimming = 50
+    @@pre_slimming = @@post_tunning + 10
+    @@slimming = @@pre_slimming + 10
+    @@post_slimming = @@slimming + 10
 
-    @@final = 55
+    @@final = @@post_slimming + 10
 
     attr_reader :jboss
 
@@ -209,7 +210,7 @@ module JBoss
       register :resource,
 
                :type => JBoss::Resource,
-               :priority => @@after_install,
+               :priority => @@post_install,
                :multiple_instances => true
 
       register :jmx,
@@ -266,16 +267,17 @@ module JBoss
       register :run_conf,
 
                :type => JBoss::RunConf,
-               :priority => @@after_setup,
+               :priority => @@post_setup,
                :enabled => true,
                :send_config => {
                  :to_init_script => [:service_binding]
                },
                :defaults => {
-                 :path => "#{@base_dir}/resources/run.conf",
+                 :template_path => "#{@base_dir}/resources/run.conf",
+
                  :stack_size => '128k',
                  :heap_size => '2048m',
-                 :perm_size => '256m',
+                 :perm_size => '256m'
                }
 
       register :slimming,

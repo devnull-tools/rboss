@@ -32,41 +32,50 @@ module JBoss
     def initialize jboss, logger, config
       @logger = logger
       @jboss = jboss
-      @template_path = config[:path]
-      @config = {:args => []}.merge! config
-      @args = @config[:args]
+      @template_path = config[:template_path]
+      @template = config[:template]
+      @config = {:jvm_args => []}.merge! config
+      @args = @config[:jvm_args]
       parse_config
     end
 
     def process
       @logger.info "Creating and configuring run.conf"
-      processor = create_file_processor
-      processor.with @template_path do |action|
-        action.to_process do |content|
-          [:heap_size, :perm_size, :stack_size].each do |arg|
-            @logger.debug "run.conf: #{arg} -> #{@config[arg]}"
-            content.gsub! /\[#{arg.to_s.upcase}\]/, @config[arg].to_s if @config.has_key? arg
+      if @template_path
+        processor = create_file_processor
+        processor.with @template_path do |action|
+          action.to_process do |content|
+            process_template content
           end
-          buff = @args.join " "
-          unless buff.empty?
-            @logger.debug "run.conf: #{buff}"
-            content << "\nJAVA_OPTS=\"$JAVA_OPTS #{buff}\""
-          end
-          content
+          processor.copy_to "#{@jboss.profile}/run.conf"
         end
-        processor.copy_to "#{@jboss.profile}/run.conf"
+        processor.process
+      else
+        File.open("#{@jboss.profile}/run.conf", "w+") {|f| f.write process_template @template}
       end
-      processor.process
     end
 
     private
 
+    def process_template content
+      @config.each do |arg, value|
+        @logger.debug "template: #{arg} -> #{value}"
+        content.gsub! /\[#{arg.to_s.upcase}\]/, value.to_s
+      end
+      buff = @args.join " "
+      unless buff.empty?
+        @logger.debug "jvm arg: #{buff}"
+        content << "\nJAVA_OPTS=\"$JAVA_OPTS #{buff}\""
+      end
+      content
+    end
+
     def parse_config
       map = YAML::load File.open(File::join(File.dirname(__FILE__), "run_conf.yaml"))
 
-      (@config.find_all { |key, value| map.has_key? key.to_s }).each do |key, value|
-        @args << "-D#{map[key.to_s]}=#{value}"
-        @config.delete key.to_s
+      (@config.find_all { |key, value| map.has_key? key }).each do |key, value|
+        @args << "-D#{map[key]}=#{value}"
+        @config.delete key
       end
     end
 
