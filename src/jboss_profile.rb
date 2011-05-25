@@ -127,19 +127,22 @@ module JBoss
       @opts = {
         :base_profile => :production,
         :profile => :custom,
-        :logger => Logger::new(STDOUT),
         :type => :undefined,
         :version => :undefined
       }.merge! opts
       @logger = @opts[:logger]
+      unless @logger
+        @logger = Logger::new STDOUT
+        formatter = Logger::Formatter.new
+        def formatter.call(severity, time, program_name, message)
+          "#{severity} : #{message}\n"
+        end
+        @logger.formatter = formatter
+      end
       @profile = @opts[:profile].to_s
-      self.base_profile = @opts[:base_profile]
-      initialize_components
-    end
-
-    def base_profile= base_profile
-      @base_profile = base_profile.to_s
+      @base_profile = @opts[:base_profile].to_s
       @jboss = JBoss::Path::new @jboss_home, @profile, @opts[:type], @opts[:version]
+      initialize_components
     end
 
     def create
