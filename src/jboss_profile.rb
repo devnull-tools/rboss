@@ -169,6 +169,7 @@ module JBoss
 
     def initialize_components
       load_scripts
+      load_extensions
       register :deploy_folder,
 
                :type => JBoss::DeployFolder,
@@ -300,7 +301,7 @@ module JBoss
                  :jboss_user => "RUNASIS"
                }
 
-      load_extensions
+      #load_extensions
     end
 
   end
@@ -328,7 +329,7 @@ module JBoss
     end
   end
 
-  # Loads manually every script related to jboss. This is necessary to reset the components to this natural state
+  # Loads manually every script related to jboss. This is necessary to reset the components to its natural state
   def load_scripts
     scripts = Dir.entries("#{@base_dir}/components").find_all { |f| f.end_with?('.rb') }
     scripts.each do |script|
