@@ -23,12 +23,13 @@
 require_relative "file_processor"
 require_relative "utils"
 require_relative "component_processor"
-require_relative "command_invoker"
 require_relative "jboss_path"
 
 require "logger"
 require "ostruct"
 require "fileutils"
+
+include FileUtils::Verbose
 
 module JBoss
 
@@ -95,7 +96,7 @@ module JBoss
   #
   # author Marcelo Guimarães <ataxexe@gmail.com>
   class Profile < ComponentProcessor
-    include CommandInvoker
+    include FileUtils
 
     # Priorities for components
     @@pre_install = 0
@@ -152,7 +153,7 @@ module JBoss
 
     def remove
       @logger.info "Removing installed profile"
-      invoke "rm -rf #{@jboss.profile}"
+      rm_rf "#{@jboss.profile}", :secure => true
     end
 
     private
@@ -163,7 +164,7 @@ module JBoss
         remove
       end
       @logger.info "Copying #{@base_profile} to #{@profile}..."
-      invoke "cp -r #{@jboss}/server/#{@base_profile} #{@jboss.profile}"
+      cp_r "#{@jboss}/server/#{@base_profile}", "#{@jboss.profile}"
     end
 
     def initialize_components

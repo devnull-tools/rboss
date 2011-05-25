@@ -41,7 +41,7 @@ module JBoss
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class ModCluster
-    include Component
+    include Component, FileUtils
 
     def initialize jboss, logger, config
       @jboss = jboss
@@ -56,7 +56,7 @@ module JBoss
 
     def process
       @logger.info "Installing mod_cluster.sar"
-      invoke "cp -r #{@path} #{@folder}"
+      cp_r @path, @folder
 
       return if @config.empty?
 

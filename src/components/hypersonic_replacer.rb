@@ -32,7 +32,7 @@ module JBoss
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class HypersonicReplacer
-    include Component
+    include Component, FileUtils
 
     def initialize jboss, logger, config
       @jboss = jboss
@@ -43,15 +43,15 @@ module JBoss
 
     def process
       @logger.info "Removing Hypersonic..."
-      invoke "rm -f #{@jboss.profile}/deploy/hsqldb-ds.xml"
-      invoke "rm -f #{@jboss.profile}/deploy/messaging/hsqldb-persistence-service.xml"
+      rm_f "#{@jboss.profile}/deploy/hsqldb-ds.xml"
+      rm_f "#{@jboss.profile}/deploy/messaging/hsqldb-persistence-service.xml"
 
       @datasource.jndi_name = "DefaultDS"
 
       @datasource.process
 
       @logger.info "Copying persistence service template for #{@datasource.type}..."
-      invoke "cp #{@jboss.home}/docs/examples/jms/#{@datasource.type}-persistence-service.xml #{@jboss.profile}/deploy/messaging"
+      cp "#{@jboss.home}/docs/examples/jms/#{@datasource.type}-persistence-service.xml", "#{@jboss.profile}/deploy/messaging"
     end
 
   end

@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'fileutils'
+
 module JBoss
 
   # A class to replace Hypersonic in SOA-P. This class makes a build.properties file
@@ -39,6 +41,7 @@ module JBoss
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class HypersonicReplacer
+    include FileUtils
 
     def initialize jboss, logger, config
       @jboss = jboss
@@ -57,13 +60,13 @@ module JBoss
       properties = @build_properties.collect {|key, value| "#{key} = #{value}" }
 
       # make a backup of build.properties
-      invoke "mv #{@jboss.home}/tools/schema/build.properties #{@jboss.home}/tools/schema/build.properties~"
+      mv "#{@jboss.home}/tools/schema/build.properties", "#{@jboss.home}/tools/schema/build.properties~"
 
       File.open("#{@jboss.home}/tools/schema/build.properties", 'w+') { |f| f.write properties.join("\n") }
 
-      invoke "cd #{@jboss.home}/tools/schema; ant"
+      cd "#{@jboss.home}/tools/schema" do `ant` end
 
-      invoke "mv #{@jboss.home}/tools/schema/build.properties~ #{@jboss.home}/tools/schema/build.properties"
+      mv "#{@jboss.home}/tools/schema/build.properties~", "#{@jboss.home}/tools/schema/build.properties"
     end
 
   end

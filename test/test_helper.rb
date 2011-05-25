@@ -34,9 +34,9 @@ module TestHelper
 
   def all
     @all ||= {
-      :org   => ["5.1.0.GA", "6.0.0.Final"],
+      :org   => ["5.1", "6.0"],
       :eap   => ["5.0",      "5.1"],
-      :soa_p => ["5",        "5.0.0"],
+      :soa_p => ["5",        "5.0"],
       :epp   =>  "5.1"
     }
     @all

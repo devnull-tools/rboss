@@ -58,7 +58,7 @@ module JBoss
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class Datasource
-    include Component, CommandInvoker
+    include Component
 
     attr_reader :attributes, :type, :name
     attr_accessor :jndi_name
@@ -168,15 +168,9 @@ module JBoss
 <application-policy name='#{@name}'>
   <authentication>
     <login-module code='org.jboss.resource.security.SecureIdentityLoginModule' flag='required'>
-      <module-option name='username'>
-        #{@user}
-      </module-option>
-      <module-option name='password'>
-        #{@password}
-      </module-option>
-      <module-option name='managedConnectionFactoryName'>
-        jboss.jca:name=#{@jndi_name},service=#{@service}
-      </module-option>
+      <module-option name='username'>#{@user}</module-option>
+      <module-option name='password'>#{@password}</module-option>
+      <module-option name='managedConnectionFactoryName'>jboss.jca:name=#{@jndi_name},service=#{@service}</module-option>
     </login-module>
   </authentication>
 </application-policy>
@@ -197,7 +191,8 @@ XML
 
     # Encrypts the given password using the SecureIdentityLoginModule
     def encrypt password
-      encrypted = invoke "java -cp #{jboss_logging_lib_path}:#{jbosssx_lib_path} org.jboss.resource.security.SecureIdentityLoginModule #{password}"
+      cmd = "java -cp #{jboss_logging_lib_path}:#{jbosssx_lib_path} org.jboss.resource.security.SecureIdentityLoginModule #{password}"
+      encrypted = `#{cmd}`
       encrypted.chomp.split(/:/)[1].strip
     end
 

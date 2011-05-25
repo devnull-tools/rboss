@@ -37,10 +37,5 @@ module JBoss
       FileProcessor::new :logger => @logger, :var => @jboss
     end
 
-    def invoke command
-      @logger.debug "Command: #{command}"
-      `#{command}`
-    end
-
   end
 end

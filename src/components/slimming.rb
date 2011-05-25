@@ -46,7 +46,7 @@ module JBoss
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class Slimming
-    include Component
+    include Component, FileUtils
 
     def initialize jboss, logger, services_to_remove
       @jboss = jboss
@@ -115,7 +115,7 @@ module JBoss
     private
 
     def reject file
-      invoke "mv #{file} #{file}.rej"
+      mv(file, file + ".rej")
     end
 
   end

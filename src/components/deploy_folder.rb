@@ -37,7 +37,7 @@ module JBoss
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class DeployFolder
-    include Component
+    include Component, FileUtils
 
     def initialize jboss, logger, folder
       @jboss = jboss
@@ -57,7 +57,7 @@ module JBoss
 
     def process
       @logger.info "Creating deploy folder: #{@path}"
-      invoke "mkdir -p #{@path}"
+      mkdir_p @path
 
       if @configure_vsf_and_profile
         configure_vfs

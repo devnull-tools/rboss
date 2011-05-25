@@ -35,7 +35,7 @@ module JBoss
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class Resource
-    include Component
+    include Component, FileUtils
 
     def initialize jboss, logger, resources
       @jboss = jboss
@@ -49,7 +49,7 @@ module JBoss
         resources = [resources] unless resources.is_a? Array
         resources.each do |resource|
           to_path = "#{@jboss.profile}/#{to_path}" unless to_path.to_s.start_with? '/'
-          invoke "cp #{resource} #{to_path}"
+          cp resource, to_path
         end
       end
     end
