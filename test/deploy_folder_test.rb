@@ -53,7 +53,16 @@ class DeployFolderTest < Test::Unit::TestCase
       assert(File.directory? "#{jboss.profile}/rboss/deploy")
 
       check_profile_xml "${jboss.server.home.url}rboss-deploy", "${jboss.server.home.url}rboss/deploy"
-      check_vfs_xml "${jboss.server.home.url}rboss-deploy", "${jboss.server.home.url}rboss/deploy" unless jboss.version == 6.0
+      check_vfs_xml "${jboss.server.home.url}rboss-deploy", "${jboss.server.home.url}rboss/deploy"
+    end
+
+    for_assertions_with :org, 6.0 do |jboss|
+      assert(File.exists? "#{jboss.profile}/rboss-deploy")
+      assert(File.directory? "#{jboss.profile}/rboss-deploy")
+      assert(File.exists? "#{jboss.profile}/rboss/deploy")
+      assert(File.directory? "#{jboss.profile}/rboss/deploy")
+
+      check_profile_xml "${jboss.server.home.url}rboss-deploy", "${jboss.server.home.url}rboss/deploy"
     end
 
     do_test
@@ -72,7 +81,16 @@ class DeployFolderTest < Test::Unit::TestCase
       assert(File.directory? "/tmp/rboss/deploy")
 
       check_profile_xml 'file:///tmp/rboss-deploy', 'file:///tmp/rboss/deploy'
-      check_vfs_xml 'file:///tmp/rboss-deploy', 'file:///tmp/rboss/deploy' unless jboss.version == 6.0
+      check_vfs_xml 'file:///tmp/rboss-deploy', 'file:///tmp/rboss/deploy'
+    end
+
+    for_assertions_with :org, 6.0 do |jboss|
+      assert(File.exists? "/tmp/rboss-deploy")
+      assert(File.directory? "/tmp/rboss-deploy")
+      assert(File.exists? "/tmp/rboss/deploy")
+      assert(File.directory? "/tmp/rboss/deploy")
+
+      check_profile_xml 'file:///tmp/rboss-deploy', 'file:///tmp/rboss/deploy'
     end
 
     do_test

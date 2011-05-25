@@ -64,7 +64,10 @@ module JBoss
 
       File.open("#{@jboss.home}/tools/schema/build.properties", 'w+') { |f| f.write properties.join("\n") }
 
-      cd "#{@jboss.home}/tools/schema" do `ant` end
+      cd "#{@jboss.home}/tools/schema" do
+        @logger.info "Executing ant..."
+        `ant`
+      end
 
       mv "#{@jboss.home}/tools/schema/build.properties~", "#{@jboss.home}/tools/schema/build.properties"
     end
