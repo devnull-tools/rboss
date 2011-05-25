@@ -53,7 +53,7 @@ class DeployFolderTest < Test::Unit::TestCase
       assert(File.directory? "#{jboss.profile}/rboss/deploy")
 
       check_profile_xml "${jboss.server.home.url}rboss-deploy", "${jboss.server.home.url}rboss/deploy"
-      check_vfs_xml "${jboss.server.home.url}rboss-deploy", "${jboss.server.home.url}rboss/deploy" unless jboss.version == "6.0"
+      check_vfs_xml "${jboss.server.home.url}rboss-deploy", "${jboss.server.home.url}rboss/deploy" unless jboss.version == 6.0
     end
 
     do_test
@@ -72,7 +72,7 @@ class DeployFolderTest < Test::Unit::TestCase
       assert(File.directory? "/tmp/rboss/deploy")
 
       check_profile_xml 'file:///tmp/rboss-deploy', 'file:///tmp/rboss/deploy'
-      check_vfs_xml 'file:///tmp/rboss-deploy', 'file:///tmp/rboss/deploy' unless jboss.version == "6.0"
+      check_vfs_xml 'file:///tmp/rboss-deploy', 'file:///tmp/rboss/deploy' unless jboss.version == 6.0
     end
 
     do_test
