@@ -300,8 +300,6 @@ module JBoss
                  :jnp_port => 1099,
                  :jboss_user => "RUNASIS"
                }
-
-      #load_extensions
     end
 
   end
@@ -314,7 +312,7 @@ module JBoss
       dir = File.join(@base_dir, "components", @jboss.type.to_s.gsub(/_/, '-'))
       load_scripts_in dir
       unless @jboss.version == :undefined
-        dir = File.join(dir, @jboss.version)
+        dir = File.join(dir, @jboss.version.to_s)
         load_scripts_in dir
       end
     end
