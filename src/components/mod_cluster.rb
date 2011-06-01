@@ -43,12 +43,11 @@ module JBoss
   class ModCluster
     include Component, FileUtils
 
-    def initialize jboss, logger, config
-      @jboss = jboss
-      @logger = logger
-      config = {
-        :folder => "#{@jboss.profile}/deploy"
-      }.merge! config
+    def defaults
+      {:folder => "#{@jboss.profile}/deploy"}
+    end
+
+    def configure config
       @path = config.delete :path
       @folder = config.delete :folder
       @config = config
@@ -61,7 +60,7 @@ module JBoss
       return if @config.empty?
 
       @logger.info "Configuring mod_cluster.sar"
-      processor = create_file_processor
+      processor = new_file_processor
       processor.with "#{@folder}/mod_cluster.sar/META-INF/mod_cluster-jboss-beans.xml", :xml do |action|
         action.to_process do |xml, jboss|
           config = XPath.first(xml, "//bean[@name='ModClusterConfig']")

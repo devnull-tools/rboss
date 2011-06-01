@@ -25,13 +25,15 @@ require_relative "component"
 require 'yaml'
 
 module JBoss
-
+  # A class to create a custom run.conf file to a JBoss Profile
+  #
+  # The configuration
+  #
+  # author: Marcelo Guimarães <ataxexe@gmail.com>
   class RunConf
     include Component
 
-    def initialize jboss, logger, config
-      @logger = logger
-      @jboss = jboss
+    def configure config
       @template_path = config[:template_path]
       @template = config[:template]
       @config = {:jvm_args => []}.merge! config
@@ -42,7 +44,7 @@ module JBoss
     def process
       @logger.info "Creating and configuring run.conf"
       if @template_path
-        processor = create_file_processor
+        processor = new_file_processor
         processor.with @template_path do |action|
           action.to_process do |content|
             process_template content

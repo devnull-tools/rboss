@@ -31,9 +31,20 @@ module JBoss
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   module Component
 
+    def initialize jboss, logger, config
+      @jboss = jboss
+      @logger = logger
+      config = defaults.merge! config if self.respond_to? :defaults
+      configure(config)
+    end
+
+    def configure config
+      @config = config
+    end
+
     # Creates a FileProcessor using the same logger and
     # jboss path as the variable
-    def create_file_processor
+    def new_file_processor
       FileProcessor::new :logger => @logger, :var => @jboss
     end
 

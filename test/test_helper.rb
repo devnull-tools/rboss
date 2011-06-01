@@ -36,8 +36,8 @@ module TestHelper
     @all ||= {
       :org   => [5.1, 6.0],
       :eap   => [5.0, 5.1],
-      :soa_p => [5,   5.0],
-      :epp   =>  5.1
+      :soa_p =>  5,
+      #:epp   =>  5.1
     }
     @all
   end

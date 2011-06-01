@@ -39,9 +39,7 @@ module JBoss
   class DeployFolder
     include Component, FileUtils
 
-    def initialize jboss, logger, folder
-      @jboss = jboss
-      @logger = logger
+    def configure folder
       @folder = folder.to_s
 
       @absolute_path = @folder.start_with? '/'
@@ -67,7 +65,7 @@ module JBoss
 
     def configure_profile
       @logger.info "Updating profile.xml"
-      processor = create_file_processor
+      processor = new_file_processor
       processor.with "#{@jboss.profile}/conf/bootstrap/profile.xml", :xml do |action|
         action.to_process do |xml, jboss|
           element = XPath.first xml, "//property[@name='applicationURIs']"
@@ -83,7 +81,7 @@ module JBoss
 
     def configure_vfs
       @logger.info "Updating vfs.xml"
-      processor = create_file_processor
+      processor = new_file_processor
       processor.with "#{@jboss.profile}/conf/bootstrap/vfs.xml", :xml do |action|
         action.to_process do |xml, jboss|
           map = XPath.first xml, "//map[@keyClass='java.net.URL']"

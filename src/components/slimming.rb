@@ -48,9 +48,7 @@ module JBoss
   class Slimming
     include Component, FileUtils
 
-    def initialize jboss, logger, services_to_remove
-      @jboss = jboss
-      @logger = logger
+    def configure services_to_remove
       @services_to_remove = services_to_remove
     end
 
@@ -111,8 +109,6 @@ module JBoss
     def remove_jmx_remoting
       reject("#{@jboss.profile}/deploy/jmx-remoting.sar")
     end
-
-    private
 
     def reject file
       mv(file, file + ".rej")

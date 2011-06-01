@@ -40,8 +40,8 @@ module JBoss
   class XADatasource < Datasource
     include Component
 
-    def initialize jboss, logger, config
-      super jboss, logger, config
+    def configure config
+      super config
       @type << "-xa"
     end
 

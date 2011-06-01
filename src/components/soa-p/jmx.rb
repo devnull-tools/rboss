@@ -35,11 +35,11 @@ module JBoss
       }
     end
 
-    def users_properties
+    def users_properties_file
       "soa-users.properties"
     end
 
-    def roles_properties
+    def roles_properties_file
       "soa-roles.properties"
     end
 

@@ -34,19 +34,16 @@ module JBoss
   class HypersonicReplacer
     include Component, FileUtils
 
-    def initialize jboss, logger, config
-      @jboss = jboss
-      @logger = logger
+    def configure config
       @datasource = config if config.is_a? Datasource
       @datasource ||= Datasource::new(@jboss, @logger, config)
+      @datasource.jndi_name = "DefaultDS"
     end
 
     def process
       @logger.info "Removing Hypersonic..."
       rm_f "#{@jboss.profile}/deploy/hsqldb-ds.xml"
       rm_f "#{@jboss.profile}/deploy/messaging/hsqldb-persistence-service.xml"
-
-      @datasource.jndi_name = "DefaultDS"
 
       @datasource.process
 

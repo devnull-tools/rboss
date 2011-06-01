@@ -63,14 +63,15 @@ module JBoss
     attr_reader :attributes, :type, :name
     attr_accessor :jndi_name
 
-    def initialize jboss, logger, config
-      config = {
-        :folder => "#{jboss.profile}/deploy",
+    def defaults
+      {
+        :folder => "#{@jboss.profile}/deploy",
         :encrypt => false,
         :attributes => {}
-      }.merge! config
-      @jboss = jboss
-      @logger = logger
+      }
+    end
+
+    def configure config
       @type = config[:type].to_s.gsub /_/, '-'
       @name = config[:name]
       @name ||= @type.to_s
@@ -87,7 +88,7 @@ module JBoss
         @user = @attributes.delete :user_name unless @user
         @password = encrypt @attributes.delete :password
       end
-      processor = create_file_processor
+      processor = new_file_processor
       processor.with "#{@jboss.home}/docs/examples/jca/#{@type}-ds.xml", :xml do |action|
         action.to_process do |xml, jboss|
           element = XPath.first xml, "//jndi-name"
@@ -153,7 +154,7 @@ module JBoss
     end
 
     def update_login_config
-      processor = create_file_processor
+      processor = new_file_processor
       processor.with "#{@jboss.profile}/conf/login-config.xml", :xml do |action|
         action.to_process do |xml, jboss|
           xml.root << @login_module

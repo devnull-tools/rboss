@@ -1,13 +1,14 @@
+# Cluster
 partition_name : jboss.partition.name,
 multicast_ip : jboss.partition.udpGroup
-
+# mod_cluster
 advertise : jboss.mod_cluster.advertise,
 advertise_group_address : jboss.mod_cluster.advertise.address,
 advertise_port : jboss.mod_cluster.advertise.port,
 proxy_list : jboss.mod_cluster.proxyList,
 excluded_contexts : jboss.mod_cluster.excludedContexts,
 auto_enable_contexts : jboss.mod_cluster.autoEnableContexts
-
+# Messaging
 peer_id : jboss.messaging.ServerPeerID
-
+# Service Binding
 service_binding : jboss.service.binding.set

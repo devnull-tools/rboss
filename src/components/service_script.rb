@@ -40,7 +40,7 @@ module JBoss
 
     def process
       @logger.info "Configuring service script..."
-      processor = create_file_processor
+      processor = new_file_processor
       processor.with @template_path do |action|
         action.to_process do |content|
           [

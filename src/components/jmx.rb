@@ -35,10 +35,7 @@ module JBoss
   class JMX
     include Component
 
-    def initialize jboss, logger, config
-      config = defaults.merge! config
-      @jboss = jboss
-      @logger = logger
+    def configure config
       @password = config[:password]
       @user = config[:user]
       @roles = config[:roles]
@@ -58,8 +55,8 @@ module JBoss
     end
 
     def configure_users
-      processor = create_file_processor
-      processor.with "#{@jboss.profile}/conf/props/#{users_properties}" do |action|
+      processor = new_file_processor
+      processor.with "#{@jboss.profile}/conf/props/#{users_properties_file}" do |action|
         action.to_process do |content, jboss|
           [@user, @password].join '='
         end
@@ -68,8 +65,8 @@ module JBoss
     end
 
     def configure_roles
-      processor = create_file_processor
-      processor.with "#{@jboss.profile}/conf/props/#{roles_properties}" do |action|
+      processor = new_file_processor
+      processor.with "#{@jboss.profile}/conf/props/#{roles_properties_file}" do |action|
         action.to_process do |content, jboss|
           [@user, @roles].join '='
         end
@@ -77,11 +74,11 @@ module JBoss
       processor.process
     end
 
-    def users_properties
+    def users_properties_file
       "jmx-console-users.properties"
     end
 
-    def roles_properties
+    def roles_properties_file
       "jmx-console-roles.properties"
     end
 

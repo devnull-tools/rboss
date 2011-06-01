@@ -43,21 +43,19 @@ module JBoss
   class HypersonicReplacer
     include FileUtils
 
-    def initialize jboss, logger, config
-      @jboss = jboss
-      @logger = logger
-      @build_properties = {
+    def defaults
+      {
         "org.jboss.esb.server.home" => "#{@jboss.home}",
         "org.jboss.esb.server.clustered" => "#{File.exists? "#{@jboss.profile}/farm"}",
         "org.jboss.esb.server.config" => "#{@jboss.profile_name}",
 
         "db.minpoolsize" => 15,
         "db.maxpoolsize" => 50
-      }.merge! config
+      }
     end
 
     def process
-      properties = @build_properties.collect {|key, value| "#{key} = #{value}" }
+      properties = @config.collect { |key, value| "#{key} = #{value}" }
 
       # make a backup of build.properties
       mv "#{@jboss.home}/tools/schema/build.properties", "#{@jboss.home}/tools/schema/build.properties~"

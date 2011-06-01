@@ -221,17 +221,12 @@ module JBoss
       register :jmx,
 
                :type => JBoss::JMX,
-               :enabled => true,
                :priority => @@setup,
                :send_config => {
                  :to_init_script => {
                    :password => :jmx_password,
                    :user => :jmx_user
                  }
-               },
-               :defaults => {
-                 :user => "admin",
-                 :password => "admin"
                }
 
       register :datasource,
