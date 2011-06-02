@@ -27,17 +27,26 @@ require 'yaml'
 module JBoss
   # A class to create a custom run.conf file to a JBoss Profile
   #
-  # The configuration
+  # The configuration is based on a template, variables and jvm args:
+  #
+  # :template_path  => an absolute path to the template
+  # :template       => the template string
+  # :jvm_args       => array with the jvm args to use in JAVA_OPTS
+  # any other symbol will be upcased and the tag [SYMBOL] will be replaced by the content
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class RunConf
     include Component
 
+    def defaults
+      {:jvm_args => []}
+    end
+
     def configure config
-      @template_path = config[:template_path]
-      @template = config[:template]
-      @config = {:jvm_args => []}.merge! config
-      @args = @config[:jvm_args]
+      @template_path = config.delete :template_path
+      @template = config.delete :template
+      @jvm_args = config.delete :jvm_args
+      @config = config
       parse_config
     end
 
@@ -64,9 +73,9 @@ module JBoss
         @logger.debug "template: #{arg} -> #{value}"
         content.gsub! /\[#{arg.to_s.upcase}\]/, value.to_s
       end
-      buff = @args.join " "
+      buff = @jvm_args.join " "
       unless buff.empty?
-        @logger.debug "jvm arg: #{buff}"
+        @logger.debug "jvm args: #{buff}"
         content << "\nJAVA_OPTS=\"$JAVA_OPTS #{buff}\""
       end
       content
@@ -75,9 +84,9 @@ module JBoss
     def parse_config
       map = YAML::load File.open(File::join(File.dirname(__FILE__), "run_conf.yaml"))
 
-      (@config.find_all { |key, value| map.has_key? key }).each do |key, value|
-        @args << "-D#{map[key]}=#{value}"
-        @config.delete key
+      (@config.find_all { |key, value| map.has_key? key.to_s }).each do |key, value|
+        @jvm_args << "-D#{map[key.to_s]}=#{value}"
+        @config.delete key.to_sym
       end
     end
 

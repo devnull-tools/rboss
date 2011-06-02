@@ -29,8 +29,6 @@ require "logger"
 require "ostruct"
 require "fileutils"
 
-include FileUtils::Verbose
-
 module JBoss
 
   # A Class to configure a JBoss Profile
