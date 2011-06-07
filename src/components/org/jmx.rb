@@ -20,69 +20,36 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative "component"
-
 module JBoss
-  # This class configures the JXM user for a JBoss profile.
-  #
-  # Configuration:
-  #
-  # :user => the jxm user (default: 'admin')
-  # :password => the jmx user password (default: 'admin')
-  # :roles => the roles mapped for the user (default: 'JBossAdmin,HttpInvoker')
-  #
-  # author: Marcelo Guimarães <ataxexe@gmail.com>
+
   class JMX
-    include Component
 
-    def configure config
-      @config = config
-      @password = config[:password]
-      @user = config[:user]
-      @roles = config[:roles]
-    end
-
-    def defaults
-      {
-        :user => "admin",
-        :password => "admin",
-        :roles => "JBossAdmin,HttpInvoker"
-      }
-    end
+    alias_method :base_process, :process
 
     def process
-      configure_users
-      configure_roles
+      base_process
+      secure_jmx_console
     end
 
-    def configure_users
+    def secure_jmx_console
       processor = new_file_processor
-      processor.with "#{@jboss.profile}/conf/props/#{users_properties_file}" do |action|
+      processor.with "#{@jboss.profile}/deploy/jmx-console.war/WEB-INF/jboss-web.xml", :xml do |action|
+        action.to_process do |xml, jboss|
+          xml.root << Document::new("<security-domain>java:/jaas/jmx-console</security-domain>")
+          xml
+        end
+      end
+      processor.with "#{@jboss.profile}/deploy/jmx-console.war/WEB-INF/web.xml" do |action|
         action.to_process do |content, jboss|
-          [@user, @password].join '='
+          content.gsub! /<security-constraint>/, "--> <security-constraint>"
+          content.gsub! /<\/security-constraint>/, "</security-constraint><!--"
+          content
         end
       end
       processor.process
-    end
-
-    def configure_roles
-      processor = new_file_processor
-      processor.with "#{@jboss.profile}/conf/props/#{roles_properties_file}" do |action|
-        action.to_process do |content, jboss|
-          [@user, @roles].join '='
-        end
-      end
-      processor.process
-    end
-
-    def users_properties_file
-      "jmx-console-users.properties"
-    end
-
-    def roles_properties_file
-      "jmx-console-roles.properties"
     end
 
   end
 
 end
+
