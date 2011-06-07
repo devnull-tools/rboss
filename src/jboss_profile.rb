@@ -154,7 +154,7 @@ module JBoss
 
     def remove
       @logger.info "Removing installed profile"
-      rm_rf "#{@jboss.profile}", :secure => true
+      rm_rf @jboss.profile
     end
 
     private
