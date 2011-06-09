@@ -152,6 +152,12 @@ module JBoss
       process_components
     end
 
+    alias install add
+
+    def slim *args
+      add :slimming, args
+    end
+
     def remove
       @logger.info "Removing installed profile"
       rm_rf @jboss.profile
@@ -299,8 +305,6 @@ module JBoss
     end
 
   end
-
-  private
 
   # loads extensions to components based on the type of jboss (eap, soa-p, org, epp...)
   def load_extensions
