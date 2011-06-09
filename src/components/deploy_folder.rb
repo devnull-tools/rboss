@@ -33,7 +33,8 @@ module JBoss
   #
   #
   # Note: there is a bug in JBoss (https://issues.jboss.org/browse/JBAS-9387) that affect
-  # this class if profile.xml needs to be changed (deploy folder outside $JBOSS_HOME/$PROFILE/deploy)
+  # this class if profile.xml needs to be changed (deploy folder outside
+  # $JBOSS_HOME/server/$PROFILE/deploy)
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class DeployFolder
