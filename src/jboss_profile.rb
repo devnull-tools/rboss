@@ -145,15 +145,24 @@ module JBoss
 
     def create
       create_profile
-      configure
+      configure_profile
     end
 
-    def configure
-      process_components
-    end
+    alias configure_profile process_components
 
+    # For making code more readable
+    #
+    # example: profile.install :mod_cluster
     alias install add
 
+    # For making code more readable
+    #
+    # example: profile.configure :jmx, :password => "password"
+    alias configure add
+
+    # For making code more readable
+    #
+    # example: profile.slim :jmx_console, :admin_console
     def slim *args
       add :slimming, args
     end
