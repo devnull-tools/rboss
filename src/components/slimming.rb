@@ -40,6 +40,7 @@ module JBoss
   #   JMX Console         => :jmx_console
   #   JBoss WS            => :jboss_ws
   #   JMX Remoting        => :jmx_remoting
+  #   ROOT Page           => :root_page
   #
   # Each service is binded to a remove_$SERVICE_ID method so you can easily add
   # more services by modifying this class
@@ -108,6 +109,10 @@ module JBoss
 
     def remove_jmx_remoting
       reject("#{@jboss.profile}/deploy/jmx-remoting.sar")
+    end
+
+    def remove_root_page
+      reject("#{@jboss.profile}/deploy/ROOT.war")
     end
 
     def reject file
