@@ -94,7 +94,6 @@ module JBoss
   #
   # author Marcelo Guimarães <ataxexe@gmail.com>
   class Profile < ComponentProcessor
-    include FileUtils
 
     # Priorities for components
     @@pre_install = 0
@@ -105,15 +104,7 @@ module JBoss
     @@setup = @@pre_setup + 10
     @@post_setup = @@setup + 10
 
-    @@pre_tunning = @@post_setup + 10
-    @@tunning = @@pre_tunning + 10
-    @@post_tunning = @@tunning + 10
-
-    @@pre_slimming = @@post_tunning + 10
-    @@slimming = @@pre_slimming + 10
-    @@post_slimming = @@slimming + 10
-
-    @@final = @@post_slimming + 10
+    @@final = @@post_setup + 10
 
     attr_reader :jboss
 
@@ -132,23 +123,24 @@ module JBoss
       unless @logger
         @logger = Logger::new STDOUT
         formatter = Logger::Formatter.new
+
         def formatter.call(severity, time, program_name, message)
           "#{severity} : #{message}\n"
         end
+
         @logger.formatter = formatter
       end
       @profile = @opts[:profile].to_s
       @base_profile = @opts[:base_profile].to_s
       @jboss = JBoss::Path::new @jboss_home, @profile, @opts[:type], @opts[:version]
       initialize_components
+
+      add :profile_folder, @base_profile
     end
 
     def create
-      create_profile
-      configure_profile
+      process_components
     end
-
-    alias configure_profile process_components
 
     # For making code more readable
     #
@@ -167,52 +159,36 @@ module JBoss
       add :slimming, args
     end
 
-    def remove
-      @logger.info "Removing installed profile"
-      rm_rf @jboss.profile
-    end
-
     private
-
-    # Creates the profile using the base profile for copying
-    def create_profile
-      if File.exists? @jboss.profile
-        remove
-      end
-      @logger.info "Copying #{@base_profile} to #{@profile}..."
-      cp_r "#{@jboss}/server/#{@base_profile}", "#{@jboss.profile}"
-    end
 
     def initialize_components
       load_scripts
       load_extensions
-      register :deploy_folder,
-
-               :type => JBoss::DeployFolder,
-               :priority => @@install,
-               :multiple_instances => true
 
       register :cluster,
 
-               :priority => @@install,
+               :priority => @@pre_install,
                :send_config => {
-                 :to_run_conf => [:multicast_ip, :partition_name]
+                 :to_run_conf => [:multicast_ip, :partition_name],
+                 :to_jboss_web => [:jvm_route],
+                 :to_jms => [:peer_id]
                },
                :defaults => {
                  :multicast_ip => "239.255.0.1",
-                 :partition_name => "#{@profile}-partition"
+                 :partition_name => "#{@profile}-partition",
+                 :jvm_route => "${jboss.jbossweb.jvmRoute}"
                }
 
       register :jms,
 
-               :priority => @@install,
+               :priority => @@pre_install,
                :send_config => {
                  :to_run_conf => [:peer_id]
                }
 
       register :bind,
 
-               :priority => @@install,
+               :priority => @@pre_install,
                :send_config => {
                  :to_init_script => {
                    :address => :bind_address
@@ -225,10 +201,21 @@ module JBoss
                  :address => 'localhost'
                }
 
+      register :profile_folder,
+               :type => JBoss::ProfileFolder,
+               :priority => @@install
+
+      register :deploy_folder,
+
+               :type => JBoss::DeployFolder,
+               :priority => @@post_install,
+               :multiple_instances => true
+
+
       register :resource,
 
                :type => JBoss::Resource,
-               :priority => @@post_install,
+               :priority => @@pre_setup,
                :multiple_instances => true
 
       register :jmx,
@@ -277,6 +264,11 @@ module JBoss
                  :path => "#{@base_dir}/resources/mod_cluster.sar",
                }
 
+      register :jboss_web,
+
+               :type => JBoss::Web,
+               :priority => @@setup
+
       register :run_conf,
 
                :type => JBoss::RunConf,
@@ -296,7 +288,7 @@ module JBoss
       register :slimming,
 
                :type => JBoss::Slimming,
-               :priority => @@slimming
+               :priority => @@post_setup
 
       register :init_script,
 

@@ -14,3 +14,5 @@ auto_enable_contexts : jboss.mod_cluster.autoEnableContexts
 peer_id : jboss.messaging.ServerPeerID
 # Service Binding
 service_binding : jboss.service.binding.set
+# jbossweb engine
+jvm_route : jboss.jbossweb.jvmRoute

@@ -22,7 +22,6 @@
 
 require_relative "component"
 
-require "logger"
 require "rexml/document"
 
 include REXML
