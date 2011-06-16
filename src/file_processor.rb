@@ -51,7 +51,8 @@ class FileProcessor
         :store => lambda do |file, xml|
           @logger.info "Saving file #{file}"
           content = ''
-          xml.write(content, 2)
+          formatter = REXML::Formatters::Pretty::new 2
+          formatter.write xml, content
           File.open(file, 'w+') { |f| f.write content }
         end
       }
