@@ -24,8 +24,8 @@ require 'test/unit'
 require 'logger'
 require 'rexml/document'
 
-require_relative '../src/jboss_profile'
-require_relative '../src/file_processor'
+require_relative '../src/rboss/jboss_profile'
+require_relative '../src/rboss/file_processor'
 
 include JBoss
 include REXML
@@ -34,10 +34,10 @@ module TestHelper
 
   def all
     @all ||= {
-      :org   => [5.1, 6.0],
-      :eap   => [5.0, 5.1],
-      :soa_p =>  5,
-      #:epp   =>  5.1
+      :org => [5.1, 6.0],
+      :eap => [5.0, 5.1],
+      :soa_p => 5,
+      :epp => 5.1
     }
     @all
   end
@@ -77,14 +77,15 @@ module TestHelper
   end
 
   def do_test_with type, version, blocks
-    map ||= {
-      :eap   => "#{jboss_dir}/eap/jboss-eap-#{version}/jboss-as",
-      :epp   => "#{jboss_dir}/epp/jboss-epp-#{version}/jboss-as",
+    map = {
+      :eap => "#{jboss_dir}/eap/jboss-eap-#{version}/jboss-as",
+      :epp => "#{jboss_dir}/epp/jboss-epp-#{version}/jboss-as",
       :soa_p => "#{jboss_dir}/soa-p/jboss-soa-p-#{version}/jboss-as",
-      :org   => "#{jboss_dir}/org/jboss-#{version}"
+      :org => "#{jboss_dir}/org/jboss-#{version}"
     }
+    return unless File.exist? map[type]
     @logger = Logger::new STDOUT
-    @logger.level = Logger::INFO
+    @logger.level = Logger::WARN
     @jboss_profile = Profile::new map[type],
                                   :type => type,
                                   :version => version,
@@ -95,7 +96,6 @@ module TestHelper
     blocks[:configure].call @jboss_profile
     @jboss_profile.create
     blocks[:assertion].call @jboss
-    #@jboss_profile.remove
   end
 
   def create_file_processor

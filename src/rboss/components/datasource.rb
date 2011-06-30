@@ -109,7 +109,7 @@ module JBoss
       processor.process
       if @encrypt
         create_login_module
-        update_login_config
+        create_login_config
       end
     end
 
@@ -153,28 +153,23 @@ module JBoss
       xml.root.elements[1] << element
     end
 
-    def update_login_config
-      processor = new_file_processor
-      processor.with "#{@jboss.profile}/conf/login-config.xml", :xml do |action|
-        action.to_process do |xml, jboss|
-          xml.root << @login_module
-          xml
-        end
-      end
-      processor.process
+    def create_login_config
+      File.open("#{@folder}/#{@name}.login-module.xml", 'w+') { |f| f.write @login_module }
     end
 
     def create_login_module
       @login_module = Document::new <<XML
-<application-policy name='#{@name}'>
-  <authentication>
-    <login-module code='org.jboss.resource.security.SecureIdentityLoginModule' flag='required'>
-      <module-option name='username'>#{@user}</module-option>
-      <module-option name='password'>#{@password}</module-option>
-      <module-option name='managedConnectionFactoryName'>jboss.jca:name=#{@jndi_name},service=#{@service}</module-option>
-    </login-module>
-  </authentication>
-</application-policy>
+<policy>
+  <application-policy name='#{@name}'>
+    <authentication>
+      <login-module code='org.jboss.resource.security.SecureIdentityLoginModule' flag='required'>
+        <module-option name='username'>#{@user}</module-option>
+        <module-option name='password'>#{@password}</module-option>
+        <module-option name='managedConnectionFactoryName'>jboss.jca:name=#{@jndi_name},service=#{@service}</module-option>
+      </login-module>
+    </authentication>
+  </application-policy>
+</policy>
 XML
     end
 

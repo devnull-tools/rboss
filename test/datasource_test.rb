@@ -187,7 +187,7 @@ class DatasourceTest < Test::Unit::TestCase
 
         assert_tag xml, "//security-domain", type, "local-tx-datasource"
 
-        xml = REXML::Document::new File::new("#{jboss.profile}/conf/login-config.xml")
+        xml = REXML::Document::new File::new("#{jboss.profile}/deploy/#{type}.login-module.xml")
 
         application_policy = XPath::first xml, "//application-policy[@name='#{type}']"
         assert !application_policy.nil?
