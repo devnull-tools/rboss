@@ -1,0 +1,41 @@
+#!/bin/sh 
+#Time to wait until the next twiddle loop
+FREQUENCY=<%=@opts[:frequency]%>
+
+while [ 1 ] ; do
+  clear
+  echo ">>> Starting monitoring for server <%=@twiddle.jboss_ip %> <<<"
+
+  echo " "
+  echo ">>> Server Info "
+  <% @monitor.properties[:server_info].each do |property| %>
+    echo " |---> $(<%= @monitor.server_info[property] %>)"
+  <% end %>
+  echo " "
+  echo ">>> Connectors"
+  <% monitor.resources[:connector].each do |resource| %>
+    <% monitor.with resource do %>
+      echo " |---> <%= resource %>"
+      <% monitor.properties[:connector].each do |property| %>
+        echo "   |---> $(<%= monitor.connector[property] %>)"
+      <% end %>
+      <% monitor.properties[:request].each do |property| %>
+        echo "   |---> $(<%= monitor.request[property] %>)"
+      <% end %>
+    <% end %>
+    echo " "
+  <% end %>
+  echo " "
+  echo ">>> Datasources"
+  <% monitor.resources[:datasource].each do |resource| %>
+    <% monitor.with resource do %>
+      echo " |---> <%= resource %>"
+      <% monitor.properties[:datasource].each do |property| %>
+        echo "   |---> $(<%= monitor.datasource[property] %>)"
+      <% end %>
+    <% end %>
+    echo " "
+  <% end %>
+  sleep $FREQUENCY
+done
+
