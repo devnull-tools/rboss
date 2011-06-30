@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../src/rboss/base_monitor'
+require_relative '../src/rboss'
 
 monitor = JBoss::Twiddle::BaseMonitor::new
 
