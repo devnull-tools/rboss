@@ -295,7 +295,7 @@ module JBoss
                :type => JBoss::ServiceScript,
                :priority => @@final,
                :defaults => {
-                 :path => "#{@base_dir}/resources/jboss_init_redhat.sh",
+                 :path => "#{@base_dir}/resources/jboss_init_redhat.sh.erb",
                  :jmx_user => "admin",
                  :jmx_password => "admin",
                  :bind_address => "0.0.0.0",

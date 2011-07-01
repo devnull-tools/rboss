@@ -16,27 +16,27 @@
 #
 # Either modify this script for your requirements or just ensure that
 # the following variables are set correctly before calling the script.
-JBOSS_ADMIN_USER="[JMX_USER]"
-JBOSS_ADMIN_PWD="[JMX_PASSWORD]"
+JBOSS_ADMIN_USER="<%= @config[:jmx_user] %>"
+JBOSS_ADMIN_PWD="<%= @config[:jmx_password] %>"
 #1099
-JBOSS_JNP_PORT="[JNP_PORT]"
+JBOSS_JNP_PORT="<%= @config[:jnp_port] %>"
 
 #define where jboss is - this is the directory containing directories log, bin, conf etc
 #/opt/jboss
-JBOSS_HOME=${JBOSS_HOME:-"[JBOSS_HOME]"}
+JBOSS_HOME=${JBOSS_HOME:-"<%= @config[:jboss_home] %>"}
 
 #define the user under which jboss will run, or use 'RUNASIS' to run as the current user
-JBOSS_USER=${JBOSS_USER:-"[JBOSS_USER]"}
+JBOSS_USER=${JBOSS_USER:-"<%= @config[:jboss_user] %>"}
 
 #make sure java is in your path
 #/usr/java/default
-JAVAPTH=${JAVAPTH:-"[JAVA_PATH]"}
+JAVAPTH=${JAVAPTH:-"<%= @config[:java_path] %>"}
 
 #configuration to use, usually one of 'minimal', 'default', 'all', 'production'
-JBOSS_CONF=${JBOSS_CONF:-"[CONFIGURATION]"}
+JBOSS_CONF=${JBOSS_CONF:-"<%= @config[:profile] %>"}
 
 #if JBOSS_HOST specified, use -b to bind jboss services to that address
-JBOSS_BIND_ADDR=${JBOSS_HOST:-"[BIND_ADDRESS]"}
+JBOSS_BIND_ADDR=${JBOSS_HOST:-"<%= @config[:bind_address] %>"}
 
 #define the script to use to start jboss
 JBOSSSH=${JBOSSSH:-"$JBOSS_HOME/bin/run.sh -c $JBOSS_CONF -b $JBOSS_BIND_ADDR"}
@@ -115,8 +115,8 @@ case "$1" in
 start)
 
     echo "Cleaning work and tmp..."
-    rm -rf $JBOSS_HOME/server/[CONFIGURATION]/work/*
-    rm -rf $JBOSS_HOME/server/[CONFIGURATION]/tmp/*
+    rm -rf $JBOSS_HOME/server/<%= @config[:profile] %>/work/*
+    rm -rf $JBOSS_HOME/server/<%= @config[:profile] %>/tmp/*
 
     echo "JBOSS_CMD_START = $JBOSS_CMD_START"
     
