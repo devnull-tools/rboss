@@ -52,10 +52,10 @@ fi
 #JAVA_OPTS="$JAVA_OPTS -Djava.security.manager -Djava.security.policy=$POLICY"
 
 # Sample JPDA settings for remote socket debugging
-#JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n"
+<%= "#" unless @config[:debug] == :socket %>JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n"
 
-# Sample JPDA settings for shared memory debugging 
-#JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_shmem,address=jboss,server=y,suspend=n"
+# Sample JPDA settings for shared memory debugging
+<%= "#" unless @config[:debug] == :shared_memory %>JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_shmem,address=jboss,server=y,suspend=n"
 
 <% unless @jvm_args.empty? %>
 JAVA_OPTS="$JAVA_OPTS <%= @jvm_args.join ' ' %>"
