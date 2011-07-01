@@ -2,6 +2,19 @@
 #Time to wait until the next twiddle loop
 FREQUENCY=<%=@opts[:frequency]%>
 
+SERVER_IP='<%= @twiddle.jboss_ip %>'
+SERVER_PORT='<%= @twiddle.jboss_port %>'
+USER='<%= @twiddle.jmx_user %>'
+PASSWORD='<%= @twiddle.jmx_password %>'
+
+#Resources
+CONNECTORS=(<%= monitor.resources[:connector].join ' ' %>)
+DATASOURCES=(<%= monitor.resources[:datasource].join ' ' %>)
+WEBAPPS=(<%= monitor.resources[:webapp].join ' ' %>)
+
+#Path to twiddle
+<%= @opts[:twiddle_command_var] %>=<%= "#{@twiddle.jboss_home}" %>/bin/twiddle.sh -s $SERVER_IP:$SERVER_PORT -u '$USER' -p '$PASSWORD'
+
 while [ 1 ] ; do
   clear
   echo ">>> Starting monitoring for server <%=@twiddle.jboss_ip %> <<<"
@@ -32,6 +45,16 @@ while [ 1 ] ; do
       echo " |---> <%= resource %>"
       <% monitor.properties[:datasource].each do |property| %>
         echo "   |---> $(<%= monitor.datasource[property] %>)"
+      <% end %>
+    <% end %>
+    echo " "
+  <% end %>
+  echo ">>> Webapps"
+  <% monitor.resources[:webapp].each do |resource| %>
+    <% monitor.with resource do %>
+      echo " |---> <%= resource %>"
+      <% monitor.properties[:webapp].each do |property| %>
+        echo "   |---> $(<%= monitor.webapp[property] %>)"
       <% end %>
     <% end %>
     echo " "

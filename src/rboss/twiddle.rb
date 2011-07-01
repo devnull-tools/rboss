@@ -24,7 +24,8 @@ module JBoss
   module Twiddle
     class Invoker
 
-      attr_reader :jboss_ip, :jboss_port
+      attr_reader :jboss_ip, :jboss_port, :jboss_home, :jmx_user, :jmx_password
+      attr_accessor :command
 
       def initialize params
         params = {
@@ -42,11 +43,7 @@ module JBoss
         @jmx_user = params[:jmx_user]
         @jmx_password = params[:jmx_password]
 
-        @twiddle_exec = "#{@jboss_home}/bin/twiddle.sh -s #{@jboss_ip}:#{@jboss_port} -u '#{@jmx_user}' -p '#{@jmx_password}'"
-      end
-
-      def command
-        @twiddle_exec
+        @command = "#{@jboss_home}/bin/twiddle.sh -s #{@jboss_ip}:#{@jboss_port} -u '#{@jmx_user}' -p '#{@jmx_password}'"
       end
 
       def home
@@ -57,8 +54,8 @@ module JBoss
         execute(shell command, arguments)
       end
 
-      def shell command, *arguments
-        "#{@twiddle_exec} #{command} #{arguments.join " "}"
+      def shell operation, *arguments
+        "#{command} #{operation} #{arguments.join " "}"
       end
 
       def get_system_property property

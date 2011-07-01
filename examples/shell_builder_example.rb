@@ -22,11 +22,11 @@
 
 require_relative '../src/rboss'
 
-monitor = JBoss::Twiddle::BaseMonitor::new
+monitor = JBoss::Twiddle::BaseMonitor::new :jboss_home => "#{ENV['HOME']}/jboss/org/jboss-5.1"
 builder = JBoss::Twiddle::ShellBuilder::new monitor
 
 monitor.resources :datasource, 'DefaultDS'
 monitor.resources [:webapp, :request], 'jmx-console', 'admin-console', 'web-console'
 monitor.resources :connector, 'http:8080', 'ajp:8009'
 
-File.open("monitor.sh", "w+") {|f| f.write(builder.result)}
+puts builder.result
