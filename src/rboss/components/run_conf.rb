@@ -28,12 +28,14 @@ require 'erb'
 module JBoss
   # A class to create a custom run.conf file to a JBoss Profile
   #
-  # The configuration is based on a template, variables and jvm args:
+  # The configuration is based on a erb template, variables and jvm args:
   #
   # :template_path  => an absolute path to the template
   # :template       => the template string
-  # :jvm_args       => array with the jvm args to use in JAVA_OPTS
-  # any other symbol will be upcased and the tag [SYMBOL] will be replaced by the content
+  # :jvm_args       => array with the jvm args to use in JAVA_OPTS, stored in @jvm_args
+  # any other key will be stored in a @config variable
+  #
+  # This class is used as the binding for erb processor.
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class RunConf

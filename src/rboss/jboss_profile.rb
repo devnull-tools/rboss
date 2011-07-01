@@ -75,7 +75,7 @@ module JBoss
   #
   # :run_conf       => binded to a JBoss::RunConf
   #   Defaults:
-  #     :path => 'resources/run.conf'
+  #     :path => 'resources/run.conf.erb'
   #     :stack_size => '128k'
   #     :heap_size => '2048m'
   #     :perm_size => '256m'
@@ -278,7 +278,7 @@ module JBoss
                  :to_init_script => [:service_binding]
                },
                :defaults => {
-                 :template_path => "#{@base_dir}/resources/run.conf",
+                 :template_path => "#{@base_dir}/resources/run.conf.erb",
 
                  :stack_size => '128k',
                  :heap_size => '2048m',
