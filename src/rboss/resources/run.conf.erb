@@ -42,7 +42,9 @@
 # Specify options to pass to the Java VM.
 #
 if [ "x$JAVA_OPTS" = "x" ]; then
-   JAVA_OPTS="-Xms[HEAP_SIZE] -Xmx[HEAP_SIZE] -XX:PermSize=[PERM_SIZE] -XX:MaxPermSize=[PERM_SIZE] -Xss[STACK_SIZE]"
+   JAVA_OPTS="-Xms<%= @config[:heap_size] %> -Xmx<%= @config[:heap_size] %>"
+   JAVA_OPTS="$JAVA_OPTS -XX:PermSize=<%= @config[:perm_size] %> -XX:MaxPermSize=<%= @config[:perm_size] %>"
+   JAVA_OPTS="$JAVA_OPTS -Xss<<%= @config[:stack_size] %>"
    JAVA_OPTS="$JAVA_OPTS -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Dsun.lang.ClassLoader.allowArraySyntax=true"
 fi
 
@@ -54,3 +56,5 @@ fi
 
 # Sample JPDA settings for shared memory debugging 
 #JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_shmem,address=jboss,server=y,suspend=n"
+
+JAVA_OPTS="$JAVA_OPTS <%= @jvm_args.join ' ' %>"

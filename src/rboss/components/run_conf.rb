@@ -23,6 +23,7 @@
 require_relative "component"
 
 require 'yaml'
+require 'erb'
 
 module JBoss
   # A class to create a custom run.conf file to a JBoss Profile
@@ -62,23 +63,15 @@ module JBoss
         end
         processor.process
       else
-        File.open("#{@jboss.profile}/run.conf", "w+") {|f| f.write process_template @template}
+        File.open("#{@jboss.profile}/run.conf", "w+") { |f| f.write process_template @template }
       end
     end
 
     private
 
     def process_template content
-      @config.each do |arg, value|
-        @logger.debug "template: #{arg} -> #{value}"
-        content.gsub! /\[#{arg.to_s.upcase}\]/, value.to_s
-      end
-      buff = @jvm_args.join " "
-      unless buff.empty?
-        @logger.debug "jvm args: #{buff}"
-        content << "\nJAVA_OPTS=\"$JAVA_OPTS #{buff}\""
-      end
-      content
+      erb = ERB::new(content, 0, "%<>")
+      erb.result binding
     end
 
     def parse_config
