@@ -41,7 +41,7 @@ module JBoss
       resource = @resource
       env = @env
       query = eval("\"#{pattern}\"")
-      @twiddle.invoke(:get, query, property).chomp
+      @twiddle.invoke(:get, query, property)
     end
 
     def get property, params
@@ -54,6 +54,17 @@ module JBoss
       env = @env
       query = eval("\"#{pattern}\"")
       @twiddle.invoke :set, query, property, value
+    end
+
+    def method_missing(method, *args, &block)
+      resource = @resource
+      env = @env
+      query = eval("\"#{pattern} #{method}\"")
+      return_value = @twiddle.invoke :invoke, query, args
+      if block_given?
+        block.call return_value
+      end
+      return_value
     end
 
   end

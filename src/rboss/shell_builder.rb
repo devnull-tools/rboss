@@ -29,7 +29,7 @@ module JBoss
 
     class ShellBuilder
 
-      attr_reader :monitor, :twiddle
+      attr_reader :monitor, :twiddle, :opts
 
       def initialize monitor, params = {}
         @opts = {

@@ -27,7 +27,7 @@ module JBoss
       attr_reader :jboss_ip, :jboss_port, :jboss_home, :jmx_user, :jmx_password
       attr_accessor :command
 
-      def initialize params
+      def initialize params = {}
         params = {
           :jboss_home => ENV["JBOSS_HOME"],
           :jboss_ip => '127.0.0.1',
@@ -59,12 +59,11 @@ module JBoss
       end
 
       def get_system_property property
-        value = invoke :invoke, 'jboss:name=SystemProperties,type=Service', 'get', property
-        value.chomp
+        invoke :invoke, 'jboss:name=SystemProperties,type=Service', 'get', property
       end
 
       def execute shell
-        `#{shell}`
+        `#{shell}`.chomp
       end
 
       alias_method :[], :get_system_property

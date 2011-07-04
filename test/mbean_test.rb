@@ -21,27 +21,33 @@
 # THE SOFTWARE.
 
 require 'test/unit'
-require_relative '../src/rboss/mbean'
+require_relative '../src/rboss'
 
 class MBeanTest < Test::Unit::TestCase
 
-  def test_pattern_with_resource
-    twiddle = Object::new
+  def twiddle
+    twiddle = Object.new
     def twiddle.invoke command, *args
-      "#{command} #{args.join " "}"
+      "#{command} #{args.join " "}".strip
     end
+    twiddle
+  end
+
+  def test_pattern_with_resource
     mbean = JBoss::MBean::new :pattern => 'query=/#{resource}', :twiddle => twiddle
     mbean.resource= "my_resource"
     assert_equal "get query=/my_resource my_property", mbean[:my_property]
   end
 
   def test_pattern_without_resource
-    twiddle = Object::new
-    def twiddle.invoke *args
-      return args.join " "
-    end
     mbean = JBoss::MBean::new :pattern => 'query=/resource', :twiddle => twiddle
     assert_equal "get query=/resource my_property", mbean[:my_property]
+  end
+
+  def test_invoke
+    mbean = JBoss::MBean::new :pattern => 'jboss.system:type=Server', :twiddle => twiddle
+    assert_equal "invoke jboss.system:type=Server shutdown", mbean.shutdown
+    assert_equal "invoke jboss.system:type=Server traceInstructions true", mbean.traceInstructions(true)
   end
 
 end
