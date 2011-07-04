@@ -54,6 +54,10 @@ module JBoss
       }
     end
 
+    def configure config
+      @config = config
+    end
+
     def process
       properties = @config.collect { |key, value| "#{key} = #{value}" }
 
