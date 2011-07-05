@@ -86,7 +86,7 @@ module TestHelper
     return unless File.exist? map[type]
     @logger = Logger::new STDOUT
     @logger.level = Logger::WARN
-    @jboss_profile = Profile::new map[type],
+    @jboss_profile = Profile::new :jboss_home => map[type],
                                   :type => type,
                                   :version => version,
                                   :base_profile => :all,

@@ -112,7 +112,6 @@ module JBoss
       block = lambda { |type, config| type.new(@jboss, @logger, config).process }
       super &block
       @base_dir = File.dirname(__FILE__)
-      @jboss_home = jboss_home
       @opts = {
         :jboss_home => ENV['JBOSS_HOME'],
         :base_profile => :production,
@@ -120,6 +119,7 @@ module JBoss
         :type => :undefined,
         :version => :undefined
       }.merge! opts
+      @jboss_home = @opts[:jboss_home]
       @logger = @opts[:logger]
       unless @logger
         @logger = Logger::new STDOUT
