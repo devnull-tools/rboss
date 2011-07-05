@@ -41,7 +41,7 @@ profile.add :default_ds,
             "db.username" => :postgres,
             "db.password" => :postgres
 
-profile.add :resource, 'lib/postgresql-8.4-x.jdbc4.jar' => '/home/ataxexe/jdbc/postgresql/postgresql.jar'
+profile.add :resource, 'lib/postgresql-8.4-x.jdbc4.jar' => "#{ENV["HOME"]}/jdbc/postgresql/postgresql.jar"
 
 profile.install :mod_cluster
 
