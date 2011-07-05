@@ -70,16 +70,20 @@ module JBoss
 
     end
 
-    class ResourceDiscovery
+    class ResourceDiscoverer
 
       def initialize invoker = Invoker::new
         @twiddle = invoker
       end
 
       def webapps
-        result = @twiddle.invoke :query, "jboss.web.deployment:war=*"
+        result = @twiddle.invoke :query, "jboss.web:type=Manager,*"
         webapps = result.split(/\s+/)
-        webapps.collect { |path| path.gsub "jboss.web.deployment:war=/", "" }
+        webapps.collect do |path|
+          path.gsub! "jboss.web:type=Manager,path=/", ""
+          path.gsub! /,host=.+/, ''
+          path
+        end
       end
 
       def datasources

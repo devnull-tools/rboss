@@ -27,6 +27,11 @@ module JBoss
 
     module Monitor
 
+      def discoverer
+        @discoverer ||= JBoss::Twiddle::ResourceDiscoverer::new @twiddle
+        @discoverer
+      end
+
       def properties
         @properties ||= {}
         @properties
@@ -46,7 +51,7 @@ module JBoss
             @resources[id] = resources
           end
         else
-        @resources[mbean_id] = resources
+          @resources[mbean_id] = resources
         end
       end
 
@@ -56,10 +61,19 @@ module JBoss
       end
 
       def with resource
+        resource = discoverer.send resource if resource.is_a? Symbol
         if block_given?
-          @current_resource = resource
-          yield
-          @current_resource = nil
+          if resource.kind_of? Array
+            resource.each do |res|
+              @current_resource = res
+              yield res
+              @current_resource = nil
+            end
+          else
+            @current_resource = resource
+            yield
+            @current_resource = nil
+          end
         end
       end
 

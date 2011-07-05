@@ -25,38 +25,35 @@ require_relative '../src/rboss'
 twiddle = JBoss::Twiddle::Invoker::new
 monitor = JBoss::Twiddle::BaseMonitor::new twiddle
 
-info = []
-info << "Server Info:"
-info << "\t- FreeMemory=#{monitor.server_info(:property => 'FreeMemory').value.to_i / (1024 * 1024)}MB"
-info << "\t- #{monitor.server_info :property => 'ActiveThreadCount'}"
-info << "Connectors:"
+puts "Server Info:"
+puts "\t- FreeMemory=#{monitor.server_info(:property => 'FreeMemory').value.to_i / (1024 * 1024)}MB"
+puts "\t- #{monitor.server_info :property => 'ActiveThreadCount'}"
+puts "Connectors:"
 
-%W(http:8080 ajp:8009).each do |connector|
-  monitor.with connector do
-    info << "\t- #{connector}"
-    monitor.properties[:connector].each do |property|
-      info << "\t\t- #{monitor.connector[property]}"
-    end
-    monitor.properties[:request].each do |property|
-      info << "\t\t- #{monitor.request[property]}"
-    end
+monitor.with :connectors do |connector|
+  puts "\t- #{connector}"
+  monitor.properties[:connector].each do |property|
+    puts "\t\t- #{monitor.connector[property]}"
+  end
+  monitor.properties[:request].each do |property|
+    puts "\t\t- #{monitor.request[property]}"
   end
 end
 
-info << "Datasource DefaultDS:"
+puts "Datasources"
 
-monitor.with 'DefaultDS' do
+monitor.with :datasources do |datasource|
+  puts "\t- #{datasource}"
   monitor.properties[:datasource].each do |property|
-    info << "\t- #{monitor.datasource[property]}"
+    puts "\t\t- #{monitor.datasource[property]}"
   end
 end
 
-info << "Webapp jmx-console"
+puts "Webapp"
 
-monitor.with 'jmx-console' do
+monitor.with :webapps do |webapp|
+  puts "\t- #{webapp}"
   monitor.properties[:webapp].each do |property|
-    info << "\t- #{monitor.webapp[property]}"
+    puts "\t\t- #{monitor.webapp[property]}"
   end
 end
-
-puts info.join "\n"

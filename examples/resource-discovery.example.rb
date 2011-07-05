@@ -1,6 +1,6 @@
 require_relative '../src/rboss'
 
-discovery = JBoss::Twiddle::ResourceDiscovery::new
+discovery = JBoss::Twiddle::ResourceDiscoverer::new
 
 puts "Webapps:"
 puts discovery.webapps
