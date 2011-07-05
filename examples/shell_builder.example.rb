@@ -21,12 +21,26 @@
 # THE SOFTWARE.
 
 require_relative '../src/rboss'
-invoker = JBoss::Twiddle::Invoker::new :jboss_home => "#{ENV['HOME']}/jboss/org/jboss-5.1"
-monitor = JBoss::Twiddle::BaseMonitor::new invoker
+
+require 'optparse'
+
+params = {}
+
+opts = OptionParser::new
+opts.on('-j', '--jboss-home [path]', 'Defines the JBOSS_HOME variable') { |home| params[:jboss_home] = home }
+opts.on('-s', '--jboss-ip [ip]', 'Defines the JBoss ip') { |ip| params[:jboss_ip] = ip }
+opts.on('-l', '--jboss-port [port]', 'Defines the JBoss jnp port') { |port| params[:jboss_port] = port }
+opts.on('-u', '--jmx-user [user]', 'Defines the JMX User') { |user| params[:jmx_user] = user }
+opts.on('-p', '--jmx-password [password]', 'Defines the JMX Password') { |password| params[:jmx_password] = password }
+opts.on("-h", "--help", "Show this help message") { puts opts; exit }
+opts.parse!(ARGV) rescue abort 'Invalid Option'
+
+discoverer = JBoss::Twiddle::ResourceDiscoverer::new JBoss::Twiddle::Invoker::new(params)
+monitor = JBoss::Twiddle::BaseMonitor::new JBoss::Twiddle::Invoker::new(params)
 builder = JBoss::Twiddle::Monitor::ShellBuilder::new monitor
 
-monitor.resources :datasource, 'DefaultDS'
-monitor.resources [:webapp, :request], 'jmx-console', 'admin-console', 'web-console'
-monitor.resources :connector, 'http:8080', 'ajp:8009'
+monitor.resources :datasource, *discoverer.datasources
+monitor.resources [:webapp, :request], *discoverer.webapps
+monitor.resources :connector, *discoverer.connectors
 
 puts builder.result
