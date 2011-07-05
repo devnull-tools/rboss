@@ -38,7 +38,7 @@ module JBoss
             :properties => %W(activeSessions maxActive)
           },
           :connector => {
-            :pattern => 'jboss.web:type=ThreadPool,name=#{resource.split(/:/)[0]}-#{env.jboss_ip}-#{@resource.split(/:/)[1]}',
+            :pattern => 'jboss.web:type=ThreadPool,name=#{resource}',
             :properties => %W(maxThreads currentThreadCount currentThreadsBusy)
           },
           :server_info => {
@@ -46,7 +46,7 @@ module JBoss
             :properties => %W(FreeMemory ActiveThreadCount)
           },
           :request => {
-            :pattern => 'jboss.web:type=GlobalRequestProcessor,name=#{resource.split(/:/)[0]}-#{env.jboss_ip}-#{@resource.split(/:/)[1]}',
+            :pattern => 'jboss.web:type=GlobalRequestProcessor,name=#{resource}',
             :properties => %W(requestCount)
           },
           :datasource => {

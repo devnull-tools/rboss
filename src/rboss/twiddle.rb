@@ -95,10 +95,7 @@ module JBoss
       def connectors
         result = @twiddle.invoke :query, "jboss.web:type=ThreadPool,*"
         connectors = result.split(/\s+/)
-        connectors.collect do |path|
-          name = path.gsub "jboss.web:type=ThreadPool,name=", ""
-          name.gsub /-\d{1,3}(.\d{1,3}){3}-/, ':'
-        end
+        connectors.collect { |path| path.gsub "jboss.web:type=ThreadPool,name=", "" }
       end
 
     end
