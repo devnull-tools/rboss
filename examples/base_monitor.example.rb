@@ -22,38 +22,47 @@
 
 require_relative '../src/rboss'
 
-twiddle = JBoss::Twiddle::Invoker::new
-monitor = JBoss::Twiddle::BaseMonitor::new twiddle
+while true do
 
-puts "Server Info:"
-puts "\t- FreeMemory=#{monitor.server_info(:property => 'FreeMemory').value.to_i / (1024 * 1024)}MB"
-puts "\t- #{monitor.server_info :property => 'ActiveThreadCount'}"
-puts "Connectors:"
+  twiddle = JBoss::Twiddle::Invoker::new
+  monitor = JBoss::Twiddle::BaseMonitor::new twiddle
 
-monitor.with :connectors do |connector|
-  puts "\t- #{connector}"
-  monitor.properties[:connector].each do |property|
-    puts "\t\t- #{monitor.connector[property]}"
+  puts "Server Info:"
+  puts "\t- FreeMemory=#{monitor.server_info(:property => 'FreeMemory').value.to_i / (1024 * 1024)}MB"
+  puts "\t- #{monitor.server_info :property => 'ActiveThreadCount'}"
+  puts "Connectors:"
+
+  monitor.with :connectors do |connector|
+    puts "\t- #{connector}"
+    monitor.properties[:connector].each do |property|
+      puts "\t\t- #{monitor.connector[property]}"
+    end
+    monitor.properties[:request].each do |property|
+      puts "\t\t- #{monitor.request[property]}"
+    end
   end
-  monitor.properties[:request].each do |property|
-    puts "\t\t- #{monitor.request[property]}"
+
+  puts "Datasources"
+
+  monitor.with :datasources do |datasource|
+    puts "\t- #{datasource}"
+    monitor.properties[:datasource].each do |property|
+      puts "\t\t- #{monitor.datasource[property]}"
+    end
   end
-end
 
-puts "Datasources"
+  puts "Webapp"
 
-monitor.with :datasources do |datasource|
-  puts "\t- #{datasource}"
-  monitor.properties[:datasource].each do |property|
-    puts "\t\t- #{monitor.datasource[property]}"
+  monitor.with :webapps do |webapp|
+    puts "\t- #{webapp}"
+    monitor.properties[:webapp].each do |property|
+      puts "\t\t- #{monitor.webapp[property]}"
+    end
   end
-end
 
-puts "Webapp"
+  sleep 10
 
-monitor.with :webapps do |webapp|
-  puts "\t- #{webapp}"
-  monitor.properties[:webapp].each do |property|
-    puts "\t\t- #{monitor.webapp[property]}"
-  end
+  puts
+  puts
+  puts
 end
