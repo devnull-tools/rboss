@@ -79,13 +79,22 @@ module JBoss
       def webapps
         result = @twiddle.invoke :query, "jboss.web.deployment:war=*"
         webapps = result.split(/\s+/)
-        webapps.collect {|path| path.gsub "jboss.web.deployment:war=/", ""}
+        webapps.collect { |path| path.gsub "jboss.web.deployment:war=/", "" }
       end
 
       def datasources
         result = @twiddle.invoke :query, "jboss.jca:service=ManagedConnectionPool,*"
         datasources = result.split(/\s+/)
-        datasources.collect {|path| path.gsub "jboss.jca:service=ManagedConnectionPool,name=", ""}
+        datasources.collect { |path| path.gsub "jboss.jca:service=ManagedConnectionPool,name=", "" }
+      end
+
+      def connectors
+        result = @twiddle.invoke :query, "jboss.web:type=ThreadPool,*"
+        connectors = result.split(/\s+/)
+        connectors.collect do |path|
+          name = path.gsub "jboss.web:type=ThreadPool,name=", ""
+          name.gsub /-\d{1,3}(.\d{1,3}){3}-/, ':'
+        end
       end
 
     end
