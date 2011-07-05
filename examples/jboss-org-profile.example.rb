@@ -21,14 +21,23 @@
 # THE SOFTWARE.
 
 require_relative '../src/rboss'
+require 'optparse'
+
+params = {}
+
+opts = OptionParser::new
+opts.on('-j', '--jboss-home [path]', 'Defines the JBOSS_HOME variable') { |home| params[:jboss_home] = home }
+opts.on('-t', '--type [type]', 'Defines the JBoss Type (org, eap, soa_p, epp)') { |type| params[:type] = type }
+opts.on('-v', '--version [version]', 'Defines the JBoss version (5, 6, 5.1, 5.0.1)') { |version| params[:version] = version }
+opts.on('-b', '--base-profile [profile]', 'Defines the JMX User') { |profile| params[:base_profile] = profile }
+opts.on('-p', '--profile [profile]', 'Defines the JMX Password') { |profile| params[:profile] = profile }
+opts.on("-h", "--help", "Show this help message") { puts opts; exit }
+#TODO make an option for reading an yaml with profile configuration
+opts.parse!(ARGV) rescue abort 'Invalid Option'
 
 include JBoss
 
-profile = Profile::new "#{ENV["HOME"]}/jboss/org/jboss-5.1",
-                       :type         => :org,
-                       :version      => 5.1,
-                       :base_profile => :default,
-                       :profile      => :dev
+profile = Profile::new params
 
 profile.configure :jmx, :password => "admin"
 
