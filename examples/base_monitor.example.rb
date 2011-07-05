@@ -21,12 +21,24 @@
 # THE SOFTWARE.
 
 require_relative '../src/rboss'
+require 'optparse'
+
+params = {}
+
+opts = OptionParser::new
+opts.on('-j', '--jboss-home [path]', 'Defines the JBOSS_HOME variable') { |home| params[:jboss_home] = home }
+opts.on('-s', '--jboss-ip [ip]', 'Defines the JBoss ip') { |ip| params[:jboss_ip] = ip }
+opts.on('-l', '--jboss-port [port]', 'Defines the JBoss jnp port') { |port| params[:jboss_port] = port }
+opts.on('-u', '--jmx-user [user]', 'Defines the JMX User') { |user| params[:jmx_user] = user }
+opts.on('-p', '--jmx-password [password]', 'Defines the JMX Password') { |password| params[:jmx_password] = password }
+opts.on("-h", "--help", "Show this help message") { puts opts; exit }
+opts.parse!(ARGV) rescue abort 'Invalid Option'
+
+twiddle = JBoss::Twiddle::Invoker::new params
+
+monitor = JBoss::Twiddle::BaseMonitor::new twiddle
 
 while true do
-
-  twiddle = JBoss::Twiddle::Invoker::new
-  monitor = JBoss::Twiddle::BaseMonitor::new twiddle
-
   puts "Server Info:"
   puts "\t- FreeMemory=#{monitor.server_info(:property => 'FreeMemory').value.to_i / (1024 * 1024)}MB"
   puts "\t- #{monitor.server_info :property => 'ActiveThreadCount'}"
@@ -42,7 +54,7 @@ while true do
     end
   end
 
-  puts "Datasources"
+  puts "Datasources:"
 
   monitor.with :datasources do |datasource|
     puts "\t- #{datasource}"
@@ -51,7 +63,7 @@ while true do
     end
   end
 
-  puts "Webapp"
+  puts "Webapp:"
 
   monitor.with :webapps do |webapp|
     puts "\t- #{webapp}"
