@@ -22,13 +22,31 @@
 
 require_relative '../src/rboss'
 
-discovery = JBoss::Twiddle::ResourceDiscoverer::new
+require 'optparse'
 
-puts "Webapps:"
-puts discovery.webapps
+params = {}
 
-puts "\nDatasources:"
-puts discovery.datasources
+opts = OptionParser::new
+opts.on('-j', '--jboss-home [path]', 'Defines the JBOSS_HOME variable') { |home| params[:jboss_home] = home }
+opts.on('-s', '--jboss-ip [ip]', 'Defines the JBoss ip') { |ip| params[:jboss_ip] = ip }
+opts.on('-l', '--jboss-port [port]', 'Defines the JBoss jnp port') { |port| params[:jboss_port] = port }
+opts.on('-u', '--jmx-user [user]', 'Defines the JMX User') { |user| params[:jmx_user] = user }
+opts.on('-p', '--jmx-password [password]', 'Defines the JMX Password') { |password| params[:jmx_password] = password }
+opts.on("-h", "--help", "Show this help message") { puts opts; exit }
+opts.parse!(ARGV) rescue abort 'Invalid Option'
 
-puts "\nConnectors:"
-puts discovery.connectors
+twiddle = JBoss::Twiddle::Invoker::new params
+discovery = JBoss::Twiddle::ResourceDiscoverer::new twiddle
+
+print_resources = lambda do |resource|
+  puts "\t- #{resource}"
+end
+
+puts "- Webapps:"
+discovery.webapps.each &print_resources
+
+puts "- Datasources:"
+discovery.datasources.each &print_resources
+
+puts "- Connectors:"
+discovery.connectors.each &print_resources

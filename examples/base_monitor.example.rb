@@ -35,7 +35,6 @@ opts.on("-h", "--help", "Show this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option'
 
 twiddle = JBoss::Twiddle::Invoker::new params
-
 monitor = JBoss::Twiddle::BaseMonitor::new twiddle
 
 while true do
