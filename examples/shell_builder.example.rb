@@ -21,41 +21,12 @@
 # THE SOFTWARE.
 
 require_relative '../src/rboss'
+invoker = JBoss::Twiddle::Invoker::new :jboss_home => "#{ENV['HOME']}/jboss/org/jboss-5.1"
+monitor = JBoss::Twiddle::BaseMonitor::new invoker
+builder = JBoss::Twiddle::Monitor::ShellBuilder::new monitor
 
-monitor = JBoss::Twiddle::BaseMonitor::new
+monitor.resources :datasource, 'DefaultDS'
+monitor.resources [:webapp, :request], 'jmx-console', 'admin-console', 'web-console'
+monitor.resources :connector, 'http:8080', 'ajp:8009'
 
-info = []
-info << "Server Info:"
-info << "\t- FreeMemory=#{monitor.server_info(:property => 'FreeMemory').value.to_i / (1024 * 1024)}MB"
-info << "\t- #{monitor.server_info :property => 'ActiveThreadCount'}"
-info << "Connectors:"
-
-%W(http:8080 ajp:8009).each do |connector|
-  monitor.with connector do
-    info << "\t- #{connector}"
-    monitor.properties[:connector].each do |property|
-      info << "\t\t- #{monitor.connector[property]}"
-    end
-    monitor.properties[:request].each do |property|
-      info << "\t\t- #{monitor.request[property]}"
-    end
-  end
-end
-
-info << "Datasource DefaultDS:"
-
-monitor.with 'DefaultDS' do
-  monitor.properties[:datasource].each do |property|
-    info << "\t- #{monitor.datasource[property]}"
-  end
-end
-
-info << "Webapp jmx-console"
-
-monitor.with 'jmx-console' do
-  monitor.properties[:webapp].each do |property|
-    info << "\t- #{monitor.webapp[property]}"
-  end
-end
-
-puts info.join "\n"
+puts builder.result

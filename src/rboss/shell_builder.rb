@@ -26,35 +26,35 @@ require 'erb'
 
 module JBoss
   module Twiddle
+    module Monitor
+      class ShellBuilder
 
-    class ShellBuilder
+        attr_reader :monitor, :twiddle, :opts
 
-      attr_reader :monitor, :twiddle, :opts
+        def initialize monitor, params = {}
+          @opts = {
+            :frequency => 10,
+            :template_path => File.join(File.dirname(__FILE__), "resources", "monitor.template.sh.erb"),
+            :twiddle_command_var => "TWIDDLE_CMD"
+          }.merge! params
+          @monitor = monitor
+          @twiddle = monitor.twiddle
+          @twiddle.command = @opts[:twiddle_command_var]
+          # return the shell command instead of executing it
+          def @twiddle.execute shell
+            shell
+          end
 
-      def initialize monitor, params = {}
-        @opts = {
-          :frequency => 10,
-          :template_path => File.join(File.dirname(__FILE__), "resources", "monitor.template.sh.erb"),
-          :twiddle_command_var => "TWIDDLE_CMD"
-        }.merge! params
-        @monitor = monitor
-        @twiddle = monitor.twiddle
-        @twiddle.command = @opts[:twiddle_command_var]
-        # return the shell command instead of executing it
-        def @twiddle.execute shell
-          shell
+          @template = @opts[:template] if @opts.has_key? :template
+          @template ||= File.read @opts[:template_path]
         end
 
-        @template = @opts[:template] if @opts.has_key? :template
-        @template ||= File.read @opts[:template_path]
-      end
+        def result
+          erb = ERB::new(@template, 0, "%<>")
+          erb.result binding
+        end
 
-      def result
-        erb = ERB::new(@template, 0, "%<>")
-        erb.result binding
       end
-
     end
-
   end
 end

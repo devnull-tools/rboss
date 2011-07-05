@@ -3,10 +3,10 @@ require_relative '../src/rboss'
 include JBoss
 
 profile = Profile::new "#{ENV["HOME"]}/jboss/org/jboss-5.1",
-                       :type => :org,
-                       :version => 5.1,
+                       :type         => :org,
+                       :version      => 5.1,
                        :base_profile => :default,
-                       :profile => :dev
+                       :profile      => :dev
 
 profile.configure :jmx, :password => "admin"
 

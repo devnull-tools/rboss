@@ -56,8 +56,8 @@ module JBoss
         }
       end
 
-      def initialize params = {}
-        @twiddle = JBoss::Twiddle::Invoker::new params
+      def initialize twiddle
+        @twiddle = twiddle
         defaults.each do |mbean_id, config|
           monitor mbean_id, config
         end

@@ -20,11 +20,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require_relative 'twiddle'
+
 module JBoss
   class MBean
 
     attr_reader :pattern
-    attr_accessor :resource
+    attr_accessor :resource, :twiddle
 
     def initialize params
       @pattern = params[:pattern]
@@ -44,7 +46,7 @@ module JBoss
       @twiddle.invoke(:get, query, property)
     end
 
-    def get property, params
+    def get property, params = {}
       @resource= params[:for]
       self[property]
     end
@@ -57,6 +59,10 @@ module JBoss
     end
 
     def method_missing(method, *args, &block)
+      _invoke_ method, args, block
+    end
+
+    def _invoke_ method, *args, &block
       resource = @resource
       env = @env
       query = eval("\"#{pattern} #{method}\"")
@@ -68,6 +74,27 @@ module JBoss
     end
 
   end
+
+  module MBeans
+
+    class ServerInfo < MBean
+
+      def initialize twiddle = JBoss::Twiddle::Invoker::new
+        super :pattern => 'jboss.system:type=ServerInfo', :twiddle => twiddle
+      end
+
+      def free_memory
+        get("FreeMemory").value.to_i
+      end
+
+      def active_thread_count
+        get("ActiveThreadCount").value.to_i
+      end
+
+    end
+
+  end
+
 end
 
 class String

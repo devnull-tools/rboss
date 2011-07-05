@@ -69,5 +69,26 @@ module JBoss
       alias_method :[], :get_system_property
 
     end
+
+    class ResourceDiscovery
+
+      def initialize invoker = Invoker::new
+        @twiddle = invoker
+      end
+
+      def webapps
+        result = @twiddle.invoke :query, "jboss.web.deployment:war=*"
+        webapps = result.split(/\s+/)
+        webapps.collect {|path| path.gsub "jboss.web.deployment:war=/", ""}
+      end
+
+      def datasources
+        result = @twiddle.invoke :query, "jboss.jca:service=ManagedConnectionPool,*"
+        datasources = result.split(/\s+/)
+        datasources.collect {|path| path.gsub "jboss.jca:service=ManagedConnectionPool,name=", ""}
+      end
+
+    end
+
   end
 end
