@@ -14,7 +14,7 @@ DATASOURCES=(<%= monitor.resources[:datasource].join ' ' %>)
 WEBAPPS=(<%= monitor.resources[:webapp].join ' ' %>)
 
 #Path to twiddle
-<%= opts[:twiddle_command_var] %>=<%= "#{twiddle.jboss_home}" %>/bin/twiddle.sh -s $SERVER_IP:$SERVER_PORT -u '$USER' -p '$PASSWORD'
+<%= opts[:twiddle_command_var] %>="<%= "#{twiddle.jboss_home}" %>/bin/twiddle.sh -s $SERVER_IP:$SERVER_PORT -u '$USER' -p '$PASSWORD'"
 
 while [ 1 ] ; do
   clear

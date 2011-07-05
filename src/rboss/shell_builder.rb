@@ -39,7 +39,7 @@ module JBoss
           }.merge! params
           @monitor = monitor
           @twiddle = monitor.twiddle
-          @twiddle.command = @opts[:twiddle_command_var]
+          @twiddle.command = "$#{@opts[:twiddle_command_var]}"
           # return the shell command instead of executing it
           def @twiddle.execute shell
             shell
