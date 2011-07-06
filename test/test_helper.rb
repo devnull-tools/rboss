@@ -24,7 +24,7 @@ require 'test/unit'
 require 'logger'
 require 'rexml/document'
 
-require_relative '../lib/rboss/jboss_profile'
+require_relative '../lib/rboss'
 require_relative '../lib/rboss/file_processor'
 
 include JBoss
