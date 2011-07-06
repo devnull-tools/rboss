@@ -4,3 +4,4 @@ rboss.iws
 .bundle
 Gemfile.lock
 pkg/*
+.rakeTasks
