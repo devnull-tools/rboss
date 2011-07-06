@@ -11,8 +11,6 @@ Gem::Specification.new do |s|
   s.summary     = %q{A Ruby way to do a JBoss work!}
   s.description = %q{This gem help you to create a JBoss profile and some other things like building twiddle scripts}
 
-  s.add_dependency "erb"
-
   s.rubyforge_project = "rboss"
 
   s.files         = `git ls-files`.split("\n")
