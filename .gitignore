@@ -1,2 +1,6 @@
 out
 rboss.iws
+*.gem
+.bundle
+Gemfile.lock
+pkg/*
