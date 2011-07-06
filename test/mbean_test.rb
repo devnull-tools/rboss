@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 
 require 'test/unit'
-require_relative '../src/rboss'
+require_relative '../lib/rboss'
 
 class MBeanTest < Test::Unit::TestCase
 

@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 #                         The MIT License
 #
 # Copyright (c) 2011 Marcelo Guimarães <ataxexe@gmail.com>
@@ -20,31 +22,26 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require '../src/rboss'
+require 'rboss'
+require 'optparse'
 
-include JBoss
+params = {}
 
-profile = Profile::new "#{ENV["HOME"]}/jboss/soa-p/jboss-soa-p-5/jboss-as",
-                       :type         => :soa_p,
-                       :version      => 5,
-                       :base_profile => :all,
-                       :profile      => :dev
+opts = OptionParser::new
+opts.on('-j', '--jboss-home [path]', 'Defines the JBOSS_HOME variable') { |home| params[:jboss_home] = home }
+opts.on('-s', '--jboss-ip [ip]', 'Defines the JBoss ip') { |ip| params[:jboss_ip] = ip }
+opts.on('-l', '--jboss-port [port]', 'Defines the JBoss jnp port') { |port| params[:jboss_port] = port }
+opts.on('-u', '--jmx-user [user]', 'Defines the JMX User') { |user| params[:jmx_user] = user }
+opts.on('-p', '--jmx-password [password]', 'Defines the JMX Password') { |password| params[:jmx_password] = password }
+opts.on("-h", "--help", "Show this help message") { puts opts; exit }
+opts.parse!(ARGV) rescue abort 'Invalid Option'
 
-profile.add :jmx
-profile.add :deploy_folder, 'deploy/datasources'
-profile.add :deploy_folder, 'deploy/apps'
-profile.add :default_ds,
-            "source.dir"  => :postgresql84,
-            "db.name"     => :jboss_soap_db,
-            "db.hostname" => :localhost,
-            "db.port"     => 5432,
-            "db.username" => :postgres,
-            "db.password" => :postgres
+discoverer = JBoss::Twiddle::ResourceDiscoverer::new JBoss::Twiddle::Invoker::new(params)
+monitor = JBoss::Twiddle::BaseMonitor::new JBoss::Twiddle::Invoker::new(params)
+builder = JBoss::Twiddle::Monitor::ShellBuilder::new monitor
 
-profile.add :resource, 'lib/postgresql-8.4-x.jdbc4.jar' => "#{ENV["HOME"]}/jdbc/postgresql/postgresql.jar"
+monitor.resources :datasource, *discoverer.datasources
+monitor.resources [:webapp, :request], *discoverer.webapps
+monitor.resources :connector, *discoverer.connectors
 
-profile.install :mod_cluster
-
-profile.add :run_conf, :heap_size => '1024m', :perm_size => '512m'
-
-profile.create
+puts builder.result

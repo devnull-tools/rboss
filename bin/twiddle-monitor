@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 #                         The MIT License
 #
 # Copyright (c) 2011 Marcelo Guimarães <ataxexe@gmail.com>
@@ -20,8 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../src/rboss'
-
+require 'rboss'
 require 'optparse'
 
 params = {}
@@ -36,17 +37,45 @@ opts.on("-h", "--help", "Show this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option'
 
 twiddle = JBoss::Twiddle::Invoker::new params
-discovery = JBoss::Twiddle::ResourceDiscoverer::new twiddle
+monitor = JBoss::Twiddle::BaseMonitor::new twiddle
 
-print_resources = lambda do |resource|
-  puts "\t- #{resource}"
+while true do
+  puts "Server Info:"
+  puts "\t- FreeMemory=#{monitor.server_info(:property => 'FreeMemory').value.to_i / (1024 * 1024)}MB"
+  puts "\t- #{monitor.server_info :property => 'ActiveThreadCount'}"
+  puts "Connectors:"
+
+  monitor.with :connectors do |connector|
+    puts "\t- #{connector}"
+    monitor.properties[:connector].each do |property|
+      puts "\t\t- #{monitor.connector[property]}"
+    end
+    monitor.properties[:request].each do |property|
+      puts "\t\t- #{monitor.request[property]}"
+    end
+  end
+
+  puts "Datasources:"
+
+  monitor.with :datasources do |datasource|
+    puts "\t- #{datasource}"
+    monitor.properties[:datasource].each do |property|
+      puts "\t\t- #{monitor.datasource[property]}"
+    end
+  end
+
+  puts "Webapp:"
+
+  monitor.with :webapps do |webapp|
+    puts "\t- #{webapp}"
+    monitor.properties[:webapp].each do |property|
+      puts "\t\t- #{monitor.webapp[property]}"
+    end
+  end
+
+  sleep 10
+
+  puts
+  puts
+  puts
 end
-
-puts "- Webapps:"
-discovery.webapps.each &print_resources
-
-puts "- Datasources:"
-discovery.datasources.each &print_resources
-
-puts "- Connectors:"
-discovery.connectors.each &print_resources

@@ -1,0 +1,7 @@
+- :deploy_folder: deploy/datasources
+- :deploy_folder: deploy/apps
+- :jmx
+- :run_conf: 
+    :heap_size: 1024m
+    :perm_size: 512m
+    :debug: :socket
