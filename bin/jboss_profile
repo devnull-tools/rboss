@@ -34,8 +34,8 @@ opts = OptionParser::new
 opts.on('-j', '--jboss-home [path]', 'Defines the JBOSS_HOME variable') { |home| params[:jboss_home] = home }
 opts.on('-t', '--type [type]', 'Defines the JBoss Type (org, eap, soa_p, epp)') { |type| params[:type] = type.to_sym }
 opts.on('-v', '--version [version]', 'Defines the JBoss version (5, 6, 5.1, 5.0.1)') { |version| params[:version] = version }
-opts.on('-b', '--base-profile [profile]', 'Defines the JMX User') { |profile| params[:base_profile] = profile }
-opts.on('-p', '--profile [profile]', 'Defines the JMX Password') { |profile| params[:profile] = profile }
+opts.on('-b', '--base-profile [profile]', 'Defines the base profile') { |profile| params[:base_profile] = profile }
+opts.on('-p', '--profile [profile]', 'Defines the custom profile') { |profile| params[:profile] = profile }
 opts.on('-c', '--config-file [yaml]', 'Defines the configuration file for the instance (see the examples for more details)') { |yaml| config_file = yaml }
 opts.on("-h", "--help", "Show this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option'
@@ -49,6 +49,7 @@ if config_file
       profile.add var
     elsif var.is_a? Hash
       var.each do |key, value|
+        key = key.to_s if key.is_a? String
         profile.add key, value
       end
     end
