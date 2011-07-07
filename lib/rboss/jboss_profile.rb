@@ -160,7 +160,34 @@ module JBoss
       add :slimming, args
     end
 
-    private
+    # loads extensions to components based on the type of jboss (eap, soa-p, org, epp...)
+    def load_extensions
+      unless @jboss.type == :undefined
+        dir = File.join(@base_dir, "components", @jboss.type.to_s.gsub(/_/, '-'))
+        load_scripts_in dir
+        unless @jboss.version == :undefined
+          dir = File.join(dir, @jboss.version.to_s)
+          load_scripts_in dir
+        end
+      end
+    end
+
+    def load_scripts_in dir
+      if File.exists? dir
+        scripts = Dir.entries(dir).find_all { |f| f.end_with? '.rb' }
+        scripts.each do |script|
+          load File.join(dir, script)
+        end
+      end
+    end
+
+    # Loads manually every script related to jboss. This is necessary to reset the components to its natural state
+    def load_scripts
+      scripts = Dir.entries("#{@base_dir}/components").find_all { |f| f.end_with?('.rb') }
+      scripts.each do |script|
+        load File.expand_path(@base_dir) + "/components/" + script
+      end
+    end
 
     def initialize_components
       load_scripts
@@ -306,35 +333,6 @@ module JBoss
                }
     end
 
-  end
-
-  # loads extensions to components based on the type of jboss (eap, soa-p, org, epp...)
-  def load_extensions
-    unless @jboss.type == :undefined
-      dir = File.join(@base_dir, "components", @jboss.type.to_s.gsub(/_/, '-'))
-      load_scripts_in dir
-      unless @jboss.version == :undefined
-        dir = File.join(dir, @jboss.version.to_s)
-        load_scripts_in dir
-      end
-    end
-  end
-
-  def load_scripts_in dir
-    if File.exists? dir
-      scripts = Dir.entries(dir).find_all { |f| f.end_with? '.rb' }
-      scripts.each do |script|
-        load File.join(dir, script)
-      end
-    end
-  end
-
-  # Loads manually every script related to jboss. This is necessary to reset the components to its natural state
-  def load_scripts
-    scripts = Dir.entries("#{@base_dir}/components").find_all { |f| f.end_with?('.rb') }
-    scripts.each do |script|
-      load File.expand_path(@base_dir) + "/components/" + script
-    end
   end
 
 end
