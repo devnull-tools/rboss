@@ -31,12 +31,12 @@ params = {}
 config_file = nil
 
 opts = OptionParser::new
-opts.on('-j', '--jboss-home [path]', 'Defines the JBOSS_HOME variable') { |home| params[:jboss_home] = home }
-opts.on('-t', '--type [type]', 'Defines the JBoss Type (org, eap, soa_p, epp)') { |type| params[:type] = type.to_sym }
-opts.on('-v', '--version [version]', 'Defines the JBoss version (5, 6, 5.1, 5.0.1)') { |version| params[:version] = version }
-opts.on('-b', '--base-profile [profile]', 'Defines the base profile') { |profile| params[:base_profile] = profile }
-opts.on('-p', '--profile [profile]', 'Defines the custom profile') { |profile| params[:profile] = profile }
-opts.on('-c', '--config-file [yaml]', 'Defines the configuration file for the instance (see the examples for more details)') { |yaml| config_file = yaml }
+opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') { |home| params[:jboss_home] = home }
+opts.on('-t', '--type TYPE', 'Defines the JBoss Type (org, eap, soa_p, epp)') { |type| params[:type] = type.to_sym }
+opts.on('-v', '--version VERSION', 'Defines the JBoss version (5, 6, 5.1, 5.0.1)') { |version| params[:version] = version }
+opts.on('-b', '--base-profile PROFILE', 'Defines the base profile') { |profile| params[:base_profile] = profile }
+opts.on('-p', '--profile PROFILE', 'Defines the custom profile') { |profile| params[:profile] = profile }
+opts.on('-c', '--config-file FILE', 'Defines the configuration file for the instance (see the examples for more details)') { |yaml| config_file = yaml }
 opts.on("-h", "--help", "Show this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option'
 
