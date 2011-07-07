@@ -45,7 +45,7 @@ module JBoss
 
     def defaults
       {
-        "org.jboss.esb.server.home" => "#{@jboss.home}",
+        "org.jboss.esb.server.home" => File.expand_path @jboss.home,
         "org.jboss.esb.server.clustered" => "#{File.exists? "#{@jboss.profile}/farm"}",
         "org.jboss.esb.server.config" => "#{@jboss.profile_name}",
 
