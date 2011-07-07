@@ -49,7 +49,7 @@ if config_file
       profile.add var
     elsif var.is_a? Hash
       var.each do |key, value|
-        key = key.to_s if key.is_a? String
+        key = key.to_sym if key.is_a? String
         profile.add key, value
       end
     end
