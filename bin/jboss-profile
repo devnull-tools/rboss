@@ -38,7 +38,7 @@ opts.on('-b', '--base-profile PROFILE', 'Defines the base profile') { |profile| 
 opts.on('-p', '--profile PROFILE', 'Defines the custom profile') { |profile| params[:profile] = profile }
 opts.on('-c', '--config-file FILE', 'Defines the configuration file for the instance (see the examples for more details)') { |yaml| config_file = yaml }
 opts.on("-h", "--help", "Show this help message") { puts opts; exit }
-opts.parse!(ARGV) rescue abort 'Invalid Option'
+opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
 
 profile = JBoss::Profile::new params
 

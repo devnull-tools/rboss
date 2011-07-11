@@ -35,7 +35,7 @@ opts.on('-u', '--jmx-user USER', 'Defines the JMX User') { |user| params[:jmx_us
 opts.on('-p', '--jmx-password PASSWORD', 'Defines the JMX Password') { |password| params[:jmx_password] = password }
 opts.on('-t', '--template-path PATH', 'Defines the template') { |path| params[:template_path] = path }
 opts.on("-h", "--help", "Show this help message") { puts opts; exit }
-opts.parse!(ARGV) rescue abort 'Invalid Option'
+opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
 
 discoverer = JBoss::Twiddle::Scanner::new JBoss::Twiddle::Invoker::new(params)
 monitor = JBoss::Twiddle::BaseMonitor::new JBoss::Twiddle::Invoker::new(params)
