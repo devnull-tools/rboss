@@ -41,35 +41,37 @@ monitor = JBoss::Twiddle::BaseMonitor::new twiddle
 
 while true do
   puts "Server Info:"
-  puts "\t- FreeMemory=#{monitor.server_info(:property => 'FreeMemory').value.to_i / (1024 * 1024)}MB"
-  puts "\t- #{monitor.server_info :property => 'ActiveThreadCount'}"
+  monitor.properties[:server_info].each do |property|
+    puts "\t|==> #{monitor.server_info[property]}"
+  end
+
   puts "Connectors:"
 
   monitor.with :connectors do |connector|
-    puts "\t- #{connector}"
+    puts "\t|==> #{connector}"
     monitor.properties[:connector].each do |property|
-      puts "\t\t- #{monitor.connector[property]}"
+      puts "\t\t|==> #{monitor.connector[property]}"
     end
     monitor.properties[:request].each do |property|
-      puts "\t\t- #{monitor.request[property]}"
+      puts "\t\t|==> #{monitor.request[property]}"
     end
   end
 
   puts "Datasources:"
 
   monitor.with :datasources do |datasource|
-    puts "\t- #{datasource}"
+    puts "\t|==> #{datasource}"
     monitor.properties[:datasource].each do |property|
-      puts "\t\t- #{monitor.datasource[property]}"
+      puts "\t\t|==> #{monitor.datasource[property]}"
     end
   end
 
   puts "Webapp:"
 
   monitor.with :webapps do |webapp|
-    puts "\t- #{webapp}"
+    puts "\t|==> #{webapp}"
     monitor.properties[:webapp].each do |property|
-      puts "\t\t- #{monitor.webapp[property]}"
+      puts "\t\t|==> #{monitor.webapp[property]}"
     end
   end
 

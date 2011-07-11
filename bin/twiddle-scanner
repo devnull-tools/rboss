@@ -37,7 +37,7 @@ opts.on("-h", "--help", "Show this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option'
 
 twiddle = JBoss::Twiddle::Invoker::new params
-discovery = JBoss::Twiddle::ResourceDiscoverer::new twiddle
+discovery = JBoss::Twiddle::Scanner::new twiddle
 
 print_resources = lambda do |resource|
   puts "\t- #{resource}"

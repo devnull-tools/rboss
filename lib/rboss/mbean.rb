@@ -43,7 +43,11 @@ module JBoss
       resource = @resource
       env = @env
       query = eval("\"#{pattern}\"")
-      @twiddle.invoke(:get, query, property)
+      result = @twiddle.invoke(:get, query, property)
+      def result.value
+        self.split(/=/)[1]
+      end
+      result
     end
 
     def get property, params = {}
@@ -93,12 +97,11 @@ module JBoss
 
     end
 
+    class Webapps
+
+    end
+
   end
 
 end
 
-class String
-  def value
-    self.split(/=/)[1]
-  end
-end

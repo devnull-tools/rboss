@@ -37,7 +37,7 @@ opts.on('-t', '--template-path PATH', 'Defines the template') { |path| params[:t
 opts.on("-h", "--help", "Show this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option'
 
-discoverer = JBoss::Twiddle::ResourceDiscoverer::new JBoss::Twiddle::Invoker::new(params)
+discoverer = JBoss::Twiddle::Scanner::new JBoss::Twiddle::Invoker::new(params)
 monitor = JBoss::Twiddle::BaseMonitor::new JBoss::Twiddle::Invoker::new(params)
 builder = JBoss::Twiddle::Monitor::ShellBuilder::new monitor, params
 

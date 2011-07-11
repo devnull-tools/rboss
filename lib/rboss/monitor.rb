@@ -28,7 +28,7 @@ module JBoss
     module Monitor
 
       def discoverer
-        @discoverer ||= JBoss::Twiddle::ResourceDiscoverer::new @twiddle
+        @discoverer ||= JBoss::Twiddle::Scanner::new @twiddle
         @discoverer
       end
 

@@ -70,7 +70,7 @@ module JBoss
 
     end
 
-    class ResourceDiscoverer
+    class Scanner
 
       def initialize invoker = Invoker::new
         @twiddle = invoker
