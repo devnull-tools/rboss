@@ -9,7 +9,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Ruby SDK 1.9.2-p180" jdkType="RUBY_SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="bundler (v1.0.15, Ruby SDK 1.9.2-p180) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="bundler (v1.0.13, Ruby SDK 1.9.2-p180) [gem]" level="application" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">
