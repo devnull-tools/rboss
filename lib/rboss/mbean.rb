@@ -79,29 +79,5 @@ module JBoss
 
   end
 
-  module MBeans
-
-    class ServerInfo < MBean
-
-      def initialize twiddle = JBoss::Twiddle::Invoker::new
-        super :pattern => 'jboss.system:type=ServerInfo', :twiddle => twiddle
-      end
-
-      def free_memory
-        get("FreeMemory").value.to_i
-      end
-
-      def active_thread_count
-        get("ActiveThreadCount").value.to_i
-      end
-
-    end
-
-    class Webapps
-
-    end
-
-  end
-
 end
 
