@@ -6,7 +6,9 @@
 - deploy_folder: deploy/datasources
 - deploy_folder: deploy/apps
 - resource:
-    deploy/apps: ~/Downloads/teste-replicacao.war
+    deploy/apps: ~/workspace/teste-replicacao.war
+- resource:
+    lib: ~/jdbc/postgresql/postgresql.jar
 - jmx:
     :password: jbb
 - default_ds:
