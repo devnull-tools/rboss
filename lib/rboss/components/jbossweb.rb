@@ -102,7 +102,6 @@ module JBoss
           key = key.to_s.camelize.uncapitalize if key.is_a? Symbol
           tag.attributes[key] = value.to_s
         end
-        puts tag
         xml
       end
     end
