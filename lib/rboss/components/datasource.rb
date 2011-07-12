@@ -120,7 +120,7 @@ module JBoss
           return element if element
         end
       else
-        XPath.first xml, yield(k)
+        XPath.first xml, yield(key)
       end
       nil
     end

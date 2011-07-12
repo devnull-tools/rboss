@@ -12,14 +12,15 @@
 - default_ds:
     :type: postgres
     :attributes:
-      :user: postgres
+      :user_name: postgres
       :password: postgres
       :connection_url: jdbc:postgresql://localhost:5432/jboss_org_db
-- jbossweb:
-    :jvm_route: jbb1
+      :min_pool_size: 5
+      :max_pool_size: 15
+- jboss_web:
     :connectors:
-        - ajp:
-            :maxThreads:
+        ajp:
+          :max_threads: 600
 - run_conf:
     :heap_size: 1024m
     :perm_size: 512m

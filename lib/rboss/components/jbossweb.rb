@@ -70,10 +70,12 @@ module JBoss
       @processor = new_file_processor
       @actions = []
       configure_connectors
-      configure_engine if @config[:jvm_route]
+      configure_engine
       @processor.with "#{@jboss.profile}/deploy/jbossweb.sar/server.xml", :xml do |action|
         action.to_process do |xml, jboss|
-          @actions.each { |a| xml = a.call(xml, jboss) }
+          @actions.each do |block|
+            xml = block.call(xml, jboss)
+          end
           xml
         end
       end
@@ -82,7 +84,7 @@ module JBoss
 
     def configure_connectors
       @config[:connectors].each do |type, attributes|
-        defaults = connector_defaults[type]
+        defaults = connector_defaults[type.to_sym]
         defaults ||= connector_defaults[:other]
         attributes = defaults.merge attributes
         configure_connector attributes, defaults
@@ -97,8 +99,10 @@ module JBoss
           xml.insert_after "//Connector", tag
         end
         attributes.each do |key, value|
-          tag.attributes[key.to_s.camelize.uncapitalize] = value.to_s
+          key = key.to_s.camelize.uncapitalize if key.is_a? Symbol
+          tag.attributes[key] = value.to_s
         end
+        puts tag
         xml
       end
     end
@@ -106,7 +110,9 @@ module JBoss
     def configure_engine
       @actions << lambda do |xml, jboss|
         engine = XPath.first xml, "//Engine[@name='jboss.web']"
-        engine.attributes["jvmRoute"] = @config[:jvm_route]
+        route = ":#{@config[:jvm_route]}" if @config[:jvm_route]
+        route ||= ''
+        engine.attributes["jvmRoute"] = "${jboss.jbossweb.jvmRoute#{route}}"
         xml
       end
     end

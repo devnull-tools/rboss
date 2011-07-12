@@ -204,7 +204,7 @@ module JBoss
                :defaults => {
                  :multicast_ip => "239.255.0.1",
                  :partition_name => "#{@profile}-partition",
-                 :jvm_route => "${jboss.jbossweb.jvmRoute:#{@profile}}"
+                 :jvm_route => "#{@profile}"
                }
 
       register :jms,
@@ -295,7 +295,10 @@ module JBoss
       register :jboss_web,
 
                :type => JBoss::Web,
-               :priority => @@setup
+               :priority => @@setup,
+               :move_config => {
+                 :to_run_conf => [:jvm_route]
+               }
 
       register :run_conf,
 
