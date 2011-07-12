@@ -119,7 +119,7 @@ module JBoss
         :type => :undefined,
         :version => :undefined
       }.merge! opts
-      @jboss_home = @opts[:jboss_home]
+      @jboss_home = File.expand_path @opts[:jboss_home]
       @logger = @opts[:logger]
       unless @logger
         @logger = Logger::new STDOUT

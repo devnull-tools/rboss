@@ -33,7 +33,7 @@ module JBoss
 
     def initialize jboss_home, profile = :custom, type = :undefined, version = :undefined
       @home = jboss_home
-      @profile ="#{jboss_home}/server/#{profile}"
+      @profile ="#{@jboss_home}/server/#{profile}"
       @profile_name = profile.to_s
       @type = type
       @version = version

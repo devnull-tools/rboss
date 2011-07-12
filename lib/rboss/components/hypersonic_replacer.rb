@@ -48,6 +48,8 @@ module JBoss
       @datasource.process
 
       @logger.info "Copying persistence service template for #{@datasource.type}..."
+      # For postgres, the jms example filename differs from jca
+      @datasource.type = :postgresql if @datasource.type = :postgres
       cp "#{@jboss.home}/docs/examples/jms/#{@datasource.type}-persistence-service.xml", "#{@jboss.profile}/deploy/messaging"
     end
 

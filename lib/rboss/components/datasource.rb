@@ -60,8 +60,7 @@ module JBoss
   class Datasource
     include Component
 
-    attr_reader :attributes, :type, :name
-    attr_accessor :jndi_name
+    attr_accessor :jndi_name, :attributes, :type, :name
 
     def defaults
       {
