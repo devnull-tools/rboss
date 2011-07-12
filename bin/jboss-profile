@@ -46,13 +46,13 @@ profile = JBoss::Profile::new params
 if config_file
   config = YAML::load File.open(config_file)
   config.each do |var|
-    if var.is_a? Symbol
-      profile.add var
-    elsif var.is_a? Hash
+    if var.is_a? Hash
       var.each do |key, value|
         key = key.to_sym if key.is_a? String
         profile.add key, value
       end
+    else
+      profile.add var.to_sym
     end
   end
 end
