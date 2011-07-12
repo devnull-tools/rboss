@@ -70,7 +70,7 @@ module JBoss
       @processor = new_file_processor
       @actions = []
       configure_connectors
-      configure_engine
+      configure_engine if @config[:jvm_route]
       @processor.with "#{@jboss.profile}/deploy/jbossweb.sar/server.xml", :xml do |action|
         action.to_process do |xml, jboss|
           @actions.each do |block|
@@ -109,9 +109,7 @@ module JBoss
     def configure_engine
       @actions << lambda do |xml, jboss|
         engine = XPath.first xml, "//Engine[@name='jboss.web']"
-        route = ":#{@config[:jvm_route]}" if @config[:jvm_route]
-        route ||= ''
-        engine.attributes["jvmRoute"] = "${jboss.jbossweb.jvmRoute#{route}}"
+        engine.attributes["jvmRoute"] = @config[:jvm_route]
         xml
       end
     end

@@ -295,10 +295,7 @@ module JBoss
       register :jboss_web,
 
                :type => JBoss::Web,
-               :priority => @@setup,
-               :move_config => {
-                 :to_run_conf => [:jvm_route]
-               }
+               :priority => @@setup
 
       register :run_conf,
 
