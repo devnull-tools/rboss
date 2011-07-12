@@ -27,6 +27,7 @@ require 'optparse'
 require 'yaml'
 
 params = {}
+params[:jboss_home] = Dir.pwd unless ENV["JBOSS_HOME"]
 
 config_file = nil
 
