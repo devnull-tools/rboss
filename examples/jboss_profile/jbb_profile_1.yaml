@@ -1,0 +1,29 @@
+- cluster:
+    :partition_name: jbb-partition
+- mod_cluster
+- jms:
+    :peer_id: 1
+- deploy_folder: deploy/datasources
+- deploy_folder: deploy/apps
+- resource:
+    deploy/apps: ~/Downloads/teste-replicacao.war
+- jmx:
+    :password: jbb
+- default_ds:
+    :type: postgres
+    :attributes:
+      :user: postgres
+      :password: postgres
+      :connection_url: jdbc:postgresql://localhost:5432/jboss_org_db
+- jbossweb:
+    :jvm_route: jbb1
+    :connectors:
+        - ajp:
+            :maxThreads:
+- run_conf:
+    :heap_size: 1024m
+    :perm_size: 512m
+    :stack_size: 128k
+- slimming:
+    - web_console
+    - jmx_remoting
