@@ -2,7 +2,7 @@
     :partition_name: jbb-partition
 - mod_cluster
 - jms:
-    :peer_id: 1
+    :peer_id: 2
 - deploy_folder: deploy/datasources
 - deploy_folder: deploy/apps
 - resource:
