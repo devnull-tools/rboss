@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require "rboss/version"
-require 'rboss/jboss_profile'
-require 'rboss/base_monitor'
-require 'rboss/shell_builder'
+require_relative "rboss/version"
+require_relative "rboss/jboss_profile"
+require_relative "rboss/base_monitor"
+require_relative "rboss/shell_builder"
