@@ -25,6 +25,7 @@
 require 'rboss'
 require 'optparse'
 require 'yaml'
+require 'logger'
 
 params = {}
 params[:jboss_home] = Dir.pwd unless ENV["JBOSS_HOME"]
@@ -40,7 +41,10 @@ opts.on('-b', '--base-profile PROFILE', 'Defines the base profile') { |profile| 
 opts.on('-p', '--profile PROFILE', 'Defines the custom profile') { |profile| params[:profile] = profile }
 opts.on('-u', '--update', 'Just update the profile folder') { create = false }
 opts.on('-c', '--config-file FILE', 'Defines the configuration file for the instance (see the examples for more details)') { |yaml| config_file = File.expand_path(yaml) }
-opts.on('-v', '--verbose', 'Displays shell commands') { include FileUtils::Verbose }
+opts.on('-v', '--verbose', 'Displays shell commands') do
+  include FileUtils::Verbose
+  opts[:log_level] = Logger::DEBUG
+end
 opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
 

@@ -187,6 +187,7 @@ XML
     # Encrypts the given password using the SecureIdentityLoginModule
     def encrypt password
       cmd = "java -cp #{jboss_logging_lib_path}:#{jbosssx_lib_path} org.jboss.resource.security.SecureIdentityLoginModule #{password}"
+      @logger.debug cmd
       encrypted = `#{cmd}`
       encrypted.chomp.split(/:/)[1].strip
     end

@@ -123,6 +123,7 @@ module JBoss
       @logger = @opts[:logger]
       unless @logger
         @logger = Logger::new STDOUT
+        @logger.level = opts[:log_level] if opts[:log_level]
         formatter = Logger::Formatter.new
 
         def formatter.call(severity, time, program_name, message)
