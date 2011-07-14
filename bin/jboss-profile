@@ -38,7 +38,7 @@ opts.on('-t', '--type TYPE', 'Defines the JBoss Type (org, eap, soa_p, epp)') { 
 opts.on('-v', '--version VERSION', 'Defines the JBoss version (5, 6, 5.1, 5.0.1)') { |version| params[:version] = version }
 opts.on('-b', '--base-profile PROFILE', 'Defines the base profile') { |profile| params[:base_profile] = profile }
 opts.on('-p', '--profile PROFILE', 'Defines the custom profile') { |profile| params[:profile] = profile }
-opts.on('--no-create', 'Do not create the profile folder') { create = false }
+opts.on('-u', '--update', 'Just update the profile folder') { create = false }
 opts.on('-c', '--config-file FILE', 'Defines the configuration file for the instance (see the examples for more details)') { |yaml| config_file = File.expand_path(yaml) }
 opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
