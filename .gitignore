@@ -1,5 +1,7 @@
 out
 rboss.iws
+rboss.ipr
+rboss.iml
 *.gem
 .bundle
 Gemfile.lock
