@@ -304,7 +304,6 @@ module JBoss
 
                :type => JBoss::RunConf,
                :priority => @@post_setup,
-               :enabled => true,
                :send_config => {
                  :to_init_script => [:service_binding]
                },
