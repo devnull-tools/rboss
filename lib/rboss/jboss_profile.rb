@@ -197,7 +197,7 @@ module JBoss
       register :cluster,
 
                :priority => @@pre_install,
-               :send_config => {
+               :move_config => {
                  :to_run_conf => [:multicast_ip, :partition_name],
                  :to_jboss_web => [:jvm_route],
                  :to_jms => [:peer_id]
@@ -211,7 +211,7 @@ module JBoss
       register :jms,
 
                :priority => @@pre_install,
-               :send_config => {
+               :move_config => {
                  :to_run_conf => [:peer_id]
                }
 
@@ -221,7 +221,9 @@ module JBoss
                :send_config => {
                  :to_init_script => {
                    :address => :bind_address
-                 },
+                 }
+               },
+               :move_config => {
                  :to_run_conf => {
                    :ports => :service_binding
                  }

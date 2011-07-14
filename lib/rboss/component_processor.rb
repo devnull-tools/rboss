@@ -160,16 +160,18 @@ class ComponentProcessor
             config[v] = component[:config].delete k if component[:config].has_key? k
           end
         end
-        send_config destination, config
+        send_config destination, config, :enable_component => true
       end
     end
     #------------------------------------------------------
   end
 
-  def send_config component, config
-    @components[component][:defaults] ||= {}
-    component_config = @components[component][:defaults]
+  def send_config component_id, config, opts = {}
+    component = @components[component_id]
+    component[:defaults] ||= {}
+    component_config = @components[component_id][:defaults]
     component_config.merge! config
+    component[:enabled] = true if opts[:enable_component]
   end
 
 end
