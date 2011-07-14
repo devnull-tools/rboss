@@ -142,6 +142,8 @@ module JBoss
       process_components
     end
 
+    alias update process_components
+
     # For making code more readable
     #
     # example: profile.install :mod_cluster
