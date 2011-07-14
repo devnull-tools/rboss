@@ -135,11 +135,10 @@ module JBoss
       @base_profile = @opts[:base_profile].to_s
       @jboss = JBoss::Path::new @jboss_home, @profile, @opts[:type], @opts[:version]
       initialize_components
-
-      add :profile_folder, @base_profile
     end
 
     def create
+      add :profile_folder, @base_profile
       process_components
     end
 
