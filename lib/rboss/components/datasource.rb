@@ -71,7 +71,7 @@ module JBoss
     end
 
     def configure config
-      config[:type] = :mssql if config[:type].to_s = "sqlserver"
+      config[:type] = :mssql if config[:type].to_s == "sqlserver"
       @type = config[:type].to_s.gsub /_/, '-'
       @name = config[:name]
       @name ||= @type.to_s
