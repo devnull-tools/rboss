@@ -1,9 +1,8 @@
 #!/bin/sh 
 #Time to wait until the next twiddle loop
-FREQUENCY=<%=opts[:frequency]%>
+SLEEP_TIME=<%=opts[:sleep_time]%>
 
-SERVER_IP='<%= twiddle.jboss_ip %>'
-SERVER_PORT='<%= twiddle.jboss_port %>'
+SERVER='<%= twiddle.jboss_server %>'
 USER='<%= twiddle.jmx_user %>'
 PASSWORD='<%= twiddle.jmx_password %>'
 
@@ -14,11 +13,11 @@ DATASOURCES=(<%= monitor.resources[:datasource].join ' ' %>)
 WEBAPPS=(<%= monitor.resources[:webapp].join ' ' %>)
 
 #Path to twiddle
-<%= opts[:twiddle_command_var] %>="<%= "#{twiddle.jboss_home}" %>/bin/twiddle.sh -s $SERVER_IP:$SERVER_PORT -u '$USER' -p '$PASSWORD'"
+<%= opts[:twiddle_command_var] %>="<%= "#{twiddle.jboss_home}" %>/bin/twiddle.sh -s $SERVER -u '$USER' -p '$PASSWORD'"
 
 while [ 1 ] ; do
   clear
-  echo ">>> Starting monitoring for server <%=twiddle.jboss_ip %> <<<"
+  echo ">>> Starting monitoring for server <%=twiddle.jboss_host %> <<<"
 
   echo " "
   echo ">>> Server Info "
@@ -60,6 +59,6 @@ while [ 1 ] ; do
     <% end %>
     echo " "
   <% end %>
-  sleep $FREQUENCY
+  sleep $SLEEP_TIME
 done
 

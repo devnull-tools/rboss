@@ -33,7 +33,7 @@ module JBoss
 
         def initialize monitor, params = {}
           @opts = {
-            :frequency => 10,
+            :sleep_time => 10,
             :template_path => File.join(File.dirname(__FILE__), "resources", "monitor.template.sh.erb"),
             :twiddle_command_var => "TWIDDLE_CMD"
           }.merge! params

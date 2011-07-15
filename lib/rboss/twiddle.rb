@@ -24,26 +24,29 @@ module JBoss
   module Twiddle
     class Invoker
 
-      attr_reader :jboss_ip, :jboss_port, :jboss_home, :jmx_user, :jmx_password
+      attr_reader :jboss_host, :jboss_port, :jboss_home, :jmx_user, :jmx_password
       attr_accessor :command
 
       def initialize params = {}
         params = {
           :jboss_home => ENV["JBOSS_HOME"],
-          :jboss_ip => '127.0.0.1',
+          :jboss_server => nil,
+          :jboss_host => '127.0.0.1',
           :jboss_port => 1099,
           :jmx_user => "admin",
           :jmx_password => "admin"
         }.merge! params
         @jboss_home = params[:jboss_home]
 
-        @jboss_ip = params[:jboss_ip]
+        @jboss_host = params[:jboss_host]
         @jboss_port = params[:jboss_port]
+        @jboss_server = params[:jboss_server]
+        @jboss_server ||= [@jboss_host, @jboss_port].join ':'
 
         @jmx_user = params[:jmx_user]
         @jmx_password = params[:jmx_password]
 
-        @command = "#{@jboss_home}/bin/twiddle.sh -s #{@jboss_ip}:#{@jboss_port} -u '#{@jmx_user}' -p '#{@jmx_password}'"
+        @command = "#{@jboss_home}/bin/twiddle.sh -s #{@jboss_server} -u '#{@jmx_user}' -p '#{@jmx_password}'"
       end
 
       def home
@@ -77,9 +80,7 @@ module JBoss
       end
 
       def webapps
-        result = @twiddle.invoke :query, "jboss.web:type=Manager,*"
-        webapps = result.split(/\s+/)
-        webapps.collect do |path|
+        _query_ "jboss.web:type=Manager,*" do |path|
           path.gsub! "jboss.web:type=Manager,path=/", ""
           path.gsub! /,host=.+/, ''
           path
@@ -87,15 +88,28 @@ module JBoss
       end
 
       def datasources
-        result = @twiddle.invoke :query, "jboss.jca:service=ManagedConnectionPool,*"
-        datasources = result.split(/\s+/)
-        datasources.collect { |path| path.gsub "jboss.jca:service=ManagedConnectionPool,name=", "" }
+        _query_ "jboss.jca:service=ManagedConnectionPool,*" do |path|
+          path.gsub "jboss.jca:service=ManagedConnectionPool,name=", ""
+        end
       end
 
       def connectors
-        result = @twiddle.invoke :query, "jboss.web:type=ThreadPool,*"
-        connectors = result.split(/\s+/)
-        connectors.collect { |path| path.gsub "jboss.web:type=ThreadPool,name=", "" }
+        _query_ "jboss.web:type=ThreadPool,*" do |path|
+          path.gsub "jboss.web:type=ThreadPool,name=", ""
+        end
+      end
+
+      def deployments
+        _query_ "jboss.web.deployment:*" do |path|
+          path.gsub "jboss.web.deployment:", ""
+        end
+      end
+
+      private
+
+      def _query_ query, &block
+        result = @twiddle.invoke(:query, query).split /\s+/
+        block ? result.collect(&block) : result
       end
 
     end

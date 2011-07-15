@@ -27,11 +27,16 @@ require 'optparse'
 
 params = {}
 params[:jboss_home] = Dir.pwd unless ENV["JBOSS_HOME"]
+template_path = File.expand_path(File.join(File.dirname(__FILE__), "../examples/monitor/simple_monitor.rb"))
+time = 10
 
 opts = OptionParser::new
 opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') { |home| params[:jboss_home] = home }
-opts.on('-s', '--jboss-ip IP', 'Defines the JBoss ip') { |ip| params[:jboss_ip] = ip }
-opts.on('-l', '--jboss-port PORT', 'Defines the JBoss jnp port') { |port| params[:jboss_port] = port }
+opts.on('-s', '--jboss-server URL', 'Defines the JBoss server') { |server| params[:jboss_server] = server }
+opts.on('--jboss-host HOST', 'Defines the JBoss host') { |host| params[:jboss_host] = host }
+opts.on('--jboss-port PORT', 'Defines the JBoss jnp port') { |port| params[:jboss_port] = port }
+opts.on('-t', '--template-path PATH', 'Defines the ruby template to eval in each monitor loop') { |path| template_path = File.expand_path path }
+opts.on('--sleep VALUE', Float, 'Defines the sleep time for each monitor loop') { |sleep_time| time = sleep_time }
 opts.on('-u', '--jmx-user USER', 'Defines the JMX User') { |user| params[:jmx_user] = user }
 opts.on('-p', '--jmx-password PASSWORD', 'Defines the JMX Password') { |password| params[:jmx_password] = password }
 opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
@@ -42,42 +47,9 @@ twiddle = JBoss::Twiddle::Invoker::new params
 monitor = JBoss::Twiddle::BaseMonitor::new twiddle
 
 while true do
-  puts "Server Info:"
-  monitor.properties[:server_info].each do |property|
-    puts "\t|==> #{monitor.server_info[property]}"
-  end
+  eval File.read(template_path), binding, template_path
 
-  puts "Connectors:"
-
-  monitor.with :connectors do |connector|
-    puts "\t|==> #{connector}"
-    monitor.properties[:connector].each do |property|
-      puts "\t\t|==> #{monitor.connector[property]}"
-    end
-    monitor.properties[:request].each do |property|
-      puts "\t\t|==> #{monitor.request[property]}"
-    end
-  end
-
-  puts "Datasources:"
-
-  monitor.with :datasources do |datasource|
-    puts "\t|==> #{datasource}"
-    monitor.properties[:datasource].each do |property|
-      puts "\t\t|==> #{monitor.datasource[property]}"
-    end
-  end
-
-  puts "Webapp:"
-
-  monitor.with :webapps do |webapp|
-    puts "\t|==> #{webapp}"
-    monitor.properties[:webapp].each do |property|
-      puts "\t\t|==> #{monitor.webapp[property]}"
-    end
-  end
-
-  sleep 10
+  sleep time
 
   puts
   puts

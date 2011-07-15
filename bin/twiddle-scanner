@@ -30,25 +30,29 @@ params[:jboss_home] = Dir.pwd unless ENV["JBOSS_HOME"]
 
 opts = OptionParser::new
 opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') { |home| params[:jboss_home] = home }
-opts.on('-s', '--jboss-ip IP', 'Defines the JBoss ip') { |ip| params[:jboss_ip] = ip }
-opts.on('-l', '--jboss-port PORT', 'Defines the JBoss jnp port') { |port| params[:jboss_port] = port }
+opts.on('-s', '--jboss-server URL', 'Defines the JBoss server') { |server| params[:jboss_server] = server }
+opts.on('--jboss-host HOST', 'Defines the JBoss host') { |host| params[:jboss_host] = host }
+opts.on('--jboss-port PORT', 'Defines the JBoss jnp port') { |port| params[:jboss_port] = port }
 opts.on('-u', '--jmx-user USER', 'Defines the JMX User') { |user| params[:jmx_user] = user }
 opts.on('-p', '--jmx-password PASSWORD', 'Defines the JMX Password') { |password| params[:jmx_password] = password }
 opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
 
 twiddle = JBoss::Twiddle::Invoker::new params
-discovery = JBoss::Twiddle::Scanner::new twiddle
+scanner = JBoss::Twiddle::Scanner::new twiddle
 
 print_resources = lambda do |resource|
   puts "\t- #{resource}"
 end
 
 puts "- Webapps:"
-discovery.webapps.each &print_resources
+scanner.webapps.each &print_resources
 
 puts "- Datasources:"
-discovery.datasources.each &print_resources
+scanner.datasources.each &print_resources
 
 puts "- Connectors:"
-discovery.connectors.each &print_resources
+scanner.connectors.each &print_resources
+
+puts "- Deployments:"
+scanner.deployments.each &print_resources
