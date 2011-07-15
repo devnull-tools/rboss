@@ -26,6 +26,7 @@ require 'rboss'
 require 'optparse'
 
 params = {}
+params[:jboss_home] = Dir.pwd unless ENV["JBOSS_HOME"]
 
 opts = OptionParser::new
 opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') { |home| params[:jboss_home] = home }
