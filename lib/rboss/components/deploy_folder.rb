@@ -58,6 +58,7 @@ module JBoss
       mkdir_p @path
 
       if @configure_vsf_and_profile
+        @logger.warn "Please change your profile.xml file according to this issue <https://issues.jboss.org/browse/JBAS-9387>"
         configure_vfs
         configure_profile
       end
