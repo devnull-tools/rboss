@@ -25,6 +25,7 @@
     :heap_size: 1024m
     :perm_size: 512m
     :stack_size: 128k
+    :bind_address: 127.0.0.2
 - slimming:
     - web_console
     - jmx_remoting
