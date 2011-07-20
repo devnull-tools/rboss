@@ -45,6 +45,10 @@ module JBoss
             :pattern => 'jboss.system:type=ServerInfo',
             :properties => %W(FreeMemory ActiveThreadCount)
           },
+          :server => {
+            :pattern => 'jboss.system:type=Server',
+            :properties => %W(VersionNumber StartDate)
+          },
           :request => {
             :pattern => 'jboss.web:type=GlobalRequestProcessor,name=#{resource}',
             :properties => %W(requestCount)

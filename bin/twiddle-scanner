@@ -42,11 +42,8 @@ twiddle = JBoss::Twiddle::Invoker::new params
 scanner = JBoss::Twiddle::Scanner::new twiddle
 monitor = JBoss::Twiddle::BaseMonitor::new twiddle
 
-print_resources = lambda do |resource|
-  puts "  - #{resource}"
-end
-
 puts "- Server Info:"
+puts "  - #{monitor.server["Version"]}"
 puts "  - #{monitor.server_info["MaxMemory"]}"
 puts "  - #{monitor.server_info["AvailableProcessors"]}"
 puts "  - #{monitor.server_info["HostAddress"]}"
@@ -57,7 +54,9 @@ puts "  - #{monitor.server_info["OSVersion"]}"
 puts "  - #{monitor.server_info["OSArch"]}"
 
 puts "- Webapps:"
-scanner.webapps.each &print_resources
+scanner.webapps.each do |webapp|
+  puts "  - #{webapp}"
+end
 
 puts "- Datasources:"
 scanner.datasources.each do |datasource|
