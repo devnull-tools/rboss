@@ -27,4 +27,3 @@
     :stack_size: 128k
 - slimming:
     - web_console
-    - jmx_remoting
