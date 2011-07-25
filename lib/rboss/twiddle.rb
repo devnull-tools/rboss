@@ -99,6 +99,12 @@ module JBoss
         end
       end
 
+      def queues
+        _query_ "jboss.messaging.destination:service=Queue,*" do |path|
+          path.gsub "jboss.messaging.destination:service=Queue,name=", ""
+        end
+      end
+
       def deployments
         _query_ "jboss.web.deployment:*" do |path|
           path.gsub "jboss.web.deployment:", ""

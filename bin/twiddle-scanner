@@ -53,6 +53,14 @@ puts "  - #{monitor.server_info["OSName"]}"
 puts "  - #{monitor.server_info["OSVersion"]}"
 puts "  - #{monitor.server_info["OSArch"]}"
 
+puts "- Connectors:"
+scanner.connectors.each do |connector|
+  monitor.with connector do
+    puts "  - #{connector}"
+    puts "    - #{monitor.connector['maxThreads']}"
+  end
+end
+
 puts "- Webapps:"
 scanner.webapps.each do |webapp|
   puts "  - #{webapp}"
@@ -67,10 +75,14 @@ scanner.datasources.each do |datasource|
   end
 end
 
-puts "- Connectors:"
-scanner.connectors.each do |connector|
-  monitor.with connector do
-    puts "  - #{connector}"
-    puts "    - #{monitor.connector['maxThreads']}"
+puts "- Queues:"
+scanner.queues.each do |queue|
+  monitor.with queue do
+    puts "  - #{queue}"
+    puts "    - #{monitor.queue['Name']}"
+    puts "    - #{monitor.queue['JNDIName']}"
+    puts "    - #{monitor.queue['MaxSize']}"
+    puts "    - #{monitor.queue['FullSize']}"
+    puts "    - #{monitor.queue['Clustered']}"
   end
 end

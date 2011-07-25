@@ -56,6 +56,11 @@ module JBoss
           :datasource => {
             :pattern => 'jboss.jca:service=ManagedConnectionPool,name=#{resource}',
             :properties => %W(MaxSize AvailableConnectionCount InUseConnectionCount ConnectionCount)
+          },
+          :queue => {
+            :pattern => 'jboss.messaging.destination:service=Queue,name=#{resource}',
+            :properties => %W(Name JNDIName MessageCount DeliveringCount
+              ScheduledMessageCount MaxSize FullSize Clustered ConsumerCount)
           }
         }
       end

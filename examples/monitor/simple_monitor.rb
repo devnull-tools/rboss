@@ -54,3 +54,12 @@ monitor.with :webapps do |webapp|
     puts "    |--> #{monitor.webapp[property]}"
   end
 end
+
+puts "Queues:"
+
+monitor.with :queues do |queue|
+  puts "  |--> #{queue}"
+  monitor.properties[:queue].each do |property|
+    puts "    |--> #{monitor.queue[property]}"
+  end
+end
