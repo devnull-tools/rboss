@@ -24,11 +24,12 @@
 
 require 'rboss'
 require 'optparse'
+require 'yaml'
 
 params = {}
 params[:jboss_home] = Dir.pwd unless ENV["JBOSS_HOME"]
 template_path = File.expand_path(File.join(File.dirname(__FILE__), "../examples/monitor/simple_monitor.rb"))
-time = 10
+config_file = nil
 
 opts = OptionParser::new
 opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') { |home| params[:jboss_home] = home }
@@ -36,22 +37,69 @@ opts.on('-s', '--jboss-server URL', 'Defines the JBoss server') { |server| param
 opts.on('--jboss-host HOST', 'Defines the JBoss host') { |host| params[:jboss_host] = host }
 opts.on('--jboss-port PORT', 'Defines the JBoss jnp port') { |port| params[:jboss_port] = port }
 opts.on('-t', '--template-path PATH', 'Defines the ruby template to eval in each monitor loop') { |path| template_path = File.expand_path path }
-opts.on('--sleep VALUE', Float, 'Defines the sleep time for each monitor loop') { |sleep_time| time = sleep_time }
+opts.on('-c', '--config-file FILE', 'Defines the configuration file for the monior (see the examples for more details)') { |yaml| config_file = File.expand_path(yaml) }
 opts.on('-u', '--jmx-user USER', 'Defines the JMX User') { |user| params[:jmx_user] = user }
 opts.on('-p', '--jmx-password PASSWORD', 'Defines the JMX Password') { |password| params[:jmx_password] = password }
 opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
 
-
 twiddle = JBoss::Twiddle::Invoker::new params
 monitor = JBoss::Twiddle::BaseMonitor::new twiddle
 
-while true do
+if config_file
+  config = YAML::load File.open(config_file)
+  config.each do |var|
+    if var.respond_to? :each
+      if var.is_a? Hash
+        var.each do |key, resources|
+          mbean_id = key.to_sym
+          if monitor.can_scan? mbean_id
+            next
+          end
+          puts "#{mbean_id}:"
+          mbean = monitor.mbean(mbean_id)
+          resources.each do |resource|
+            if resource.is_a? Hash
+              resource.each do |res, properties|
+                puts "  |--> #{res}:"
+                mbean.with res do
+                  properties.each do |property|
+                    puts "    |--> #{mbean[property]}"
+                  end
+                end
+              end
+            else
+              puts "  |--> #{resource}:"
+              mbean.with resource do
+                monitor.properties(mbean_id).each do |property|
+                  puts "    |--> #{mbean[property]}"
+                end
+              end
+            end
+          end
+        end
+      elsif var.is_a? Array
+
+      end
+    else
+      if monitor.can_scan? var
+        resources = var.to_sym
+        puts "#{resources}:"
+        monitor.with resources do |resource|
+          puts "  |--> #{resource}:"
+          monitor.properties(:for_scanned).each do |property|
+            puts "    |--> #{monitor.mbean[property]}"
+          end
+        end
+      else
+        mbean_id = var.to_sym
+        puts "#{mbean_id}:"
+        monitor.properties[mbean_id].each do |property|
+          puts "  |--> #{monitor.mbean(mbean_id)[property]}"
+        end
+      end
+    end
+  end
+else
   eval File.read(template_path), binding, template_path
-
-  sleep time
-
-  puts
-  puts
-  puts
 end

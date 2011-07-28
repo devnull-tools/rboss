@@ -36,6 +36,10 @@ module JBoss
 
     def with resource
       @resource = resource
+      if block_given?
+        yield
+        @resource = nil
+      end
       self
     end
 

@@ -1,0 +1,10 @@
+- server_info
+- connector:
+    - http-127.0.0.1-8080
+- datasource:
+    - DefaultDS:
+        - MinSize
+        - MaxSize
+- webapps:
+    - activeSessions
+- queues

@@ -73,13 +73,14 @@ module JBoss
 
     end
 
-    class Scanner
+    module Scanner
 
-      def initialize invoker = Invoker::new
-        @twiddle = invoker
+      def current_scan
+        @current_scan
       end
 
       def webapps
+        @current_scan = :webapp
         _query_ "jboss.web:type=Manager,*" do |path|
           path.gsub! "jboss.web:type=Manager,path=/", ""
           path.gsub! /,host=.+/, ''
@@ -88,27 +89,35 @@ module JBoss
       end
 
       def datasources
+        @current_scan = :datasource
         _query_ "jboss.jca:service=ManagedConnectionPool,*" do |path|
           path.gsub "jboss.jca:service=ManagedConnectionPool,name=", ""
         end
       end
 
       def connectors
+        @current_scan = :connector
         _query_ "jboss.web:type=ThreadPool,*" do |path|
           path.gsub "jboss.web:type=ThreadPool,name=", ""
         end
       end
 
       def queues
+        @current_scan = :queue
         _query_ "jboss.messaging.destination:service=Queue,*" do |path|
           path.gsub "jboss.messaging.destination:service=Queue,name=", ""
         end
       end
 
       def deployments
+        @current_scan = :deployment
         _query_ "jboss.web.deployment:*" do |path|
           path.gsub "jboss.web.deployment:", ""
         end
+      end
+
+      def can_scan? resource
+        self.respond_to? resource.to_sym
       end
 
       private

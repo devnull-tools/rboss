@@ -39,7 +39,6 @@ opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
 
 twiddle = JBoss::Twiddle::Invoker::new params
-scanner = JBoss::Twiddle::Scanner::new twiddle
 monitor = JBoss::Twiddle::BaseMonitor::new twiddle
 
 puts "- Server Info:"
@@ -54,7 +53,7 @@ puts "  - #{monitor.server_info["OSVersion"]}"
 puts "  - #{monitor.server_info["OSArch"]}"
 
 puts "- Connectors:"
-scanner.connectors.each do |connector|
+monitor.connectors.each do |connector|
   monitor.with connector do
     puts "  - #{connector}"
     puts "    - #{monitor.connector['maxThreads']}"
@@ -62,12 +61,12 @@ scanner.connectors.each do |connector|
 end
 
 puts "- Webapps:"
-scanner.webapps.each do |webapp|
+monitor.webapps.each do |webapp|
   puts "  - #{webapp}"
 end
 
 puts "- Datasources:"
-scanner.datasources.each do |datasource|
+monitor.datasources.each do |datasource|
   monitor.with datasource do
     puts "  - #{datasource}"
     puts "    - #{monitor.datasource['MinSize']}"
@@ -76,7 +75,7 @@ scanner.datasources.each do |datasource|
 end
 
 puts "- Queues:"
-scanner.queues.each do |queue|
+monitor.queues.each do |queue|
   monitor.with queue do
     puts "  - #{queue}"
     puts "    - #{monitor.queue['Name']}"

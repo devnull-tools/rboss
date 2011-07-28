@@ -27,7 +27,7 @@ module JBoss
   module Twiddle
 
     class BaseMonitor
-      include JBoss::Twiddle::Monitor
+      include JBoss::Twiddle::Monitor, JBoss::Twiddle::Scanner
 
       attr_reader :twiddle
 

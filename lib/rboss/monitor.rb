@@ -27,14 +27,15 @@ module JBoss
 
     module Monitor
 
-      def discoverer
-        @discoverer ||= JBoss::Twiddle::Scanner::new @twiddle
-        @discoverer
+      def properties mbean_id = nil
+        @properties ||= {}
+        return properties[current_scan] if mbean_id == :for_scanned
+        return properties[mbean_id] if mbean_id
+        @properties
       end
 
-      def properties
-        @properties ||= {}
-        @properties
+      def scanned_properties
+        properties[current_scan]
       end
 
       def mbeans
@@ -61,7 +62,7 @@ module JBoss
       end
 
       def with resource
-        resource = discoverer.send resource if resource.is_a? Symbol
+        resource = send resource if resource.is_a? Symbol
         if block_given?
           if resource.kind_of? Array
             resource.each do |res|
@@ -77,28 +78,30 @@ module JBoss
         end
       end
 
-      def value_for mbean_id, params = @current_resource
-        mbean = mbeans[mbean_id]
-        if params.is_a? Hash
-          resource = params[:resource]
-          property = params[:property]
-          mbean.get property, :for => resource
-        else
-          resource = params
-          mbean.with resource
-        end
+      def with_current &block
+        with current_scan &block
       end
 
-      def [] mbean_id
+      def mbean mbean_id = nil
+        return get current_scan unless mbean_id
+        mbeans[mbean_id]
+      end
+
+      def get mbean_id
         mbean = mbeans[mbean_id]
         if @current_resource
-          mbean.with resource
+          mbean.with @current_resource
         end
         mbean
       end
 
+      alias_method :[], :get
+
       def method_missing(method, *args, &block)
-        value_for method, *args
+        mbean_id = method
+        mbean = mbeans[mbean_id]
+        resource = args[0] || @current_resource
+        mbean.with resource
       end
 
     end
