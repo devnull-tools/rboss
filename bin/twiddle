@@ -43,6 +43,11 @@ opts.on('--datasources [name_a, name_b, name_c, ...]', Array, 'Defines the datas
 opts.on('--connectors [name_a, name_b, name_c, ...]', Array, 'Defines the connectors to show or scan if not specified') { |connectors| resources[:connectors] = connectors || :all }
 opts.on('--webapps [name_a, name_b, name_c, ...]', Array, 'Defines the webapps to show or scan if not specified') { |webapps| resources[:webapps] = webapps || :all }
 opts.on('--queues [name_a, name_b, name_c, ...]', Array, 'Defines the JMS queues to show or scan if not specified') { |queues| resources[:queues] = queues || :all }
+opts.on('--show-all', 'Shows all resources available') do
+  [:server_info, :datasources, :webapps, :connectors, :queues].each do |option|
+    resources[option] = :all
+  end
+end
 opts.on('--list-only', 'Only lists the required info') { list_only = true }
 opts.on('-u', '--jmx-user USER', 'Defines the JMX User') { |user| params[:jmx_user] = user }
 opts.on('-p', '--jmx-password PASSWORD', 'Defines the JMX Password') { |password| params[:jmx_password] = password }
