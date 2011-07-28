@@ -26,7 +26,6 @@ monitor.properties[:server_info].each do |property|
 end
 
 puts "Connectors:"
-
 monitor.with :connectors do |connector|
   puts "  |--> #{connector}"
   monitor.properties[:connector].each do |property|
@@ -38,7 +37,6 @@ monitor.with :connectors do |connector|
 end
 
 puts "Datasources:"
-
 monitor.with :datasources do |datasource|
   puts "  |--> #{datasource}"
   monitor.properties[:datasource].each do |property|
@@ -47,7 +45,6 @@ monitor.with :datasources do |datasource|
 end
 
 puts "Webapps:"
-
 monitor.with :webapps do |webapp|
   puts "  |--> #{webapp}"
   monitor.properties[:webapp].each do |property|
@@ -56,7 +53,6 @@ monitor.with :webapps do |webapp|
 end
 
 puts "Queues:"
-
 monitor.with :queues do |queue|
   puts "  |--> #{queue}"
   monitor.properties[:queue].each do |property|

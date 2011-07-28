@@ -1,0 +1,130 @@
+#!/usr/bin/env ruby
+
+#                         The MIT License
+#
+# Copyright (c) 2011 Marcelo Guimarães <ataxexe@gmail.com>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+require 'rboss'
+require 'optparse'
+require 'yaml'
+
+params = {}
+resources = {}
+list_only = false
+params[:jboss_home] = Dir.pwd unless ENV["JBOSS_HOME"]
+template_path = File.expand_path(File.join(File.dirname(__FILE__), "../examples/monitor/simple_monitor.rb"))
+
+opts = OptionParser::new
+opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') { |home| params[:jboss_home] = home }
+opts.on('-s', '--jboss-server URL', 'Defines the JBoss server') { |server| params[:jboss_server] = server }
+opts.on('--jboss-host HOST', 'Defines the JBoss host') { |host| params[:jboss_host] = host }
+opts.on('--jboss-port PORT', 'Defines the JBoss jnp port') { |port| params[:jboss_port] = port }
+opts.on('-t', '--template-path PATH', 'Defines the ruby template to eval') { |path| template_path = File.expand_path path }
+opts.on('--server-info', 'Shows server information') { resources[:server_info] = true }
+opts.on('--datasources [name_a, name_b, name_c, ...]', Array, 'Defines the datasources to show or scan if not specified') { |datasources| resources[:datasources] = datasources || :all }
+opts.on('--connectors [name_a, name_b, name_c, ...]', Array, 'Defines the connectors to show or scan if not specified') { |connectors| resources[:connectors] = connectors || :all }
+opts.on('--webapps [name_a, name_b, name_c, ...]', Array, 'Defines the webapps to show or scan if not specified') { |webapps| resources[:webapps] = webapps || :all }
+opts.on('--queues [name_a, name_b, name_c, ...]', Array, 'Defines the JMS queues to show or scan if not specified') { |queues| resources[:queues] = queues || :all }
+opts.on('--list-only', 'Only lists the required info') { list_only = true }
+opts.on('-u', '--jmx-user USER', 'Defines the JMX User') { |user| params[:jmx_user] = user }
+opts.on('-p', '--jmx-password PASSWORD', 'Defines the JMX Password') { |password| params[:jmx_password] = password }
+opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
+opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
+
+twiddle = JBoss::Twiddle::Invoker::new params
+monitor = JBoss::Twiddle::BaseMonitor::new twiddle
+
+if resources.empty?
+  eval File.read(template_path), binding, template_path
+else
+  if resources[:server_info]
+    puts "Server Info:"
+    monitor.properties[:server].each do |property|
+      puts "  |--> #{monitor.server[property]}"
+    end
+    monitor.properties[:server_info].each do |property|
+      puts "  |--> #{monitor.server_info[property]}"
+    end
+  end
+  if resources[:connectors]
+    puts "Connectors:"
+    connectors = resources[:connectors]
+    connectors = monitor.connectors if connectors == :all
+    connectors.each do |connector|
+      monitor.with connector do
+        puts "  |--> #{connector}"
+        unless list_only
+          monitor.properties[:connector].each do |property|
+            puts "    |--> #{monitor.connector[property]}"
+          end
+          monitor.properties[:request].each do |property|
+            puts "    |--> #{monitor.request[property]}"
+          end
+        end
+      end
+    end
+  end
+  if resources[:datasources]
+    puts "Datasources:"
+    datasources = resources[:datasources]
+    datasources = monitor.datasources if datasources == :all
+    datasources.each do |datasource|
+      monitor.with datasource do
+        puts "  |--> #{datasource}"
+        unless list_only
+          monitor.properties[:datasource].each do |property|
+            puts "    |--> #{monitor.datasource[property]}"
+          end
+        end
+      end
+    end
+  end
+  if resources[:webapps]
+    puts "Webapps:"
+    webapps = resources[:webapps]
+    webapps = monitor.webapps if webapps == :all
+    webapps.each do |webapp|
+      monitor.with webapp do
+        puts "  |--> #{webapp}"
+        unless list_only
+          monitor.properties[:webapp].each do |property|
+            puts "    |--> #{monitor.webapp[property]}"
+          end
+        end
+      end
+    end
+  end
+  if resources[:queues]
+    puts "Queues:"
+    queues = resources[:queues]
+    queues = monitor.queues if queues == :all
+    queues.each do |queue|
+      monitor.with queue do
+        puts "  |--> #{queue}"
+        unless list_only
+          monitor.properties[:queue].each do |property|
+            puts "    |--> #{monitor.queue[property]}"
+          end
+        end
+      end
+    end
+  end
+end

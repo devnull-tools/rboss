@@ -43,7 +43,8 @@ module JBoss
           },
           :server_info => {
             :pattern => 'jboss.system:type=ServerInfo',
-            :properties => %W(FreeMemory ActiveThreadCount)
+            :properties => %W(ActiveThreadCount MaxMemory FreeMemory AvailableProcessors
+                              HostAddress JavaVendor JavaVersion OSName OSArch)
           },
           :server => {
             :pattern => 'jboss.system:type=Server',
@@ -55,7 +56,7 @@ module JBoss
           },
           :datasource => {
             :pattern => 'jboss.jca:service=ManagedConnectionPool,name=#{resource}',
-            :properties => %W(MaxSize AvailableConnectionCount InUseConnectionCount ConnectionCount)
+            :properties => %W(MinSize MaxSize AvailableConnectionCount InUseConnectionCount ConnectionCount)
           },
           :queue => {
             :pattern => 'jboss.messaging.destination:service=Queue,name=#{resource}',
