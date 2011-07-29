@@ -52,15 +52,20 @@ module JBoss
 
       def ejbs
         result = _query_ "jboss.j2ee:service=EJB3,*"
-        (result.find_all {|path| path["name="] && path["jar"]}).collect do |path|
+        (result.find_all {|path| path["name="] && path["jar="]}).collect do |path|
           path.gsub("jboss.j2ee:", '').gsub(/,?service=EJB3/, '')
         end
       end
 
       def deployments
-        _query_ "jboss.web.deployment:*" do |path|
+        wars = _query_ "jboss.web.deployment:*" do |path|
           path.gsub "jboss.web.deployment:", ""
         end
+        ears = _query_ "jboss.j2ee:*"
+        ears = (ears.find_all {|path| path["ear="] && path["jar="]}).collect do |path|
+          path.split(/,/).find {|p| p.start_with? "ear="}
+        end
+        wars + ears
       end
 
       def can_scan? resource
