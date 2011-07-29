@@ -64,7 +64,7 @@ end
 opts.on('--webapps [name_a, name_b, name_c, ...]', Array, 'Defines the webapps to show or scan if not specified') do |webapps|
   resources[:webapps] = webapps || :all
 end
-opts.on('--list-only', 'Only lists the required info') { list_only = true }
+opts.on('--list', 'Only lists the required info (datasources, queues, ...)') { list_only = true }
 opts.on('-u', '--jmx-user USER', 'Defines the JMX User') { |user| params[:jmx_user] = user }
 opts.on('-p', '--jmx-password PASSWORD', 'Defines the JMX Password') { |password| params[:jmx_password] = password }
 opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
