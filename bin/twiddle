@@ -33,16 +33,28 @@ params[:jboss_home] = Dir.pwd unless ENV["JBOSS_HOME"]
 template_path = File.expand_path(File.join(File.dirname(__FILE__), "../examples/monitor/simple_monitor.rb"))
 
 opts = OptionParser::new
-opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') { |home| params[:jboss_home] = home }
+opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') do |home|
+  params[:jboss_home] = home
+end
 opts.on('-s', '--jboss-server URL', 'Defines the JBoss server') { |server| params[:jboss_server] = server }
 opts.on('--jboss-host HOST', 'Defines the JBoss host') { |host| params[:jboss_host] = host }
 opts.on('--jboss-port PORT', 'Defines the JBoss jnp port') { |port| params[:jboss_port] = port }
-opts.on('-t', '--template-path PATH', 'Defines the ruby template to eval') { |path| template_path = File.expand_path path }
+opts.on('-e', '--exec-file PATH', 'Defines the ruby file to exec using the vars twiddle and monitor') do |path|
+  template_path = File.expand_path path
+end
 opts.on('--server-info', 'Shows server information') { resources[:server_info] = true }
-opts.on('--datasources [name_a, name_b, name_c, ...]', Array, 'Defines the datasources to show or scan if not specified') { |datasources| resources[:datasources] = datasources || :all }
-opts.on('--connectors [name_a, name_b, name_c, ...]', Array, 'Defines the connectors to show or scan if not specified') { |connectors| resources[:connectors] = connectors || :all }
-opts.on('--webapps [name_a, name_b, name_c, ...]', Array, 'Defines the webapps to show or scan if not specified') { |webapps| resources[:webapps] = webapps || :all }
-opts.on('--queues [name_a, name_b, name_c, ...]', Array, 'Defines the JMS queues to show or scan if not specified') { |queues| resources[:queues] = queues || :all }
+opts.on('--datasources [name_a, name_b, name_c, ...]', Array, 'Defines the datasources to show or scan if not specified') do |datasources|
+  resources[:datasources] = datasources || :all
+end
+opts.on('--connectors [name_a, name_b, name_c, ...]', Array, 'Defines the connectors to show or scan if not specified') do |connectors|
+  resources[:connectors] = connectors || :all
+end
+opts.on('--webapps [name_a, name_b, name_c, ...]', Array, 'Defines the webapps to show or scan if not specified') do |webapps|
+  resources[:webapps] = webapps || :all
+end
+opts.on('--queues [name_a, name_b, name_c, ...]', Array, 'Defines the JMS queues to show or scan if not specified') do |queues|
+  resources[:queues] = queues || :all
+end
 opts.on('--show-all', 'Shows all resources available') do
   [:server_info, :datasources, :webapps, :connectors, :queues].each do |option|
     resources[option] = :all
