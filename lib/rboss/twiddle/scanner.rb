@@ -50,6 +50,13 @@ module JBoss
         end
       end
 
+      def ejbs
+        result = _query_ "jboss.j2ee:service=EJB3,*"
+        (result.find_all {|path| path["name="] && path["jar"]}).collect do |path|
+          path.gsub("jboss.j2ee:", '').gsub(/,?service=EJB3/, '')
+        end
+      end
+
       def deployments
         _query_ "jboss.web.deployment:*" do |path|
           path.gsub "jboss.web.deployment:", ""

@@ -30,43 +30,6 @@ module JBoss
     class BaseMonitor
       include JBoss::Twiddle::Monitor, JBoss::Twiddle::Scanner
 
-      attr_reader :twiddle
-
-      def defaults
-        {
-          :webapp => {
-            :pattern => 'jboss.web:type=Manager,host=localhost,path=/#{resource}',
-            :properties => %W(activeSessions maxActive)
-          },
-          :connector => {
-            :pattern => 'jboss.web:type=ThreadPool,name=#{resource}',
-            :properties => %W(maxThreads currentThreadCount currentThreadsBusy)
-          },
-          :server_info => {
-            :pattern => 'jboss.system:type=ServerInfo',
-            :properties => %W(ActiveThreadCount MaxMemory FreeMemory AvailableProcessors
-                              HostAddress JavaVendor JavaVersion OSName OSArch)
-          },
-          :server => {
-            :pattern => 'jboss.system:type=Server',
-            :properties => %W(VersionNumber StartDate)
-          },
-          :request => {
-            :pattern => 'jboss.web:type=GlobalRequestProcessor,name=#{resource}',
-            :properties => %W(requestCount)
-          },
-          :datasource => {
-            :pattern => 'jboss.jca:service=ManagedConnectionPool,name=#{resource}',
-            :properties => %W(MinSize MaxSize AvailableConnectionCount InUseConnectionCount ConnectionCount)
-          },
-          :queue => {
-            :pattern => 'jboss.messaging.destination:service=Queue,name=#{resource}',
-            :properties => %W(Name JNDIName MessageCount DeliveringCount
-              ScheduledMessageCount MaxSize FullSize Clustered ConsumerCount)
-          }
-        }
-      end
-
       def initialize twiddle
         @twiddle = twiddle
         defaults.each do |mbean_id, config|

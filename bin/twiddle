@@ -42,23 +42,26 @@ opts.on('--jboss-port PORT', 'Defines the JBoss jnp port') { |port| params[:jbos
 opts.on('-e', '--exec-file PATH', 'Defines the ruby file to exec using the vars twiddle and monitor') do |path|
   template_path = File.expand_path path
 end
-opts.on('--server-info', 'Shows server information') { resources[:server_info] = true }
-opts.on('--datasources [name_a, name_b, name_c, ...]', Array, 'Defines the datasources to show or scan if not specified') do |datasources|
-  resources[:datasources] = datasources || :all
+opts.on('--show-all', 'Shows all resources available') do
+  [:server_info, :datasources, :webapps, :connectors, :queues, :ejbs].each do |option|
+    resources[option] = :all
+  end
 end
+opts.on('--server-info', 'Shows server information') { resources[:server_info] = true }
 opts.on('--connectors [name_a, name_b, name_c, ...]', Array, 'Defines the connectors to show or scan if not specified') do |connectors|
   resources[:connectors] = connectors || :all
 end
-opts.on('--webapps [name_a, name_b, name_c, ...]', Array, 'Defines the webapps to show or scan if not specified') do |webapps|
-  resources[:webapps] = webapps || :all
+opts.on('--datasources [name_a, name_b, name_c, ...]', Array, 'Defines the datasources to show or scan if not specified') do |datasources|
+  resources[:datasources] = datasources || :all
+end
+opts.on('--ejbs [name_a, name_b, name_c, ...]', Array, 'Defines the EJBs to show or scan if not specified') do |ejbs|
+  resources[:ejbs] = ejbs || :all
 end
 opts.on('--queues [name_a, name_b, name_c, ...]', Array, 'Defines the JMS queues to show or scan if not specified') do |queues|
   resources[:queues] = queues || :all
 end
-opts.on('--show-all', 'Shows all resources available') do
-  [:server_info, :datasources, :webapps, :connectors, :queues].each do |option|
-    resources[option] = :all
-  end
+opts.on('--webapps [name_a, name_b, name_c, ...]', Array, 'Defines the webapps to show or scan if not specified') do |webapps|
+  resources[:webapps] = webapps || :all
 end
 opts.on('--list-only', 'Only lists the required info') { list_only = true }
 opts.on('-u', '--jmx-user USER', 'Defines the JMX User') { |user| params[:jmx_user] = user }
@@ -124,6 +127,21 @@ else
         unless list_only
           monitor.properties[:webapp].each do |property|
             puts "    - #{monitor.webapp[property]}"
+          end
+        end
+      end
+    end
+  end
+  if resources[:ejbs]
+    puts "EJBs:"
+    ejbs = resources[:ejbs]
+    ejbs = monitor.ejbs if ejbs == :all
+    ejbs.each do |ejb|
+      monitor.with ejb do
+        puts "  - #{ejb}"
+        unless list_only
+          monitor.properties[:ejb].each do |property|
+            puts "    - #{monitor.ejb[property]}"
           end
         end
       end
