@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require "set"
+
 module JBoss
   module Twiddle
     module Scanner
@@ -59,13 +61,17 @@ module JBoss
 
       def deployments
         wars = _query_ "jboss.web.deployment:*" do |path|
-          path.gsub "jboss.web.deployment:", ""
+          path.gsub("jboss.web.deployment:", "").split(/,/).find {|p| p.start_with? "war="}
         end
         ears = _query_ "jboss.j2ee:*"
         ears = (ears.find_all {|path| path["ear="] && path["jar="]}).collect do |path|
-          path.split(/,/).find {|p| p.start_with? "ear="}
+          path.gsub("jboss.j2ee:",'').split(/,/).find {|p| p.start_with? "ear="}
         end
-        wars + ears
+        result = Set::new
+        (wars + ears).each do |deployment|
+          result << deployment
+        end
+        result
       end
 
       def can_scan? resource
