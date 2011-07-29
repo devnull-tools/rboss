@@ -67,7 +67,7 @@ opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
 
 twiddle = JBoss::Twiddle::Invoker::new params
-monitor = JBoss::Twiddle::BaseMonitor::new twiddle
+monitor = twiddle.monitor
 
 if resources.empty?
   eval File.read(template_path), binding, template_path
@@ -75,10 +75,10 @@ else
   if resources[:server_info]
     puts "Server Info:"
     monitor.properties[:server].each do |property|
-      puts "  |--> #{monitor.server[property]}"
+      puts "  - #{monitor.server[property]}"
     end
     monitor.properties[:server_info].each do |property|
-      puts "  |--> #{monitor.server_info[property]}"
+      puts "  - #{monitor.server_info[property]}"
     end
   end
   if resources[:connectors]
@@ -87,13 +87,13 @@ else
     connectors = monitor.connectors if connectors == :all
     connectors.each do |connector|
       monitor.with connector do
-        puts "  |--> #{connector}"
+        puts "  - #{connector}"
         unless list_only
           monitor.properties[:connector].each do |property|
-            puts "    |--> #{monitor.connector[property]}"
+            puts "    - #{monitor.connector[property]}"
           end
           monitor.properties[:request].each do |property|
-            puts "    |--> #{monitor.request[property]}"
+            puts "    - #{monitor.request[property]}"
           end
         end
       end
@@ -105,10 +105,10 @@ else
     datasources = monitor.datasources if datasources == :all
     datasources.each do |datasource|
       monitor.with datasource do
-        puts "  |--> #{datasource}"
+        puts "  - #{datasource}"
         unless list_only
           monitor.properties[:datasource].each do |property|
-            puts "    |--> #{monitor.datasource[property]}"
+            puts "    - #{monitor.datasource[property]}"
           end
         end
       end
@@ -120,10 +120,10 @@ else
     webapps = monitor.webapps if webapps == :all
     webapps.each do |webapp|
       monitor.with webapp do
-        puts "  |--> #{webapp}"
+        puts "  - #{webapp}"
         unless list_only
           monitor.properties[:webapp].each do |property|
-            puts "    |--> #{monitor.webapp[property]}"
+            puts "    - #{monitor.webapp[property]}"
           end
         end
       end
@@ -135,10 +135,10 @@ else
     queues = monitor.queues if queues == :all
     queues.each do |queue|
       monitor.with queue do
-        puts "  |--> #{queue}"
+        puts "  - #{queue}"
         unless list_only
           monitor.properties[:queue].each do |property|
-            puts "    |--> #{monitor.queue[property]}"
+            puts "    - #{monitor.queue[property]}"
           end
         end
       end

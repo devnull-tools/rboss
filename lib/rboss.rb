@@ -22,4 +22,4 @@
 
 require_relative "rboss/version"
 require_relative "rboss/jboss_profile"
-require_relative "rboss/base_monitor"
+require_relative "rboss/twiddle"

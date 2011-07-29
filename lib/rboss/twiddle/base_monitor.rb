@@ -21,6 +21,7 @@
 # THE SOFTWARE.
 
 require_relative 'monitor'
+require_relative 'scanner'
 require_relative 'twiddle'
 
 module JBoss
@@ -71,6 +72,19 @@ module JBoss
         defaults.each do |mbean_id, config|
           monitor mbean_id, config
         end
+      end
+
+    end
+
+    class Invoker
+
+      def monitor
+        @monitor ||= BaseMonitor::new self
+        @monitor
+      end
+
+      def mbean id
+        monitor.mbean id
       end
 
     end

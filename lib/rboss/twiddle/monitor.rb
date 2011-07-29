@@ -29,13 +29,8 @@ module JBoss
 
       def properties mbean_id = nil
         @properties ||= {}
-        return properties[current_scan] if mbean_id == :for_scanned
         return properties[mbean_id] if mbean_id
         @properties
-      end
-
-      def scanned_properties
-        properties[current_scan]
       end
 
       def mbeans
@@ -76,10 +71,6 @@ module JBoss
             @current_resource = nil
           end
         end
-      end
-
-      def with_current &block
-        with current_scan &block
       end
 
       def mbean mbean_id = nil
