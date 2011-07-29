@@ -30,7 +30,7 @@ params = {}
 resources = {}
 list_only = false
 params[:jboss_home] = Dir.pwd unless ENV["JBOSS_HOME"]
-template_path = File.expand_path(File.join(File.dirname(__FILE__), "../examples/monitor/simple_monitor.rb"))
+exec_file = nil
 
 opts = OptionParser::new
 opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') do |home|
@@ -40,7 +40,7 @@ opts.on('-s', '--jboss-server URL', 'Defines the JBoss server') { |server| param
 opts.on('--jboss-host HOST', 'Defines the JBoss host') { |host| params[:jboss_host] = host }
 opts.on('--jboss-port PORT', 'Defines the JBoss jnp port') { |port| params[:jboss_port] = port }
 opts.on('-e', '--exec-file PATH', 'Defines the ruby file to exec using the vars twiddle and monitor') do |path|
-  template_path = File.expand_path path
+  exec_file = File.expand_path path
 end
 opts.on('--show-all', 'Shows all resources available') do
   [:server_info, :deployments, :datasources, :webapps, :connectors, :queues, :ejbs].each do |option|
@@ -73,8 +73,13 @@ opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.
 twiddle = JBoss::Twiddle::Invoker::new params
 monitor = twiddle.monitor
 
+if resources.empty? and not exec_file
+  puts opts
+  exit
+end
+
 if resources.empty?
-  eval File.read(template_path), binding, template_path
+  eval File.read(exec_file), binding, exec_file
 else
   if resources[:server_info]
     puts "Server Info:"
