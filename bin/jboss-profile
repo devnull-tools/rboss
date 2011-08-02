@@ -29,8 +29,7 @@ require 'logger'
 
 params = {}
 params[:jboss_home] = Dir.pwd unless ENV["JBOSS_HOME"]
-
-config_file = nil
+config = nil
 create = true
 
 opts = OptionParser::new
@@ -40,7 +39,17 @@ opts.on('-v', '--version VERSION', 'Defines the JBoss version (5, 6, 5.1, 5.0.1)
 opts.on('-b', '--base-profile PROFILE', 'Defines the base profile') { |profile| params[:base_profile] = profile }
 opts.on('-p', '--profile PROFILE', 'Defines the custom profile') { |profile| params[:profile] = profile }
 opts.on('-u', '--update', 'Just update the profile folder') { create = false }
-opts.on('-c', '--config-file FILE', 'Defines the configuration file for the instance (see the examples for more details)') { |yaml| config_file = File.expand_path(yaml) }
+opts.on('-c', '--config-file FILE', 'Defines the configuration file for the instance (see the examples for more details)') do |yaml|
+  config_file = File.expand_path(yaml)
+  config = YAML::load File.open(config_file)
+  config.each do |c|
+    if c.is_a? Hash and c[:params]
+      c.delete(:params).each do |key, value|
+        params[key] = value
+      end
+    end
+  end
+end
 opts.on('-d', '--debug', '--verbose', 'Displays shell commands') do
   include FileUtils::Verbose
   params[:log_level] = Logger::DEBUG
@@ -50,8 +59,7 @@ opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.
 
 profile = JBoss::Profile::new params
 
-if config_file
-  config = YAML::load File.open(config_file)
+if config
   config.each do |var|
     if var.is_a? Hash
       var.each do |key, value|

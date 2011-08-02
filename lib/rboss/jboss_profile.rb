@@ -134,7 +134,10 @@ module JBoss
       end
       @profile = @opts[:profile].to_s
       @base_profile = @opts[:base_profile].to_s
-      @jboss = JBoss::Path::new @jboss_home, @profile, @opts[:type], @opts[:version]
+      @jboss = JBoss::Path::new @jboss_home,
+        :profile => @profile,
+        :type => @opts[:type],
+        :version => @opts[:version]
       initialize_components
     end
 

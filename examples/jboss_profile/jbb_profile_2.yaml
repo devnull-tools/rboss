@@ -1,5 +1,8 @@
-- cluster:
-    :partition_name: jbb-partition
+- :params:
+    :type: org
+    :version: 5.1
+    :base_profile: all
+    :profile: jbb1
 - mod_cluster
 - jms:
     :peer_id: 2

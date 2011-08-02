@@ -31,12 +31,17 @@ module JBoss
 
     attr_reader :profile, :profile_name, :home, :type, :version
 
-    def initialize jboss_home, profile = :custom, type = :undefined, version = :undefined
+    def initialize jboss_home, params = {}
+      params = {
+        :profile => :custom,
+        :type => :undefined,
+        version => :undefined
+      }.merge params
       @home = jboss_home
-      @profile ="#{jboss_home}/server/#{profile}"
-      @profile_name = profile.to_s
-      @type = type
-      @version = version
+      @profile ="#{@home}/server/#{params[:profile]}"
+      @profile_name = @profile.to_s
+      @type = params[:type]
+      @version = params[:version]
     end
 
     def to_s
