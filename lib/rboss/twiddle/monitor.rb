@@ -51,7 +51,7 @@ module JBoss
           },
           :request => {
             :pattern => 'jboss.web:type=GlobalRequestProcessor,name=#{resource}',
-            :properties => %W(requestCount)
+            :properties => %W(requestCount errorCount maxTime)
           },
           :datasource => {
             :pattern => 'jboss.jca:service=ManagedConnectionPool,name=#{resource}',
