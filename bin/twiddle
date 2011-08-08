@@ -83,111 +83,110 @@ if resources.empty? and not (exec_file or eval_expression)
   exit
 end
 
-if resources.empty?
-  eval File.read(exec_file), binding, exec_file if exec_file
-  puts (eval eval_expression, binding) if eval_expression
-else
-  if resources[:server_info]
-    puts "Server Info:"
-    monitor.properties[:server].each do |property|
-      puts "  - #{monitor.server[property]}"
-    end
-    monitor.properties[:server_info].each do |property|
-      puts "  - #{monitor.server_info[property]}"
+eval File.read(exec_file), binding, exec_file if exec_file
+
+puts (eval eval_expression, binding) if eval_expression
+
+if resources[:server_info]
+  puts "Server Info:"
+  monitor.properties[:server].each do |property|
+    puts "  - #{monitor.server[property]}"
+  end
+  monitor.properties[:server_info].each do |property|
+    puts "  - #{monitor.server_info[property]}"
+  end
+end
+if resources[:system_properties]
+  puts "System Properties:"
+  properties = resources[:system_properties]
+  if properties == :all
+    properties = monitor.system_properties.showAll
+    puts properties
+  else
+    properties.each do |property|
+      puts "  - #{property}=#{monitor.system_properties.get(property)}"
     end
   end
-  if resources[:system_properties]
-    puts "System Properties:"
-    properties = resources[:system_properties]
-    if properties == :all
-      properties = monitor.system_properties.showAll
-      puts properties
-    else
-      properties.each do |property|
-        puts "  - #{property}=#{monitor.system_properties.get(property)}"
-      end
-    end
+end
+if resources[:deployments]
+  puts "Deployments:"
+  monitor.deployments.each do |deployment|
+    puts "  - #{deployment}"
   end
-  if resources[:deployments]
-    puts "Deployments:"
-    monitor.deployments.each do |deployment|
-      puts "  - #{deployment}"
-    end
-  end
-  if resources[:connectors]
-    puts "Connectors:"
-    connectors = resources[:connectors]
-    connectors = monitor.connectors if connectors == :all
-    connectors.each do |connector|
-      monitor.with connector do
-        puts "  - #{connector}"
-        unless list_only
-          monitor.properties[:connector].each do |property|
-            puts "    - #{monitor.connector[property]}"
-          end
-          monitor.properties[:request].each do |property|
-            puts "    - #{monitor.request[property]}"
-          end
+end
+if resources[:connectors]
+  puts "Connectors:"
+  connectors = resources[:connectors]
+  connectors = monitor.connectors if connectors == :all
+  connectors.each do |connector|
+    monitor.with connector do
+      puts "  - #{connector}"
+      unless list_only
+        monitor.properties[:connector].each do |property|
+          puts "    - #{monitor.connector[property]}"
+        end
+        monitor.properties[:request].each do |property|
+          puts "    - #{monitor.request[property]}"
         end
       end
     end
   end
-  if resources[:datasources]
-    puts "Datasources:"
-    datasources = resources[:datasources]
-    datasources = monitor.datasources if datasources == :all
-    datasources.each do |datasource|
-      monitor.with datasource do
-        puts "  - #{datasource}"
-        unless list_only
-          monitor.properties[:datasource].each do |property|
-            puts "    - #{monitor.datasource[property]}"
-          end
+end
+if resources[:datasources]
+  puts "Datasources:"
+  datasources = resources[:datasources]
+  datasources = monitor.datasources if datasources == :all
+  datasources.each do |datasource|
+    monitor.with datasource do
+      puts "  - #{datasource}"
+      unless list_only
+        monitor.properties[:datasource].each do |property|
+          puts "    - #{monitor.datasource[property]}"
         end
       end
     end
   end
-  if resources[:webapps]
-    puts "Webapps:"
-    webapps = resources[:webapps]
-    webapps = monitor.webapps if webapps == :all
-    webapps.each do |webapp|
-      monitor.with webapp do
-        puts "  - #{webapp}"
-        unless list_only
-          monitor.properties[:webapp].each do |property|
-            puts "    - #{monitor.webapp[property]}"
-          end
+end
+if resources[:webapps]
+  puts "Webapps:"
+  webapps = resources[:webapps]
+  webapps = monitor.webapps if webapps == :all
+  webapps.each do |webapp|
+    monitor.with webapp do
+      puts "  - #{webapp}"
+      unless list_only
+        monitor.properties[:webapp].each do |property|
+          puts "    - #{monitor.webapp[property]}"
         end
       end
     end
   end
-  if resources[:ejbs]
-    puts "EJBs:"
-    ejbs = resources[:ejbs]
-    ejbs = monitor.ejbs if ejbs == :all
-    ejbs.each do |ejb|
-      monitor.with ejb do
-        puts "  - #{ejb}"
-        unless list_only
-          monitor.properties[:ejb].each do |property|
-            puts "    - #{monitor.ejb[property]}"
-          end
+end
+if resources[:ejbs]
+  puts "EJBs:"
+  ejbs = resources[:ejbs]
+  ejbs = monitor.ejbs if ejbs == :all
+  ejbs.each do |ejb|
+    monitor.with ejb do
+      puts "  - #{ejb}"
+      unless list_only
+        monitor.properties[:ejb].each do |property|
+          puts "    - #{monitor.ejb[property]}"
         end
       end
     end
   end
-  if resources[:queues]
-    puts "Queues:"
-    queues = resources[:queues]
-    queues = monitor.queues if queues == :all
-    queues.each do |queue|
-      monitor.with queue do
-        puts "  - #{queue}"
-        unless list_only
-          monitor.properties[:queue].each do |property|
-            puts "    - #{monitor.queue[property]}"
-          end
+end
+if resources[:queues]
+  puts "Queues:"
+  queues = resources[:queues]
+  queues = monitor.queues if queues == :all
+  queues.each do |queue|
+    monitor.with queue do
+      puts "  - #{queue}"
+      unless list_only
+        monitor.properties[:queue].each do |property|
+          puts "    - #{monitor.queue[property]}"
         end
       end
     end
