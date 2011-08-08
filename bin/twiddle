@@ -31,6 +31,7 @@ resources = {}
 list_only = false
 params[:jboss_home] = Dir.pwd unless ENV["JBOSS_HOME"]
 exec_file = nil
+eval_expression = nil
 
 opts = OptionParser::new
 opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') do |home|
@@ -42,6 +43,7 @@ opts.on('--jboss-port PORT', 'Defines the JBoss jnp port') { |port| params[:jbos
 opts.on('-e', '--exec-file PATH', 'Defines the ruby file to exec using the vars twiddle and monitor') do |path|
   exec_file = File.expand_path path
 end
+opts.on('--eval EXPRESSION', 'Evaluates the given expression using the vars twiddle and monitor') { |expression| eval_expression = expression }
 opts.on('--show-all', 'Shows all resources available') do
   [:server_info, :deployments, :datasources, :webapps, :connectors, :queues, :ejbs].each do |option|
     resources[option] = :all
@@ -64,6 +66,9 @@ end
 opts.on('--webapps [name_a, name_b, name_c, ...]', Array, 'Defines the webapps to show or scan if not specified') do |webapps|
   resources[:webapps] = webapps || :all
 end
+opts.on('--system-properties [name_a, name_b, name_c, ...]', Array, 'Defines the System properties to show or scan if not specified') do |properties|
+  resources[:system_properties] = properties || :all
+end
 opts.on('--list', 'Only lists the required info (datasources, queues, ...)') { list_only = true }
 opts.on('-u', '--jmx-user USER', 'Defines the JMX User') { |user| params[:jmx_user] = user }
 opts.on('-p', '--jmx-password PASSWORD', 'Defines the JMX Password') { |password| params[:jmx_password] = password }
@@ -73,13 +78,14 @@ opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.
 twiddle = JBoss::Twiddle::Invoker::new params
 monitor = twiddle.monitor
 
-if resources.empty? and not exec_file
+if resources.empty? and not (exec_file or eval_expression)
   puts opts
   exit
 end
 
 if resources.empty?
-  eval File.read(exec_file), binding, exec_file
+  eval File.read(exec_file), binding, exec_file if exec_file
+  puts (eval eval_expression, binding) if eval_expression
 else
   if resources[:server_info]
     puts "Server Info:"
@@ -88,6 +94,18 @@ else
     end
     monitor.properties[:server_info].each do |property|
       puts "  - #{monitor.server_info[property]}"
+    end
+  end
+  if resources[:system_properties]
+    puts "System Properties:"
+    properties = resources[:system_properties]
+    if properties == :all
+      properties = monitor.system_properties.showAll
+      puts properties
+    else
+      properties.each do |property|
+        puts "  - #{property}=#{monitor.system_properties.get(property)}"
+      end
     end
   end
   if resources[:deployments]

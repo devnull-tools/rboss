@@ -46,6 +46,9 @@ module JBoss
             :pattern => 'jboss.system:type=Server',
             :properties => %W(VersionNumber StartDate)
           },
+          :system_properties => {
+            :pattern => 'jboss:name=SystemProperties,type=Service'
+          },
           :request => {
             :pattern => 'jboss.web:type=GlobalRequestProcessor,name=#{resource}',
             :properties => %W(requestCount)

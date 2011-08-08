@@ -81,7 +81,9 @@ module JBoss
       private
 
       def _query_ query, &block
-        result = @twiddle.invoke(:query, query).split /\s+/
+        result = @twiddle.invoke(:query, query)
+        return [] if result["No MBean matches for query"]
+        result = result.split /\s+/
         block ? result.collect(&block) : result
       end
 

@@ -61,15 +61,9 @@ module JBoss
         "#{command} #{operation} #{arguments.join " "}"
       end
 
-      def get_system_property property
-        invoke :invoke, 'jboss:name=SystemProperties,type=Service', 'get', property
-      end
-
       def execute shell
         `#{shell}`.chomp
       end
-
-      alias_method :[], :get_system_property
 
     end
 

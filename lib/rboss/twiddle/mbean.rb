@@ -54,11 +54,6 @@ module JBoss
       result
     end
 
-    def get property, params = {}
-      @resource= params[:for]
-      self[property]
-    end
-
     def []= property, value
       resource = @resource
       env = @env
