@@ -1,4 +1,6 @@
 # These entries can be passed to RunConf component. They will be replaced by -D{value}
+#general
+log_dir                 : jboss.server.log.dir
 # Cluster
 partition_name          : jboss.partition.name
 multicast_ip            : jboss.partition.udpGroup
