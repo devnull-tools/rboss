@@ -37,42 +37,78 @@ opts = OptionParser::new
 opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') do |home|
   params[:jboss_home] = home
 end
-opts.on('-s', '--jboss-server URL', 'Defines the JBoss server') { |server| params[:jboss_server] = server }
-opts.on('--jboss-host HOST', 'Defines the JBoss host') { |host| params[:jboss_host] = host }
-opts.on('--jboss-port PORT', 'Defines the JBoss jnp port') { |port| params[:jboss_port] = port }
-opts.on('-e', '--exec-file PATH', 'Defines the ruby file to exec using the vars twiddle and monitor') do |path|
+opts.on('-s', '--jboss-server URL', 'Defines the JBoss server') do |server|
+  params[:jboss_server] = server
+end
+opts.on('--jboss-host HOST', 'Defines the JBoss host') do |host|
+  params[:jboss_host] = host
+end
+opts.on('--jboss-port PORT', 'Defines the JBoss jnp port') do |port|
+  params[:jboss_port] = port
+end
+opts.on('-e', '--exec-file PATH',
+        'Defines the ruby file to exec using the vars twiddle and monitor') do |path|
   exec_file = File.expand_path path
 end
-opts.on('--eval EXPRESSION', 'Evaluates the given expression using the vars twiddle and monitor') { |expression| eval_expression = expression }
+opts.on('--eval EXPRESSION',
+        'Evaluates the given expression using the vars twiddle and monitor') do |expression|
+  eval_expression = expression
+end
 opts.on('--show-all', 'Shows all resources available') do
-  [:server_info, :deployments, :datasources, :webapps, :connectors, :queues, :ejbs].each do |option|
+  [
+    :server_info,
+    :deployments,
+    :datasources,
+    :webapps,
+    :connectors,
+    :queues,
+    :ejbs
+  ].each do |option|
     resources[option] = :all
   end
 end
-opts.on('--server-info', 'Shows server information') { resources[:server_info] = true }
-opts.on('--deployments', 'Shows deployments on server') { resources[:deployments] = true }
-opts.on('--connectors [name_a, name_b, name_c, ...]', Array, 'Defines the connectors to show or scan if not specified') do |connectors|
+opts.on('--server-info', 'Shows server information') do
+  resources[:server_info] = true
+end
+opts.on('--deployments', 'Shows deployments on server') do
+  resources[:deployments] = true
+end
+opts.on('--connectors [name_a, name_b, name_c, ...]', Array,
+        'Defines the connectors to show or scan if not specified') do |connectors|
   resources[:connectors] = connectors || :all
 end
-opts.on('--datasources [name_a, name_b, name_c, ...]', Array, 'Defines the datasources to show or scan if not specified') do |datasources|
+opts.on('--datasources [name_a, name_b, name_c, ...]', Array,
+        'Defines the datasources to show or scan if not specified') do |datasources|
   resources[:datasources] = datasources || :all
 end
-opts.on('--ejbs [name_a, name_b, name_c, ...]', Array, 'Defines the EJBs to show or scan if not specified') do |ejbs|
+opts.on('--ejbs [name_a, name_b, name_c, ...]', Array,
+        'Defines the EJBs to show or scan if not specified') do |ejbs|
   resources[:ejbs] = ejbs || :all
 end
-opts.on('--queues [name_a, name_b, name_c, ...]', Array, 'Defines the JMS queues to show or scan if not specified') do |queues|
+opts.on('--queues [name_a, name_b, name_c, ...]', Array,
+        'Defines the JMS queues to show or scan if not specified') do |queues|
   resources[:queues] = queues || :all
 end
-opts.on('--webapps [name_a, name_b, name_c, ...]', Array, 'Defines the webapps to show or scan if not specified') do |webapps|
+opts.on('--webapps [name_a, name_b, name_c, ...]', Array,
+        'Defines the webapps to show or scan if not specified') do |webapps|
   resources[:webapps] = webapps || :all
 end
-opts.on('--system-properties [name_a, name_b, name_c, ...]', Array, 'Defines the System properties to show or scan if not specified') do |properties|
+opts.on('--system-properties [name_a, name_b, name_c, ...]', Array,
+        'Defines the System properties to show or scan if not specified') do |properties|
   resources[:system_properties] = properties || :all
 end
-opts.on('--list', 'Only lists the required info (datasources, queues, ...)') { list_only = true }
-opts.on('-u', '--jmx-user USER', 'Defines the JMX User') { |user| params[:jmx_user] = user }
-opts.on('-p', '--jmx-password PASSWORD', 'Defines the JMX Password') { |password| params[:jmx_password] = password }
-opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
+opts.on('--list', 'Only lists the required info (datasources, queues, ...)') do
+  list_only = true
+end
+opts.on('-u', '--jmx-user USER', 'Defines the JMX User') do |user|
+  params[:jmx_user] = user
+end
+opts.on('-p', '--jmx-password PASSWORD', 'Defines the JMX Password') do |password|
+  params[:jmx_password] = password
+end
+opts.on("-h", "--help", "Shows this help message") do
+  puts opts; exit
+end
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
 
 twiddle = JBoss::Twiddle::Invoker::new params
