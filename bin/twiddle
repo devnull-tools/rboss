@@ -54,7 +54,7 @@ opts.on('--eval EXPRESSION',
         'Evaluates the given expression using the vars twiddle and monitor') do |expression|
   eval_expression = expression
 end
-opts.on('--show-all', 'Shows all resources available') do
+opts.on('--all', 'Shows all resources available') do
   [
     :server_info,
     :deployments,
