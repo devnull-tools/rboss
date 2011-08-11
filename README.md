@@ -65,8 +65,6 @@ All configuration can be stored in a single yaml file:
         :perm_size: 512m
         :debug: :socket
 
-
-
 ### Configuring deploy folders
 
 ### Configuring datasources
