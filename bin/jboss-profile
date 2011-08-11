@@ -28,7 +28,6 @@ require 'yaml'
 require 'logger'
 
 params = {}
-params[:jboss_home] = Dir.pwd unless ENV["JBOSS_HOME"]
 config = nil
 create = true
 
@@ -71,6 +70,12 @@ end
 opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
 
+if params.empty?
+  puts opts
+  exit
+end
+
+params[:jboss_home] ||= Dir.pwd unless ENV["JBOSS_HOME"]
 profile = JBoss::Profile::new params
 
 if config
