@@ -50,6 +50,28 @@ module JBoss
         monitor.mbean id
       end
 
+      def get params
+        mbean = extract params
+        mbean[params[:property]]
+      end
+
+      def set params
+        mbean = extract params
+        mbean[params[:property]] = params[:value]
+      end
+
+      def invoke params
+        mbean = extract params
+        mbean.send params[:method], *params[:args]
+      end
+
+      private
+
+      def extract params
+        mbean = monitor.mbean params[:mbean]
+        mbean.with params[:name]
+      end
+
     end
 
   end

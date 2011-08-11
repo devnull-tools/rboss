@@ -47,7 +47,7 @@ module JBoss
       resource = @resource
       env = @env
       query = eval("\"#{pattern}\"")
-      result = @twiddle.invoke(:get, query, property)
+      result = @twiddle.execute(:get, query, property)
       def result.value
         self.split(/=/)[1]
       end
@@ -58,7 +58,7 @@ module JBoss
       resource = @resource
       env = @env
       query = eval("\"#{pattern}\"")
-      @twiddle.invoke :set, query, property, value
+      @twiddle.execute :set, query, property, value
     end
 
     def method_missing(method, *args, &block)
@@ -69,7 +69,7 @@ module JBoss
       resource = @resource
       env = @env
       query = eval("\"#{pattern} #{method}\"")
-      return_value = @twiddle.invoke :invoke, query, args
+      return_value = @twiddle.execute :invoke, query, args
       if block_given?
         block.call return_value
       end

@@ -97,6 +97,18 @@ opts.on('--system-properties [name_a, name_b, name_c, ...]', Array,
         'Defines the System properties to show or scan if not specified') do |properties|
   resources[:system_properties] = properties || :all
 end
+opts.on('--set resource_type[:resource_name],property,value', Array,
+        'Sets a value to a resource that the monitor knows') do |set|
+  resources[:set] = set
+end
+opts.on('--get resource_type[:resource_name],property', Array,
+        'Gets a value to a resource that the monitor knows') do |get|
+  resources[:get] = get
+end
+opts.on('--invoke resource_type[:resource_name],method,[,args...]', Array,
+        'Invokes a resoruce method') do |invoke|
+  resources[:invoke] = invoke
+end
 opts.on('--list', 'Only lists the required info (datasources, queues, ...)') do
   list_only = true
 end
@@ -122,6 +134,37 @@ end
 eval File.read(exec_file), binding, exec_file if exec_file
 
 puts (eval eval_expression, binding) if eval_expression
+
+def extract resource
+  mbean, name = resource.split(/:/)
+end
+
+if resources[:set]
+  array = resources[:set]
+  raise "Wrong number of arguments" if array.size != 3
+  mbean, name = extract array[0]
+  puts twiddle.set :mbean => mbean.to_sym,
+              :name => name,
+              :property => array[1],
+              :value => array[2]
+end
+if resources[:get]
+  array = resources[:get]
+  raise "Wrong number of arguments" if array.size != 2
+  mbean, name = extract array[0]
+  puts twiddle.get :mbean => mbean.to_sym,
+                   :name => name,
+                   :property => array[1]
+end
+if resources[:invoke]
+  array = resources[:invoke]
+  raise "Wrong number of arguments" if array.size < 2
+  mbean, name = extract array[0]
+  puts twiddle.invoke :mbean => mbean.to_sym,
+                      :name => name,
+                      :method => array[1],
+                      :args => array[2..-1]
+end
 
 if resources[:server_info]
   puts "Server Info:"

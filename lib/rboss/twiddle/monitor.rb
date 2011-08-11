@@ -33,6 +33,9 @@ module JBoss
             :pattern => 'jboss.web:type=Manager,host=localhost,path=/#{resource}',
             :properties => %W(activeSessions maxActive)
           },
+          :web_deployment => {
+            :pattern => 'jboss.web.deployment:war=/#{resource}'
+          },
           :connector => {
             :pattern => 'jboss.web:type=ThreadPool,name=#{resource}',
             :properties => %W(maxThreads currentThreadCount currentThreadsBusy)
@@ -115,20 +118,13 @@ module JBoss
         end
       end
 
-      def mbean mbean_id = nil
-        return get current_scan unless mbean_id
-        mbeans[mbean_id]
-      end
-
-      def get mbean_id
+      def mbean mbean_id
         mbean = mbeans[mbean_id]
         if @current_resource
           mbean.with @current_resource
         end
         mbean
       end
-
-      alias_method :[], :get
 
       def method_missing(method, *args, &block)
         mbean_id = method

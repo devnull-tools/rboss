@@ -53,16 +53,12 @@ module JBoss
         @jboss_home
       end
 
-      def invoke command, *arguments
-        execute(shell command, arguments)
-      end
-
       def shell operation, *arguments
         "#{command} #{operation} #{arguments.join " "}"
       end
 
-      def execute shell
-        `#{shell}`.chomp
+      def execute command, *arguments
+        `#{shell command, arguments}`.chomp
       end
 
     end
