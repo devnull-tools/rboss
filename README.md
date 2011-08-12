@@ -68,7 +68,12 @@ and its configuration:
 
 You can specify any command-line arguments directly in yaml file:
 
-    - params:
+    - :params:
+        :jboss_home: /home/user/jboss/org/jboss-5
+        :type: org
+        :version: 5.1
+        :base_profile: all
+        :profile: my_profile
 
 ### Configuring deploy folders
 
@@ -116,11 +121,11 @@ value ":database_url":
 3. The value "DatabaseUrl"
 4. The value "DATABASE_URL"
 
-The key for finding the correct datasource is the configuration attribute :type, which is used
-to search in $JBOSS_HOME/docs/examples/jca for the file.
+The key for finding the correct datasource is the configuration attribute :type, which is
+used to search in $JBOSS_HOME/docs/examples/jca for the file.
 
-Any key that is not found in the datasource template will be added. If it is a Symbol, the underlines will be
-converted to hyphens.
+Any key that is not found in the datasource template will be added. If it is a Symbol,
+the underlines will be converted to hyphens.
 
 For saving the file, the configuration :name will be used in the form "${name}-ds.xml".
 
