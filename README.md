@@ -55,7 +55,8 @@ Simply do a "cd" to your JBoss Home and use it
 
     jboss-profile --help
 
-All configuration can be stored in a single yaml file:
+All configuration can be stored in a single yaml file containing an array of components
+and its configuration:
 
     - deploy_folder: deploy/datasources
     - deploy_folder: deploy/apps
@@ -65,11 +66,32 @@ All configuration can be stored in a single yaml file:
         :perm_size: 512m
         :debug: :socket
 
+You can specify any command-line arguments directly in yaml file:
+
+    - params:
+
 ### Configuring deploy folders
+
+Use "deploy_folder" component and the desired folder. If the folder starts with a "/" or
+doesn't start with "deploy", the entries in VFS will be added.
+
+    # Will be in $JBOSS_HOME/server/$PROFILE/deploy/application
+    - deploy_folder: deploy/applications
+    # Will be in $JBOSS_HOME/server/$PROFILE/custom/application
+    - deploy_folder: custom/applications
+    - deploy_folder: /opt/deploy
 
 ### Configuring datasources
 
 ### Configuring jmx
+
+Use "jmx" component:
+
+    # user and password are "admin" by default
+    - jmx
+    - jmx:
+        :user: admin
+        :password: admin
 
 ### Replacing hypersonic
 
