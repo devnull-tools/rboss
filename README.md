@@ -157,9 +157,40 @@ The same as Datasouce, but use the "default_ds" component instead.
 
 ### Installing mod_cluster
 
+Use a "mod_cluster" component
+
+Configuration:
+
+:path => where the mod_cluster.sar is located
+:folder => where the mod_cluster.sar should be installed (default: $JBOSS_HOME/server/$CONFIG/deploy)
+
+The additional configurations are the entries in the bean ModClusterConfig (mod_cluster-jboss-beans.xml)
+and can be in a String form (using the entry name) or in a Symbol form (using ruby nomenclature - :sticky_session)
+
 ### Configuring run.conf
 
 ### Slimming
+
+Use a "slimming" component.
+
+Configuration:
+
+Use an array with the services to remove, the current supported are:
+
+* Admin Console       => :admin_console
+* Web Console         => :web_console
+* Mail Service        => :mail
+* Bsh Deployer        => :bsh_deployer
+* Hot Deploy          => :hot_deploy
+* JUDDI               => :juddi
+* UUID Key Generator  => :key_generator
+* Scheduling          => :scheduling
+* JMX Console         => :jmx_console
+* JBoss WS            => :jboss_ws
+* JMX Remoting        => :jmx_remoting
+* ROOT Page           => :root_page
+
+Any slimmed service will be removed logically by using a ".rej" suffix in the files/directories.
 
 ### Configuring jbossweb
 
