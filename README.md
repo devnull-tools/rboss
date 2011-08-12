@@ -81,8 +81,6 @@ doesn't start with "deploy", the entries in VFS will be added.
     - deploy_folder: custom/applications
     - deploy_folder: /opt/deploy
 
-### Configuring datasources
-
 ### Configuring jmx
 
 Use "jmx" component:
@@ -93,7 +91,62 @@ Use "jmx" component:
         :user: admin
         :password: admin
 
+Basically, this will add an entry in the jmx-console-users.properties (depends on JBoss type).
+For JBoss org, this will enable security in jmx-console since the enterprise versions have
+jmx-console security by default.
+
+### Configuring datasources
+
+Configuration:
+
+:folder => a folder where this datasource will be saved (default: $JBOSS_HOME/server/$CONFIG/deploy)
+if a relative path is given, it will be appended to default value
+:encrypt => a flag to indicate if the password should be encrypted (default: false)
+:type => the type of the datasource
+:name => a name for saving the file (default: :type)
+:attributes => a Hash with the attributes that will be changed in template (the only required is :jndi_name)
+
+Any attribute that is not present in datasource xml will be created using this template: <key>value</key>.
+
+For converting the symbol attributes, the above rules are used taking by example a
+value ":database_url":
+
+1. The value "database_url"
+2. The value "database-url"
+3. The value "DatabaseUrl"
+4. The value "DATABASE_URL"
+
+The key for finding the correct datasource is the configuration attribute :type, which is used
+to search in $JBOSS_HOME/docs/examples/jca for the file.
+
+Any key that is not found in the datasource template will be added. If it is a Symbol, the underlines will be
+converted to hyphens.
+
+For saving the file, the configuration :name will be used in the form "${name}-ds.xml".
+
+Example:
+
+    - datasource:
+      :type: postgres
+      :attributes:
+        :user_name: postgres
+        :password: postgres
+        :connection_url: jdbc:postgresql://localhost:5432/sample_database
+        :min_pool_size: 5
+        :max_pool_size: 15
+
 ### Replacing hypersonic
+
+The same as Datasouce, but use the "default_ds" component instead.
+
+    - default_ds:
+      :type: postgres
+      :attributes:
+        :user_name: postgres
+        :password: postgres
+        :connection_url: jdbc:postgresql://localhost:5432/jboss_db
+        :min_pool_size: 5
+        :max_pool_size: 15
 
 ### Installing mod_cluster
 
