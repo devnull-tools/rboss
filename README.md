@@ -102,6 +102,8 @@ jmx-console security by default.
 
 ### Configuring datasources
 
+Use a "datasource" component
+
 Configuration:
 
 :folder => a folder where this datasource will be saved (default: $JBOSS_HOME/server/$CONFIG/deploy)
