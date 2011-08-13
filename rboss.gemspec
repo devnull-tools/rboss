@@ -7,9 +7,10 @@ Gem::Specification.new do |s|
   s.version     = RBoss::VERSION
   s.authors     = ["Ataxexe"]
   s.email       = ["ataxexe@gmail.com"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/ataxexe/rboss"
   s.summary     = %q{A Ruby way to do a JBoss work!}
-  s.description = %q{This gem help you to create a JBoss profile and some other things like building twiddle scripts}
+  s.description = %q{A tool to create profiles for JBoss Application Server and use
+ twiddle to scan a running JBoss AS or execute scripts.}
 
   s.rubyforge_project = "rboss"
 
