@@ -31,14 +31,31 @@ module JBoss
         {
           :webapp => {
             :pattern => 'jboss.web:type=Manager,host=localhost,path=/#{resource}',
-            :properties => %W(activeSessions maxActive)
+            :properties => %W(activeSessions maxActive),
+            :scan => proc do
+              _query_ "jboss.web:type=Manager,*" do |path|
+                path.gsub! "jboss.web:type=Manager,path=/", ""
+                path.gsub! /,host=.+/, ''
+                path
+              end
+            end
           },
           :web_deployment => {
-            :pattern => 'jboss.web.deployment:war=/#{resource}'
+            :pattern => 'jboss.web.deployment:war=/#{resource}',
+            :scan => proc do
+              _query_ "jboss.jca:service=ManagedConnectionPool,*" do |path|
+                path.gsub "jboss.jca:service=ManagedConnectionPool,name=", ""
+              end
+            end
           },
           :connector => {
             :pattern => 'jboss.web:type=ThreadPool,name=#{resource}',
-            :properties => %W(maxThreads currentThreadCount currentThreadsBusy)
+            :properties => %W(maxThreads currentThreadCount currentThreadsBusy),
+            :scan => proc do
+              _query_ "jboss.web:type=ThreadPool,*" do |path|
+                path.gsub "jboss.web:type=ThreadPool,name=", ""
+              end
+            end
           },
           :engine => {
             :pattern => 'jboss.web:type=Engine',
@@ -63,16 +80,32 @@ module JBoss
           :datasource => {
             :pattern => 'jboss.jca:service=ManagedConnectionPool,name=#{resource}',
             :properties => %W(MinSize MaxSize AvailableConnectionCount
-                                InUseConnectionCount ConnectionCount)
+                                InUseConnectionCount ConnectionCount),
+            :scan => proc do
+              _query_ "jboss.jca:service=ManagedConnectionPool,*" do |path|
+                path.gsub "jboss.jca:service=ManagedConnectionPool,name=", ""
+              end
+            end
           },
           :queue => {
             :pattern => 'jboss.messaging.destination:service=Queue,name=#{resource}',
             :properties => %W(Name JNDIName MessageCount DeliveringCount
-              ScheduledMessageCount MaxSize FullSize Clustered ConsumerCount)
+              ScheduledMessageCount MaxSize FullSize Clustered ConsumerCount),
+            :scan => proc do
+              _query_ "jboss.messaging.destination:service=Queue,*" do |path|
+                path.gsub "jboss.messaging.destination:service=Queue,name=", ""
+              end
+            end
           },
           :ejb => {
             :pattern => 'jboss.j2ee:#{resource},service=EJB3',
-            :properties => %W(CreateCount RemoveCount CurrentSize AvailableCount)
+            :properties => %W(CreateCount RemoveCount CurrentSize AvailableCount),
+            :scan => proc do
+              result = _query_ "jboss.j2ee:service=EJB3,*"
+              (result.find_all { |path| path["name="] && path["jar="] }).collect do |path|
+                path.gsub("jboss.j2ee:", '').gsub(/,?service=EJB3/, '')
+              end
+            end
           }
         }
       end
@@ -104,6 +137,9 @@ module JBoss
       def monitor mbean_id, params
         mbeans[mbean_id] = JBoss::MBean::new :pattern => params[:pattern], :twiddle => @twiddle
         properties[mbean_id] = params[:properties]
+        if params[:scan]
+          (class << self;self end).send :define_method, "#{mbean_id}s".to_sym, &params[:scan]
+        end
       end
 
       def with resource
@@ -136,6 +172,15 @@ module JBoss
         mbean = mbeans[mbean_id]
         resource = args[0] || @current_resource
         mbean.with resource
+      end
+
+      private
+
+      def _query_ query, &block
+        result = @twiddle.execute(:query, query)
+        return [] if result["No MBean matches for query"]
+        result = result.split /\s+/
+        block ? result.collect(&block) : result
       end
 
     end

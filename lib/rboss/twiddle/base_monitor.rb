@@ -21,14 +21,13 @@
 # THE SOFTWARE.
 
 require_relative 'monitor'
-require_relative 'scanner'
 require_relative 'twiddle'
 
 module JBoss
   module Twiddle
 
     class BaseMonitor
-      include JBoss::Twiddle::Monitor, JBoss::Twiddle::Scanner
+      include JBoss::Twiddle::Monitor
 
       def initialize twiddle
         @twiddle = twiddle
