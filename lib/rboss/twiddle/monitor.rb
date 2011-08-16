@@ -40,6 +40,10 @@ module JBoss
             :pattern => 'jboss.web:type=ThreadPool,name=#{resource}',
             :properties => %W(maxThreads currentThreadCount currentThreadsBusy)
           },
+          :engine => {
+            :pattern => 'jboss.web:type=Engine',
+            :properties => %W(jvmRoute name defaultHost)
+          },
           :server_info => {
             :pattern => 'jboss.system:type=ServerInfo',
             :properties => %W(ActiveThreadCount MaxMemory FreeMemory AvailableProcessors
@@ -58,7 +62,8 @@ module JBoss
           },
           :datasource => {
             :pattern => 'jboss.jca:service=ManagedConnectionPool,name=#{resource}',
-            :properties => %W(MinSize MaxSize AvailableConnectionCount InUseConnectionCount ConnectionCount)
+            :properties => %W(MinSize MaxSize AvailableConnectionCount
+                                InUseConnectionCount ConnectionCount)
           },
           :queue => {
             :pattern => 'jboss.messaging.destination:service=Queue,name=#{resource}',
