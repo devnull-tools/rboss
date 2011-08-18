@@ -27,11 +27,12 @@ require 'optparse'
 require 'yaml'
 
 params = {}
-resources = {}
-list_only = false
+mbeans = {}
+commands = {}
+no_details = false
 params[:jboss_home] = Dir.pwd unless ENV["JBOSS_HOME"]
 exec_file = nil
-eval_expression = nil
+defaults = JBoss::Twiddle::Monitor::defaults
 
 opts = OptionParser::new
 opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') do |home|
@@ -50,68 +51,35 @@ opts.on('-e', '--exec-file PATH',
         'Defines the ruby file to exec using the vars twiddle and monitor') do |path|
   exec_file = File.expand_path path
 end
-opts.on('--eval EXPRESSION',
-        'Evaluates the given expression using the vars twiddle and monitor') do |expression|
-  eval_expression = expression
-end
-opts.on('--all', 'Shows all resources available') do
-  [
-    :server_info,
-    :deployments,
-    :datasources,
-    :webapps,
-    :connectors,
-    :queues,
-    :ejbs
-  ].each do |option|
-    resources[option] = :all
+
+defaults.each do |mbean_id, mbean|
+  command = mbean_id.to_s.gsub /_/, '-'
+  if mbean[:scan]
+    opts.on("--#{command} [resource_a,resource_b,...]", Array, mbean[:description]) do |names|
+      mbeans[mbean_id] = names || :all
+    end
+  elsif mbean[:detail]
+    opts.on("--#{command}", mbean[:description]) do
+      mbeans[mbean_id] = true
+    end
   end
 end
-opts.on('--server-info', 'Shows server information') do
-  resources[:server_info] = true
-end
-opts.on('--deployments', 'Shows deployments on server') do
-  resources[:deployments] = true
-end
-opts.on('--connectors [name_a, name_b, name_c, ...]', Array,
-        'Defines the connectors to show or scan if not specified') do |connectors|
-  resources[:connectors] = connectors || :all
-end
-opts.on('--datasources [name_a, name_b, name_c, ...]', Array,
-        'Defines the datasources to show or scan if not specified') do |datasources|
-  resources[:datasources] = datasources || :all
-end
-opts.on('--ejbs [name_a, name_b, name_c, ...]', Array,
-        'Defines the EJBs to show or scan if not specified') do |ejbs|
-  resources[:ejbs] = ejbs || :all
-end
-opts.on('--queues [name_a, name_b, name_c, ...]', Array,
-        'Defines the JMS queues to show or scan if not specified') do |queues|
-  resources[:queues] = queues || :all
-end
-opts.on('--webapps [name_a, name_b, name_c, ...]', Array,
-        'Defines the webapps to show or scan if not specified') do |webapps|
-  resources[:webapps] = webapps || :all
-end
-opts.on('--system-properties [name_a, name_b, name_c, ...]', Array,
-        'Defines the System properties to show or scan if not specified') do |properties|
-  resources[:system_properties] = properties || :all
-end
+
 opts.on('--set mbean_id[:resource_name],property,value', Array,
         'Sets a value to a resource that the monitor knows') do |set|
-  resources[:set] = set
+  commands[:set] = set
 end
 opts.on('--get mbean_id[:resource_name],property', Array,
         'Gets a value to a resource that the monitor knows') do |get|
-  resources[:get] = get
+  commands[:get] = get
 end
 opts.on('--invoke mbean_id[:resource_name],method,[,args...]', Array,
         'Invokes a resoruce method') do |invoke|
-  resources[:invoke] = invoke
+  commands[:invoke] = invoke
 end
-opts.on('--list', 'Only lists the required info (datasources, queues, ...)') do
-  list_only = true
-end
+#opts.on('--no-detail', 'Do not detail mbeans') do
+#  no_details = true
+#end
 opts.on('-u', '--jmx-user USER', 'Defines the JMX User') do |user|
   params[:jmx_user] = user
 end
@@ -126,38 +94,36 @@ opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.
 twiddle = JBoss::Twiddle::Invoker::new params
 monitor = twiddle.monitor
 
-if resources.empty? and not (exec_file or eval_expression)
+if mbeans.empty? and commands.empty? and not exec_file
   puts opts
   exit
 end
 
 eval File.read(exec_file), binding, exec_file if exec_file
 
-puts (eval eval_expression, binding) if eval_expression
-
 def extract resource
   mbean, name = resource.split(/:/)
 end
 
-if resources[:set]
-  array = resources[:set]
+if commands[:set]
+  array = commands[:set]
   raise "Wrong number of arguments" if array.size != 3
   mbean, name = extract array[0]
   puts twiddle.set :mbean => mbean.to_sym,
-              :name => name,
-              :property => array[1],
-              :value => array[2]
+                   :name => name,
+                   :property => array[1],
+                   :value => array[2]
 end
-if resources[:get]
-  array = resources[:get]
+if commands[:get]
+  array = commands[:get]
   raise "Wrong number of arguments" if array.size != 2
   mbean, name = extract array[0]
   puts twiddle.get :mbean => mbean.to_sym,
                    :name => name,
                    :property => array[1]
 end
-if resources[:invoke]
-  array = resources[:invoke]
+if commands[:invoke]
+  array = commands[:invoke]
   raise "Wrong number of arguments" if array.size < 2
   mbean, name = extract array[0]
   puts twiddle.invoke :mbean => mbean.to_sym,
@@ -166,108 +132,20 @@ if resources[:invoke]
                       :args => array[2..-1]
 end
 
-if resources[:server_info]
-  puts "Server Info:"
-  monitor.properties[:server].each do |property|
-    puts "  - #{monitor.server[property]}"
-  end
-  monitor.properties[:server_info].each do |property|
-    puts "  - #{monitor.server_info[property]}"
-  end
-end
-if resources[:system_properties]
-  puts "System Properties:"
-  properties = resources[:system_properties]
-  if properties == :all
-    properties = monitor.system_properties.showAll
-    puts properties
+mbeans.each do |mbean_id, resources|
+  if resources.is_a? TrueClass
+    details = monitor.mbean(mbean_id).detail
+    details.each do |name, value|
+      puts "  - #{name}=#{value}"
+    end
   else
-    properties.each do |property|
-      puts "  - #{property}=#{monitor.system_properties.get(property)}"
-    end
-  end
-end
-if resources[:deployments]
-  puts "Deployments:"
-  monitor.deployments.each do |deployment|
-    puts "  - #{deployment}"
-  end
-end
-if resources[:connectors]
-  puts "Connectors:"
-  connectors = resources[:connectors]
-  connectors = monitor.connectors if connectors == :all
-  connectors.each do |connector|
-    monitor.with connector do
-      puts "  - #{connector}"
-      unless list_only
-        monitor.properties[:connector].each do |property|
-          puts "    - #{monitor.connector[property]}"
-        end
-        monitor.properties[:request].each do |property|
-          puts "    - #{monitor.request[property]}"
-        end
+    details = monitor.mbean(mbean_id).detail resources
+    details.each do |resource, detail|
+      puts "  - #{resource}"
+      detail.each do |name, value|
+        puts "    - #{name}=#{value}"
       end
     end
   end
 end
-if resources[:datasources]
-  puts "Datasources:"
-  datasources = resources[:datasources]
-  datasources = monitor.datasources if datasources == :all
-  datasources.each do |datasource|
-    monitor.with datasource do
-      puts "  - #{datasource}"
-      unless list_only
-        monitor.properties[:datasource].each do |property|
-          puts "    - #{monitor.datasource[property]}"
-        end
-      end
-    end
-  end
-end
-if resources[:webapps]
-  puts "Webapps:"
-  webapps = resources[:webapps]
-  webapps = monitor.webapps if webapps == :all
-  webapps.each do |webapp|
-    monitor.with webapp do
-      puts "  - #{webapp}"
-      unless list_only
-        monitor.properties[:webapp].each do |property|
-          puts "    - #{monitor.webapp[property]}"
-        end
-      end
-    end
-  end
-end
-if resources[:ejbs]
-  puts "EJBs:"
-  ejbs = resources[:ejbs]
-  ejbs = monitor.ejbs if ejbs == :all
-  ejbs.each do |ejb|
-    monitor.with ejb do
-      puts "  - #{ejb}"
-      unless list_only
-        monitor.properties[:ejb].each do |property|
-          puts "    - #{monitor.ejb[property]}"
-        end
-      end
-    end
-  end
-end
-if resources[:queues]
-  puts "Queues:"
-  queues = resources[:queues]
-  queues = monitor.queues if queues == :all
-  queues.each do |queue|
-    monitor.with queue do
-      puts "  - #{queue}"
-      unless list_only
-        monitor.properties[:queue].each do |property|
-          puts "    - #{monitor.queue[property]}"
-        end
-      end
-    end
-  end
-end
+

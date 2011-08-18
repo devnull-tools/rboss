@@ -27,9 +27,8 @@ module JBoss
 
     module Monitor
 
-
       def defaults
-        {
+        @defaults ||= {
           :webapp => {
             :description => 'Shows information about deployed webapps',
             :pattern => 'jboss.web:type=Manager,host=localhost,path=/#{resource}',
@@ -40,7 +39,8 @@ module JBoss
                 path.gsub! /,host=.+/, ''
                 path
               end
-            end
+            end,
+            :detail => true
           },
           :web_deployment => {
             :description => 'Controls a deployed webapp',
@@ -59,33 +59,45 @@ module JBoss
               _query_ "jboss.web:type=ThreadPool,*" do |path|
                 path.gsub "jboss.web:type=ThreadPool,name=", ""
               end
-            end
+            end,
+            :detail => true
           },
           :engine => {
             :description => 'Shows information about a JBossWeb engine',
             :pattern => 'jboss.web:type=Engine',
-            :properties => %W(jvmRoute name defaultHost)
+            :properties => %W(jvmRoute name defaultHost),
+            :detail => true
           },
           :server_info => {
-            :description => 'Shows information about the JBoss server',
+            :description => 'Shows runtime information about JBoss server',
             :pattern => 'jboss.system:type=ServerInfo',
             :properties => %W(ActiveThreadCount MaxMemory FreeMemory AvailableProcessors
-                              HostAddress JavaVendor JavaVersion OSName OSArch)
+                              HostAddress JavaVendor JavaVersion OSName OSArch),
+            :detail => true
           },
           :server => {
-            :description => 'Shows server information',
+            :description => 'Shows server specifications',
             :pattern => 'jboss.system:type=Server',
-            :properties => %W(VersionNumber StartDate)
+            :properties => %W(VersionNumber StartDate),
+            :detail => true
           },
           :system_properties => {
             :description => 'Shows system properties',
             :pattern => 'jboss:name=SystemProperties,type=Service'
           },
           :request => {
+            :description => 'Shows information about requests on a JBossWeb connector',
             :pattern => 'jboss.web:type=GlobalRequestProcessor,name=#{resource}',
-            :properties => %W(requestCount errorCount maxTime)
+            :properties => %W(requestCount errorCount maxTime),
+            :scan => proc do
+              _query_ "jboss.web:type=ThreadPool,*" do |path|
+                path.gsub "jboss.web:type=ThreadPool,name=", ""
+              end
+            end,
+            :detail => true
           },
           :datasource => {
+            :description => 'Shows information about a datasource',
             :pattern => 'jboss.jca:service=ManagedConnectionPool,name=#{resource}',
             :properties => %W(MinSize MaxSize AvailableConnectionCount
                                 InUseConnectionCount ConnectionCount),
@@ -96,6 +108,7 @@ module JBoss
             end
           },
           :queue => {
+            :description => 'Shows information about a queue',
             :pattern => 'jboss.messaging.destination:service=Queue,name=#{resource}',
             :properties => %W(Name JNDIName MessageCount DeliveringCount
               ScheduledMessageCount MaxSize FullSize Clustered ConsumerCount),
@@ -106,6 +119,7 @@ module JBoss
             end
           },
           :ejb => {
+            :description => 'Shows information about a EJB',
             :pattern => 'jboss.j2ee:#{resource},service=EJB3',
             :properties => %W(CreateCount RemoveCount CurrentSize AvailableCount),
             :scan => proc do
@@ -116,7 +130,10 @@ module JBoss
             end
           }
         }
+        @defaults
       end
+
+      module_function :defaults
 
       def properties mbean_id = nil
         @properties ||= {}
@@ -143,14 +160,7 @@ module JBoss
       end
 
       def monitor mbean_id, params
-        mbeans[mbean_id] = JBoss::MBean::new :pattern => params[:pattern], :twiddle => @twiddle
-        properties[mbean_id] = params[:properties]
-        if params[:scan]
-          (
-          class << self;
-            self
-          end).send :define_method, "#{mbean_id}s".to_sym, &params[:scan]
-        end
+        mbeans[mbean_id] = JBoss::MBean::new params.merge(:twiddle => @twiddle)
       end
 
       def with resource
@@ -178,20 +188,22 @@ module JBoss
         mbean
       end
 
-      def method_missing(method, *args, &block)
+      def detail_mbean mbean_id, resources = nil
+        resources = _parse_resource_ mbean_id, resources if resources
+        mbean = mbeans[mbean_id]
+        result = []
+        if resources
+
+        else
+          monitor.properties
+        end
+      end
+
+      def method_missing method, *args, &block
         mbean_id = method
         mbean = mbeans[mbean_id]
         resource = args[0] || @current_resource
         mbean.with resource
-      end
-
-      private
-
-      def _query_ query, &block
-        result = @twiddle.execute(:query, query)
-        return [] if result["No MBean matches for query"]
-        result = result.split /\s+/
-        block ? result.collect(&block) : result
       end
 
     end

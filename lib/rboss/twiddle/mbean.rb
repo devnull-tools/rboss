@@ -26,12 +26,50 @@ module JBoss
   class MBean
 
     attr_reader :pattern
-    attr_accessor :resource, :twiddle
+    attr_accessor :resource, :twiddle, :description
+
+    @@__default__detail__resource__ = proc do |resources|
+      resouces = _parse_resource_ resources
+      details = {}
+      resouces.each do |resource|
+        with resource do
+          details[resource] = {}
+          @properties.each do |property|
+            details[resource][property] = self[property].value
+          end
+        end
+      end
+      details
+    end
+
+    @@__default__detail__ = proc do
+      details = {}
+      @properties.each do |property|
+        details[property] = self[property].value
+      end
+      details
+    end
 
     def initialize params
       @pattern = params[:pattern]
       @twiddle = params[:twiddle]
-      @env = @twiddle
+      @properties = params[:properties]
+      @description = params[:description]
+      if params[:scan]
+        (class << self
+          self
+        end).send :define_method, :scan, &params[:scan]
+      end
+      if params[:detail]
+        (class << self
+          self
+        end).send :define_method,
+                  :detail,
+                  &(params[:detail].is_a?(TrueClass) ?
+                    (params[:scan] ?
+                      @@__default__detail__resource__ : @@__default__detail__)
+                  : params[:detail])
+      end
     end
 
     def with resource
@@ -43,20 +81,24 @@ module JBoss
       self
     end
 
+    def resourced?
+      @pattern['#{resource}']
+    end
+
     def [] property
       resource = @resource
-      env = @env
       query = eval("\"#{pattern}\"")
       result = @twiddle.execute(:get, query, property)
+
       def result.value
         self.split(/=/)[1]
       end
+
       result
     end
 
     def []= property, value
       resource = @resource
-      env = @env
       query = eval("\"#{pattern}\"")
       @twiddle.execute :set, query, property, value
     end
@@ -67,13 +109,25 @@ module JBoss
 
     def _invoke_ method, *args, &block
       resource = @resource
-      env = @env
       query = eval("\"#{pattern} #{method}\"")
       return_value = @twiddle.execute :invoke, query, args
       if block_given?
         block.call return_value
       end
       return_value
+    end
+
+    def _query_ query, &block
+      result = @twiddle.execute(:query, query)
+      return [] if result["No MBean matches for query"] or result["Help for command:"]
+      result = result.split /\s+/
+      block ? result.collect(&block) : result
+    end
+
+    def _parse_resource_ resources
+      return scan if resources == :all
+      return [resources] unless resources.respond_to? :each
+      resources
     end
 
   end
