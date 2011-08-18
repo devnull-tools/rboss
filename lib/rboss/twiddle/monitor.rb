@@ -27,9 +27,11 @@ module JBoss
 
     module Monitor
 
+
       def defaults
         {
           :webapp => {
+            :description => 'Shows information about deployed webapps',
             :pattern => 'jboss.web:type=Manager,host=localhost,path=/#{resource}',
             :properties => %W(activeSessions maxActive),
             :scan => proc do
@@ -41,14 +43,16 @@ module JBoss
             end
           },
           :web_deployment => {
+            :description => 'Controls a deployed webapp',
             :pattern => 'jboss.web.deployment:war=/#{resource}',
             :scan => proc do
-              _query_ "jboss.jca:service=ManagedConnectionPool,*" do |path|
-                path.gsub "jboss.jca:service=ManagedConnectionPool,name=", ""
+              _query_ "jboss.web.deployment:*" do |path|
+                path.gsub("jboss.web.deployment:", "").split(/,/).find { |p| p.start_with? "war=" }
               end
             end
           },
           :connector => {
+            :description => 'Shows information about a JBossWeb connector',
             :pattern => 'jboss.web:type=ThreadPool,name=#{resource}',
             :properties => %W(maxThreads currentThreadCount currentThreadsBusy),
             :scan => proc do
@@ -58,19 +62,23 @@ module JBoss
             end
           },
           :engine => {
+            :description => 'Shows information about a JBossWeb engine',
             :pattern => 'jboss.web:type=Engine',
             :properties => %W(jvmRoute name defaultHost)
           },
           :server_info => {
+            :description => 'Shows information about the JBoss server',
             :pattern => 'jboss.system:type=ServerInfo',
             :properties => %W(ActiveThreadCount MaxMemory FreeMemory AvailableProcessors
                               HostAddress JavaVendor JavaVersion OSName OSArch)
           },
           :server => {
+            :description => 'Shows server information',
             :pattern => 'jboss.system:type=Server',
             :properties => %W(VersionNumber StartDate)
           },
           :system_properties => {
+            :description => 'Shows system properties',
             :pattern => 'jboss:name=SystemProperties,type=Service'
           },
           :request => {
@@ -138,7 +146,10 @@ module JBoss
         mbeans[mbean_id] = JBoss::MBean::new :pattern => params[:pattern], :twiddle => @twiddle
         properties[mbean_id] = params[:properties]
         if params[:scan]
-          (class << self;self end).send :define_method, "#{mbean_id}s".to_sym, &params[:scan]
+          (
+          class << self;
+            self
+          end).send :define_method, "#{mbean_id}s".to_sym, &params[:scan]
         end
       end
 

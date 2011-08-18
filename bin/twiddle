@@ -97,15 +97,15 @@ opts.on('--system-properties [name_a, name_b, name_c, ...]', Array,
         'Defines the System properties to show or scan if not specified') do |properties|
   resources[:system_properties] = properties || :all
 end
-opts.on('--set resource_type[:resource_name],property,value', Array,
+opts.on('--set mbean_id[:resource_name],property,value', Array,
         'Sets a value to a resource that the monitor knows') do |set|
   resources[:set] = set
 end
-opts.on('--get resource_type[:resource_name],property', Array,
+opts.on('--get mbean_id[:resource_name],property', Array,
         'Gets a value to a resource that the monitor knows') do |get|
   resources[:get] = get
 end
-opts.on('--invoke resource_type[:resource_name],method,[,args...]', Array,
+opts.on('--invoke mbean_id[:resource_name],method,[,args...]', Array,
         'Invokes a resoruce method') do |invoke|
   resources[:invoke] = invoke
 end
