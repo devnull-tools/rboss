@@ -30,7 +30,7 @@ module JBoss
       def defaults
         @defaults ||= {
           :webapp => {
-            :description => 'Shows information about deployed webapps',
+            :description => 'Deployed webapps',
             :pattern => 'jboss.web:type=Manager,host=localhost,path=/#{resource}',
             :properties => %W(activeSessions maxActive),
             :scan => proc do
@@ -43,7 +43,7 @@ module JBoss
             :detail => true
           },
           :web_deployment => {
-            :description => 'Controls a deployed webapp',
+            :description => 'Deployed webapp control',
             :pattern => 'jboss.web.deployment:war=/#{resource}',
             :scan => proc do
               _query_ "jboss.web.deployment:*" do |path|
@@ -52,7 +52,7 @@ module JBoss
             end
           },
           :connector => {
-            :description => 'Shows information about a JBossWeb connector',
+            :description => 'JBossWeb connector',
             :pattern => 'jboss.web:type=ThreadPool,name=#{resource}',
             :properties => %W(maxThreads currentThreadCount currentThreadsBusy),
             :scan => proc do
@@ -63,13 +63,13 @@ module JBoss
             :detail => true
           },
           :engine => {
-            :description => 'Shows information about a JBossWeb engine',
+            :description => 'JBossWeb engine',
             :pattern => 'jboss.web:type=Engine',
             :properties => %W(jvmRoute name defaultHost),
             :detail => true
           },
           :server_info => {
-            :description => 'Shows runtime information about JBoss server',
+            :description => 'JBoss server running info',
             :pattern => 'jboss.system:type=ServerInfo',
             :properties => %W(ActiveThreadCount MaxMemory FreeMemory AvailableProcessors
                               HostAddress JavaVendor JavaVersion OSName OSArch),
@@ -82,11 +82,11 @@ module JBoss
             :detail => true
           },
           :system_properties => {
-            :description => 'Shows system properties',
+            :description => 'System properties',
             :pattern => 'jboss:name=SystemProperties,type=Service'
           },
           :request => {
-            :description => 'Shows information about requests on a JBossWeb connector',
+            :description => 'JBossWeb connector requests',
             :pattern => 'jboss.web:type=GlobalRequestProcessor,name=#{resource}',
             :properties => %W(requestCount errorCount maxTime),
             :scan => proc do
@@ -97,7 +97,7 @@ module JBoss
             :detail => true
           },
           :datasource => {
-            :description => 'Shows information about a datasource',
+            :description => 'Datasource',
             :pattern => 'jboss.jca:service=ManagedConnectionPool,name=#{resource}',
             :properties => %W(MinSize MaxSize AvailableConnectionCount
                                 InUseConnectionCount ConnectionCount),
@@ -105,10 +105,11 @@ module JBoss
               _query_ "jboss.jca:service=ManagedConnectionPool,*" do |path|
                 path.gsub "jboss.jca:service=ManagedConnectionPool,name=", ""
               end
-            end
+            end,
+            :detail => true
           },
           :queue => {
-            :description => 'Shows information about a queue',
+            :description => 'JMS Queue',
             :pattern => 'jboss.messaging.destination:service=Queue,name=#{resource}',
             :properties => %W(Name JNDIName MessageCount DeliveringCount
               ScheduledMessageCount MaxSize FullSize Clustered ConsumerCount),
@@ -116,10 +117,11 @@ module JBoss
               _query_ "jboss.messaging.destination:service=Queue,*" do |path|
                 path.gsub "jboss.messaging.destination:service=Queue,name=", ""
               end
-            end
+            end,
+            :detail => true
           },
           :ejb => {
-            :description => 'Shows information about a EJB',
+            :description => 'EJB',
             :pattern => 'jboss.j2ee:#{resource},service=EJB3',
             :properties => %W(CreateCount RemoveCount CurrentSize AvailableCount),
             :scan => proc do
@@ -127,7 +129,8 @@ module JBoss
               (result.find_all { |path| path["name="] && path["jar="] }).collect do |path|
                 path.gsub("jboss.j2ee:", '').gsub(/,?service=EJB3/, '')
               end
-            end
+            end,
+            :detail => true
           }
         }
         @defaults

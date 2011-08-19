@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'rboss'
+require_relative '../lib/rboss'
 require 'optparse'
 require 'yaml'
 
@@ -38,13 +38,13 @@ opts = OptionParser::new
 opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') do |home|
   params[:jboss_home] = home
 end
-opts.on('-s', '--jboss-server URL', 'Defines the JBoss server') do |server|
+opts.on('-s', '--server URL', 'Defines the JBoss server') do |server|
   params[:jboss_server] = server
 end
-opts.on('--jboss-host HOST', 'Defines the JBoss host') do |host|
+opts.on('--host HOST', 'Defines the JBoss host') do |host|
   params[:jboss_host] = host
 end
-opts.on('--jboss-port PORT', 'Defines the JBoss jnp port') do |port|
+opts.on('--port PORT', 'Defines the JBoss jnp port') do |port|
   params[:jboss_port] = port
 end
 opts.on('-e', '--exec-file PATH',
@@ -55,11 +55,12 @@ end
 defaults.each do |mbean_id, mbean|
   command = mbean_id.to_s.gsub /_/, '-'
   if mbean[:scan]
-    opts.on("--#{command} [resource_a,resource_b,...]", Array, mbean[:description]) do |names|
+    opts.on("--#{command} [name_a,name_b,...]", Array,
+            "Detail this mbeam based on the given names (no names for scan)") do |names|
       mbeans[mbean_id] = names || :all
     end
   elsif mbean[:detail]
-    opts.on("--#{command}", mbean[:description]) do
+    opts.on("--#{command}", "Detail this mbeam") do
       mbeans[mbean_id] = true
     end
   end
@@ -77,9 +78,19 @@ opts.on('--invoke mbean_id[:resource_name],method,[,args...]', Array,
         'Invokes a resoruce method') do |invoke|
   commands[:invoke] = invoke
 end
-#opts.on('--no-detail', 'Do not detail mbeans') do
-#  no_details = true
-#end
+opts.on("-l", "--list", "List the mbeans mappings") do
+  defaults.each do |mbean_id, mbean|
+    puts " - #{mbean_id}"
+    [:description, :pattern].each do |detail|
+      puts "   - #{detail} : #{mbean[detail]}"
+    end
+    puts
+  end
+  exit
+end
+opts.on('--no-detail', 'Do not detail mbeans that needs a name') do
+  no_details = true
+end
 opts.on('-u', '--jmx-user USER', 'Defines the JMX User') do |user|
   params[:jmx_user] = user
 end
@@ -133,17 +144,22 @@ if commands[:invoke]
 end
 
 mbeans.each do |mbean_id, resources|
+  puts "  - #{defaults[mbean_id][:description]}"
   if resources.is_a? TrueClass
     details = monitor.mbean(mbean_id).detail
     details.each do |name, value|
-      puts "  - #{name}=#{value}"
+      puts "    - #{name}=#{value}"
+    end
+  elsif no_details
+    monitor.mbean(mbean_id).scan.each do |name|
+      puts "    - #{name}"
     end
   else
     details = monitor.mbean(mbean_id).detail resources
     details.each do |resource, detail|
-      puts "  - #{resource}"
+      puts "    - #{resource}"
       detail.each do |name, value|
-        puts "    - #{name}=#{value}"
+        puts "      - #{name}=#{value}"
       end
     end
   end
