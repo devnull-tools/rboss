@@ -21,16 +21,16 @@ Simply do a "cd" to your JBoss Home and use it
 
 You can scan resources like: datasources, queues, connectors, webapps, ...
 
-    twiddle --datasources --webapps
+    twiddle --datasource --webapp
     twiddle --all
 
 If you don't need to scan for resources, you can specify them for monitoring:
 
-    twiddle --webapps jmx-console,admin-console
+    twiddle --webapp jmx-console,admin-console
 
 Combine with "watch" to get a simple and instantly monitoring:
 
-    watch --interval=1 twiddle --webapps jmx-console,admin-console
+    watch --interval=1 twiddle --webapp jmx-console,admin-console
 
 Retrieve property values with --get:
 

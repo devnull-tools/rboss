@@ -119,7 +119,7 @@ module JBoss
 
     def _query_ query, &block
       result = @twiddle.execute(:query, query)
-      return [] if result["No MBean matches for query"] or result["Help for command:"]
+      return [] unless result
       result = result.split /\s+/
       block ? result.collect(&block) : result
     end

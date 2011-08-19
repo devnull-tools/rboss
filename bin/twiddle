@@ -52,6 +52,16 @@ opts.on('-e', '--exec-file PATH',
   exec_file = File.expand_path path
 end
 
+opts.on('--all', "Detail all mapped mbeans") do
+  defaults.each do |mbean_id, mbean|
+    if mbean[:scan]
+      mbeans[mbean_id] = :all
+    elsif mbean[:detail]
+      mbeans[mbean_id] = true
+    end
+  end
+end
+
 defaults.each do |mbean_id, mbean|
   command = mbean_id.to_s.gsub /_/, '-'
   if mbean[:scan]

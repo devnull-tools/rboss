@@ -58,7 +58,9 @@ module JBoss
       end
 
       def execute command, *arguments
-        `#{shell command, arguments}`.chomp
+        result = `#{shell command, arguments}`.chomp
+        return nil if result["ERROR [Twiddle] Command failure"]
+        result
       end
 
     end

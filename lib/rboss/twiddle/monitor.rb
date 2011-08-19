@@ -44,12 +44,7 @@ module JBoss
           },
           :web_deployment => {
             :description => 'Deployed webapp control',
-            :pattern => 'jboss.web.deployment:war=/#{resource}',
-            :scan => proc do
-              _query_ "jboss.web.deployment:*" do |path|
-                path.gsub("jboss.web.deployment:", "").split(/,/).find { |p| p.start_with? "war=" }
-              end
-            end
+            :pattern => 'jboss.web.deployment:war=/#{resource}'
           },
           :connector => {
             :description => 'JBossWeb connector',
@@ -69,14 +64,14 @@ module JBoss
             :detail => true
           },
           :server_info => {
-            :description => 'JBoss server running info',
+            :description => 'JBoss running info',
             :pattern => 'jboss.system:type=ServerInfo',
             :properties => %W(ActiveThreadCount MaxMemory FreeMemory AvailableProcessors
                               HostAddress JavaVendor JavaVersion OSName OSArch),
             :detail => true
           },
           :server => {
-            :description => 'Shows server specifications',
+            :description => 'JBoss specifications',
             :pattern => 'jboss.system:type=Server',
             :properties => %W(VersionNumber StartDate),
             :detail => true
@@ -125,8 +120,10 @@ module JBoss
             :pattern => 'jboss.j2ee:#{resource},service=EJB3',
             :properties => %W(CreateCount RemoveCount CurrentSize AvailableCount),
             :scan => proc do
-              result = _query_ "jboss.j2ee:service=EJB3,*"
-              (result.find_all { |path| path["name="] && path["jar="] }).collect do |path|
+              result = _query_ "jboss.j2ee:*"
+              (result.find_all do |path|
+                path["service=EJB3"] && path["name="] && path["jar="]
+              end).collect do |path|
                 path.gsub("jboss.j2ee:", '').gsub(/,?service=EJB3/, '')
               end
             end,
