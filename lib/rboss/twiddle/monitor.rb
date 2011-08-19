@@ -188,17 +188,6 @@ module JBoss
         mbean
       end
 
-      def detail_mbean mbean_id, resources = nil
-        resources = _parse_resource_ mbean_id, resources if resources
-        mbean = mbeans[mbean_id]
-        result = []
-        if resources
-
-        else
-          monitor.properties
-        end
-      end
-
       def method_missing method, *args, &block
         mbean_id = method
         mbean = mbeans[mbean_id]
