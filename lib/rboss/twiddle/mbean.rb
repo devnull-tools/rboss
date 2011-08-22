@@ -28,7 +28,7 @@ module JBoss
     attr_reader :pattern
     attr_accessor :resource, :twiddle, :description
 
-    @@__default__detail__resource__ = proc do |resources|
+    @@__default__detail__resource__ = proc do |resources, &block|
       resouces = _parse_resource_ resources
       details = {}
       resouces.each do |resource|
@@ -39,14 +39,16 @@ module JBoss
           end
         end
       end
+      details.each &block if block
       details
     end
 
-    @@__default__detail__ = proc do
+    @@__default__detail__ = proc do |&block|
       details = {}
       @properties.each do |property|
         details[property] = self[property].value
       end
+      details.each &block if block
       details
     end
 
@@ -60,6 +62,11 @@ module JBoss
         (class << self
           self
         end).send :define_method, :scan, &params[:scan]
+        (class << self
+          self
+        end).send :define_method, :each do |&block|
+          scan.each &block
+        end
       end
       if params[:detail]
         (class << self
@@ -80,10 +87,6 @@ module JBoss
         @resource = nil
       end
       self
-    end
-
-    def resourced?
-      @pattern['#{resource}']
     end
 
     def [] property

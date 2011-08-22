@@ -156,8 +156,7 @@ end
 mbeans.each do |mbean_id, resources|
   puts "  - #{defaults[mbean_id][:description]}"
   if resources.is_a? TrueClass
-    details = monitor.mbean(mbean_id).detail
-    details.each do |name, value|
+    monitor.mbean(mbean_id).detail do |name, value|
       puts "    - #{name}=#{value}"
     end
   elsif no_details
@@ -165,8 +164,7 @@ mbeans.each do |mbean_id, resources|
       puts "    - #{name}"
     end
   else
-    details = monitor.mbean(mbean_id).detail resources
-    details.each do |resource, detail|
+    monitor.mbean(mbean_id).detail resources do |resource, detail|
       puts "    - #{resource}"
       detail.each do |name, value|
         puts "      - #{name}=#{value}"

@@ -129,12 +129,6 @@ module JBoss
 
       module_function :defaults
 
-      def properties mbean_id = nil
-        @properties ||= {}
-        return properties[mbean_id] if mbean_id
-        @properties
-      end
-
       def mbeans
         @mbeans ||= {}
         @mbeans
