@@ -30,7 +30,7 @@ params = {}
 mbeans = {}
 commands = {}
 no_details = false
-params[:jboss_home] = Dir.pwd unless ENV["JBOSS_HOME"]
+params[:jboss_home] = (ENV["JBOSS_HOME"] or ENV["TWIDDLE_HOME"] or Dir.pwd)
 exec_file = nil
 defaults = JBoss::Twiddle::Monitor::defaults
 
