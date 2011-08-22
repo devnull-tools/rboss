@@ -39,8 +39,7 @@ module JBoss
                 path.gsub! /,host=.+/, ''
                 path
               end
-            end,
-            :detail => true
+            end
           },
           :web_deployment => {
             :description => 'Deployed webapp control',
@@ -54,8 +53,7 @@ module JBoss
               _query_ "jboss.web:type=ThreadPool,*" do |path|
                 path.gsub "jboss.web:type=ThreadPool,name=", ""
               end
-            end,
-            :detail => true
+            end
           },
           :engine => {
             :description => 'JBossWeb engine',
@@ -88,8 +86,7 @@ module JBoss
               _query_ "jboss.web:type=ThreadPool,*" do |path|
                 path.gsub "jboss.web:type=ThreadPool,name=", ""
               end
-            end,
-            :detail => true
+            end
           },
           :datasource => {
             :description => 'Datasource',
@@ -100,8 +97,7 @@ module JBoss
               _query_ "jboss.jca:service=ManagedConnectionPool,*" do |path|
                 path.gsub "jboss.jca:service=ManagedConnectionPool,name=", ""
               end
-            end,
-            :detail => true
+            end
           },
           :queue => {
             :description => 'JMS Queue',
@@ -112,8 +108,7 @@ module JBoss
               _query_ "jboss.messaging.destination:service=Queue,*" do |path|
                 path.gsub "jboss.messaging.destination:service=Queue,name=", ""
               end
-            end,
-            :detail => true
+            end
           },
           :ejb => {
             :description => 'EJB',
@@ -126,8 +121,7 @@ module JBoss
               end).collect do |path|
                 path.gsub("jboss.j2ee:", '').gsub(/,?service=EJB3/, '')
               end
-            end,
-            :detail => true
+            end
           }
         }
         @defaults
