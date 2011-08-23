@@ -46,6 +46,24 @@ Execute commands with --invoke:
     twiddle --invoke server,shutdown
     twiddle --invoke web_deployment:jmx-console,stop
 
+Extending mbeans
+
+You can use a file in ~/.rboss.twiddle for mapping new mbeans or overriding the defaults
+
+    JBoss::Twiddle::Monitor.defaults[:http_request] = {
+      :description => 'Request for http protocol',
+      :pattern => 'jboss.web:type=GlobalRequestProcessor,name=http-127.0.0.1-8080',
+      :properties => %W(requestCount errorCount maxTime)
+    }
+
+And use it normally
+
+    twiddle --http-request
+
+You can do every action using custom mbeans
+
+    twiddle --invoke http_request,resetCounters
+
 Using jboss-profile
 -----------
 
