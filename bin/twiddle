@@ -62,15 +62,15 @@ opts.on('--all', "Detail all mapped mbeans") do
   end
 end
 
-defaults.each do |mbean_id, mbean|
+(defaults.sort_by {|k,v| k}).each do |mbean_id, mbean|
   command = mbean_id.to_s.gsub /_/, '-'
   if mbean[:scan]
     opts.on("--#{command} [name_a,name_b,...]", Array,
-            "Detail this mbeam based on the given names (no names for scan)") do |names|
+            "Detail \"#{mbean[:description]}\" based on the given names (no names for scan)") do |names|
       mbeans[mbean_id] = names || :all
     end
   elsif mbean[:detail]
-    opts.on("--#{command}", "Detail this mbeam") do
+    opts.on("--#{command}", "Detail \"#{mbean[:description]}\"") do
       mbeans[mbean_id] = true
     end
   end
@@ -89,7 +89,7 @@ opts.on('--invoke mbean_id[:resource_name],method,[,args...]', Array,
   commands[:invoke] = invoke
 end
 opts.on("-l", "--list", "List the mbeans mappings") do
-  defaults.each do |mbean_id, mbean|
+  (defaults.sort_by {|k,v| k}).each do |mbean_id, mbean|
     puts " - #{mbean_id}"
     [:description, :pattern].each do |detail|
       puts "   - #{detail} : #{mbean[detail]}"
