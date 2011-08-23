@@ -56,7 +56,7 @@ opts.on('--all', "Detail all mapped mbeans") do
   defaults.each do |mbean_id, mbean|
     if mbean[:scan]
       mbeans[mbean_id] = :all
-    elsif mbean[:detail]
+    elsif mbean[:properties]
       mbeans[mbean_id] = true
     end
   end
@@ -69,7 +69,7 @@ end
             "Detail \"#{mbean[:description]}\" based on the given names (no names for scan)") do |names|
       mbeans[mbean_id] = names || :all
     end
-  elsif mbean[:detail]
+  elsif mbean[:properties]
     opts.on("--#{command}", "Detail \"#{mbean[:description]}\"") do
       mbeans[mbean_id] = true
     end

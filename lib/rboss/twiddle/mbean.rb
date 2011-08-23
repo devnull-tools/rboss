@@ -57,7 +57,6 @@ module JBoss
       @twiddle = params[:twiddle]
       @properties = params[:properties]
       @description = params[:description]
-      params[:detail] = true if params[:properties] and not params[:detail]
       if params[:scan]
         (class << self
           self
@@ -68,15 +67,13 @@ module JBoss
           scan.each &block
         end
       end
-      if params[:detail]
+      if params[:properties]
         (class << self
           self
         end).send :define_method,
                   :detail,
-                  &(params[:detail].is_a?(TrueClass) ?
-                    (params[:scan] ?
+                  &(params[:scan] ?
                       @@__default__detail__resource__ : @@__default__detail__)
-                  : params[:detail])
       end
     end
 
