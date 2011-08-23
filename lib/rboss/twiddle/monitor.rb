@@ -28,7 +28,7 @@ module JBoss
     module Monitor
 
       def defaults
-        @defaults ||= {
+        @@defaults ||= {
           :webapp => {
             :description => 'Deployed webapps',
             :pattern => 'jboss.web:type=Manager,host=localhost,path=/#{resource}',
@@ -124,7 +124,7 @@ module JBoss
             end
           }
         }
-        @defaults
+        @@defaults
       end
 
       module_function :defaults
