@@ -57,7 +57,7 @@ module JBoss
       @twiddle = params[:twiddle]
       @properties = params[:properties]
       @description = params[:description]
-      params[:detail] = true if params[:scan] and params[:properties] and not params[:detail]
+      params[:detail] = true if params[:properties] and not params[:detail]
       if params[:scan]
         (class << self
           self
