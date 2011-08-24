@@ -62,7 +62,7 @@ opts.on('--all', "Detail all mapped mbeans") do
   end
 end
 
-(defaults.sort_by {|k,v| k}).each do |mbean_id, mbean|
+(defaults.sort_by { |k, v| k }).each do |mbean_id, mbean|
   command = mbean_id.to_s.gsub /_/, '-'
   if mbean[:scan]
     opts.on("--#{command} [name_a,name_b,...]", Array,
@@ -84,12 +84,20 @@ opts.on('--get mbean_id[:resource_name],property', Array,
         'Gets a value to a resource that the monitor knows') do |get|
   commands[:get] = get
 end
+opts.on('--query mbean_id[:resource_name],[arguments]', Array,
+        'Queries the mbean') do |query|
+  commands[:query] = query
+end
+opts.on('--info mbean_id[:resource_name],[arguments]', Array,
+        'List mbean info') do |info|
+  commands[:info] = info
+end
 opts.on('--invoke mbean_id[:resource_name],method,[,args...]', Array,
         'Invokes a resoruce method') do |invoke|
   commands[:invoke] = invoke
 end
 opts.on("-l", "--list", "List the mbeans mappings") do
-  (defaults.sort_by {|k,v| k}).each do |mbean_id, mbean|
+  (defaults.sort_by { |k, v| k }).each do |mbean_id, mbean|
     puts " - #{mbean_id}"
     [:description, :pattern].each do |detail|
       puts "   - #{detail} : #{mbean[detail]}"
@@ -124,6 +132,8 @@ eval File.read(exec_file), binding, exec_file if exec_file
 
 def extract resource
   mbean, name = resource.split(/:/)
+  mbean.gsub! /-/, '_'
+  [mbean, name]
 end
 
 if commands[:set]
@@ -152,6 +162,22 @@ if commands[:invoke]
                       :method => array[1],
                       :args => array[2..-1]
 end
+if commands[:query]
+  array = commands[:query]
+  mbean, name = extract array[0]
+  puts twiddle.query :mbean => mbean.to_sym,
+                     :name => name,
+                     :args => array[1..-1]
+end
+
+if commands[:info]
+  array = commands[:info]
+  mbean, name = extract array[0]
+  puts twiddle.info :mbean => mbean.to_sym,
+                    :name => name,
+                    :args => array[1..-1]
+end
+
 
 mbeans.each do |mbean_id, resources|
   puts "  - #{defaults[mbean_id][:description]}"

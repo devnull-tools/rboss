@@ -28,7 +28,7 @@ module JBoss
     attr_reader :pattern
     attr_accessor :resource, :twiddle, :description
 
-    @@__default__detail__resource__ = proc do |resources, &block|
+    @@__detail__resourced__ = proc do |resources, &block|
       resouces = _parse_resource_ resources
       details = {}
       resouces.each do |resource|
@@ -43,7 +43,7 @@ module JBoss
       details
     end
 
-    @@__default__detail__ = proc do |&block|
+    @@__detail__ = proc do |&block|
       details = {}
       @properties.each do |property|
         details[property] = self[property].value
@@ -58,22 +58,25 @@ module JBoss
       @properties = params[:properties]
       @description = params[:description]
       if params[:scan]
-        (class << self
+        (
+        class << self
           self
         end).send :define_method, :scan, &params[:scan]
-        (class << self
+        (
+        class << self
           self
         end).send :define_method, :each do |&block|
           scan.each &block
         end
       end
       if params[:properties]
-        (class << self
+        (
+        class << self
           self
         end).send :define_method,
                   :detail,
                   &(params[:scan] ?
-                      @@__default__detail__resource__ : @@__default__detail__)
+                    @@__detail__resourced__ : @@__detail__)
       end
     end
 
@@ -84,6 +87,18 @@ module JBoss
         @resource = nil
       end
       self
+    end
+
+    def qualified_name
+      if pattern['#{resource}'] and not @resource
+        domain,name = pattern.split ':'
+        name.gsub! /(,)?([^,]+)+\#\{resource\}/, ''
+        name << "," unless name.empty?
+        name << "*"
+        return "#{domain}:#{name}"
+      end
+      resource = @resource
+      eval("\"#{pattern}\"")
     end
 
     def [] property

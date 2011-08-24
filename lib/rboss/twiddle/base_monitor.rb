@@ -64,6 +64,16 @@ module JBoss
         mbean.send params[:method], *params[:args]
       end
 
+      def query params
+        mbean = extract params
+        execute :query, mbean.qualified_name, *params[:args]
+      end
+
+      def info params
+        mbean = extract params
+        execute :info, mbean.qualified_name, *params[:args]
+      end
+
       private
 
       def extract params

@@ -55,10 +55,24 @@ module JBoss
               end
             end
           },
+          :cached_connection_manager => {
+            :description => 'JBoss JCA cached connections',
+            :pattern => 'jboss.jca:service=CachedConnectionManager',
+            :properties => %W(InUseConnections)
+          },
+          :main_deployer => {
+            :description => 'Main Deployer',
+            :pattern => 'jboss.system:service=MainDeployer'
+          },
           :engine => {
             :description => 'JBossWeb engine',
             :pattern => 'jboss.web:type=Engine',
             :properties => %W(jvmRoute name defaultHost)
+          },
+          :log4j => {
+            :description => 'JBoss Log4J Service',
+            :pattern => 'jboss.system:service=Logging,type=Log4jService',
+            :properties => %W(DefaultJBossServerLogThreshold)
           },
           :server => {
             :description => 'JBoss Server specifications',
