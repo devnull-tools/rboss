@@ -92,7 +92,7 @@ module JBoss
       result = @twiddle.execute(:get, query, property)
 
       def result.value
-        self.split(/=/)[1]
+        self.split(/=/)[1..-1].join "="
       end
 
       result
