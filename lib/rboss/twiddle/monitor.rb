@@ -60,16 +60,22 @@ module JBoss
             :pattern => 'jboss.web:type=Engine',
             :properties => %W(jvmRoute name defaultHost)
           },
-          :server_info => {
-            :description => 'JBoss running info',
-            :pattern => 'jboss.system:type=ServerInfo',
-            :properties => %W(ActiveThreadCount MaxMemory FreeMemory AvailableProcessors
-                              HostAddress JavaVendor JavaVersion OSName OSArch)
-          },
           :server => {
-            :description => 'JBoss specifications',
+            :description => 'JBoss Server specifications',
             :pattern => 'jboss.system:type=Server',
             :properties => %W(VersionName VersionNumber Version)
+          },
+          :server_info => {
+            :description => 'JBoss Server runtime info',
+            :pattern => 'jboss.system:type=ServerInfo',
+            :properties => %W(ActiveThreadCount MaxMemory FreeMemory AvailableProcessors
+                              HostAddress JavaVendor JavaVersion JavaVMVersion
+                              JavaVMVendor JavaVMName OSName OSArch)
+          },
+          :server_config => {
+            :description => 'JBoss Server configuration',
+            :pattern => 'jboss.system:type=ServerConfig',
+            :properties => %W(ServerName HomeDir ServerLogDir ServerHomeURL)
           },
           :system_properties => {
             :description => 'System properties',
