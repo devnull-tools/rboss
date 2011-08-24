@@ -69,7 +69,7 @@ module JBoss
           :server => {
             :description => 'JBoss specifications',
             :pattern => 'jboss.system:type=Server',
-            :properties => %W(VersionName VersionNumber Version StartDate)
+            :properties => %W(VersionName VersionNumber Version)
           },
           :system_properties => {
             :description => 'System properties',
