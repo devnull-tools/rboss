@@ -98,7 +98,7 @@ opts.on('--invoke mbean_id[:resource_name],method,[,args...]', Array,
 end
 opts.on("-l", "--list", "List the mbeans mappings") do
   (defaults.sort_by { |k, v| k }).each do |mbean_id, mbean|
-    puts " - #{mbean_id}"
+    puts " - #{mbean_id.to_s.gsub(/_/, '-')}"
     [:description, :pattern].each do |detail|
       puts "   - #{detail} : #{mbean[detail]}"
     end
