@@ -92,8 +92,8 @@ module JBoss
     def qualified_name
       if pattern['#{resource}'] and not @resource
         domain,name = pattern.split ':'
-        name.gsub! /(,)?([^,]+)+\#\{resource\}/, ''
-        name << "," unless name.empty?
+        name.gsub! /[^,]+\{resource\}/, ''
+        name << "," if name.empty?
         name << "*"
         return "#{domain}:#{name}"
       end
