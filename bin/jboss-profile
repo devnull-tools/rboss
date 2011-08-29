@@ -82,7 +82,7 @@ params[:jboss_home] ||= Dir.pwd unless ENV["JBOSS_HOME"]
 profile = JBoss::Profile::new params
 
 if params[:encrypt]
-  puts profile.jboss.encrypt(params.delete :encrypt)
+  puts "Encrypted password: " + profile.jboss.encrypt(params.delete :encrypt)
   exit
 end
 
