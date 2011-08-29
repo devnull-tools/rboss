@@ -67,16 +67,24 @@ opts.on('-d', '--debug', '--verbose', 'Displays shell commands') do
   include FileUtils::Verbose
   params[:log_level] = Logger::DEBUG
 end
+opts.on("--encrypt PASSWORD", "Encrypts the given password for using with a SecureIdentityLoginModule") do |password|
+  params[:encrypt] = password
+end
 opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
+
+params[:jboss_home] ||= Dir.pwd unless ENV["JBOSS_HOME"]
+profile = JBoss::Profile::new params
+
+if params[:encrypt]
+  puts profile.jboss.encrypt(params[:encrypt])
+  exit
+end
 
 if params.empty?
   puts opts
   exit
 end
-
-params[:jboss_home] ||= Dir.pwd unless ENV["JBOSS_HOME"]
-profile = JBoss::Profile::new params
 
 if config
   config.each do |var|

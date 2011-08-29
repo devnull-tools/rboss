@@ -48,6 +48,25 @@ module JBoss
       @home
     end
 
+    def jboss_logging_lib_path
+      %W{#{@home}/client/jboss-logging-spi.jar #{@home}/client/jboss-logging.jar}.each do |path|
+        return path if File.exist? path
+      end
+    end
+
+    def jbosssx_lib_path
+      %W{#{@home}/lib/jbosssx.jar #{@home}/common/lib/jbosssx.jar}.each do |path|
+        return path if File.exist? path
+      end
+    end
+
+    # Encrypts the given password using the SecureIdentityLoginModule
+    def encrypt password
+      cmd = "java -cp #{jboss_logging_lib_path}:#{jbosssx_lib_path} org.jboss.resource.security.SecureIdentityLoginModule #{password}"
+      encrypted = `#{cmd}`
+      encrypted.chomp.split(/:/)[1].strip
+    end
+
   end
 
 end

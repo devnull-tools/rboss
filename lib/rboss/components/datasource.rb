@@ -86,7 +86,7 @@ module JBoss
       if @encrypt
         @user = @attributes.delete :user
         @user = @attributes.delete :user_name unless @user
-        @password = encrypt @attributes.delete :password
+        @password = @jboss.encrypt @attributes.delete(:password)
       end
       processor = new_file_processor
       processor.with "#{@jboss.home}/docs/examples/jca/#{@type}-ds.xml", :xml do |action|
@@ -173,25 +173,6 @@ module JBoss
 XML
     end
 
-    def jboss_logging_lib_path
-      %W{#{@jboss.home}/client/jboss-logging-spi.jar #{@jboss.home}/client/jboss-logging.jar}.each do |path|
-        return path if File.exist? path
-      end
-    end
-
-    def jbosssx_lib_path
-      %W{#{@jboss.home}/lib/jbosssx.jar #{@jboss.home}/common/lib/jbosssx.jar}.each do |path|
-        return path if File.exist? path
-      end
-    end
-
-    # Encrypts the given password using the SecureIdentityLoginModule
-    def encrypt password
-      cmd = "java -cp #{jboss_logging_lib_path}:#{jbosssx_lib_path} org.jboss.resource.security.SecureIdentityLoginModule #{password}"
-      @logger.debug cmd
-      encrypted = `#{cmd}`
-      encrypted.chomp.split(/:/)[1].strip
-    end
 
   end
 
