@@ -50,9 +50,7 @@ end
 opts.on('-u', '--update', 'Just update the profile folder') do
   create = false
 end
-opts.on('-c', '--config-file FILE',
-        'Defines the configuration file for the instance
-(see the examples for more details)') do |yaml|
+opts.on('-c', '--config-file FILE', 'Defines the configuration file for the instance') do |yaml|
   config_file = File.expand_path(yaml)
   config = YAML::load File.open(config_file)
   config.each do |c|
