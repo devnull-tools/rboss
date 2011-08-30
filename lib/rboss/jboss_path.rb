@@ -39,7 +39,7 @@ module JBoss
       }.merge params
       @home = jboss_home
       @profile ="#{@home}/server/#{params[:profile]}"
-      @profile_name = @profile.to_s
+      @profile_name = params[:profile].to_s
       @type = params[:type]
       @version = params[:version]
     end

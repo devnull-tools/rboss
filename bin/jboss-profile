@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'rboss'
+require_relative '../lib/rboss'
 require 'optparse'
 require 'yaml'
 require 'logger'
