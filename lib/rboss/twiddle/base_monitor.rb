@@ -61,17 +61,17 @@ module JBoss
 
       def invoke params
         mbean = extract params
-        mbean.send params[:method], *params[:args]
+        mbean.invoke params[:method], *params[:args]
       end
 
       def query params
         mbean = extract params
-        execute :query, mbean.qualified_name, *params[:args]
+        execute :query, mbean.name, *params[:args]
       end
 
       def info params
         mbean = extract params
-        execute :info, mbean.qualified_name, *params[:args]
+        execute :info, mbean.name, *params[:args]
       end
 
       private

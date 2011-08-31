@@ -34,7 +34,7 @@ module JBoss
             :pattern => 'jboss.web:type=Manager,host=localhost,path=/#{resource}',
             :properties => %W(activeSessions maxActive),
             :scan => proc do
-              _query_ "jboss.web:type=Manager,*" do |path|
+              query "jboss.web:type=Manager,*" do |path|
                 path.gsub! "jboss.web:type=Manager,path=/", ""
                 path.gsub! /,host=.+/, ''
                 path
@@ -50,7 +50,7 @@ module JBoss
             :pattern => 'jboss.web:type=ThreadPool,name=#{resource}',
             :properties => %W(maxThreads currentThreadCount currentThreadsBusy),
             :scan => proc do
-              _query_ "jboss.web:type=ThreadPool,*" do |path|
+              query "jboss.web:type=ThreadPool,*" do |path|
                 path.gsub "jboss.web:type=ThreadPool,name=", ""
               end
             end
@@ -100,7 +100,7 @@ module JBoss
             :pattern => 'jboss.web:type=GlobalRequestProcessor,name=#{resource}',
             :properties => %W(requestCount errorCount maxTime),
             :scan => proc do
-              _query_ "jboss.web:type=ThreadPool,*" do |path|
+              query "jboss.web:type=ThreadPool,*" do |path|
                 path.gsub "jboss.web:type=ThreadPool,name=", ""
               end
             end
@@ -111,7 +111,7 @@ module JBoss
             :properties => %W(MinSize MaxSize AvailableConnectionCount
                                 InUseConnectionCount ConnectionCount),
             :scan => proc do
-              _query_ "jboss.jca:service=ManagedConnectionPool,*" do |path|
+              query "jboss.jca:service=ManagedConnectionPool,*" do |path|
                 path.gsub "jboss.jca:service=ManagedConnectionPool,name=", ""
               end
             end
@@ -122,7 +122,7 @@ module JBoss
             :properties => %W(Name JNDIName MessageCount DeliveringCount
               ScheduledMessageCount MaxSize FullSize Clustered ConsumerCount),
             :scan => proc do
-              _query_ "jboss.messaging.destination:service=Queue,*" do |path|
+              query "jboss.messaging.destination:service=Queue,*" do |path|
                 path.gsub "jboss.messaging.destination:service=Queue,name=", ""
               end
             end
@@ -132,7 +132,7 @@ module JBoss
             :pattern => 'jboss.j2ee:#{resource},service=EJB3',
             :properties => %W(CreateCount RemoveCount CurrentSize AvailableCount),
             :scan => proc do
-              result = _query_ "jboss.j2ee:*"
+              result = query "jboss.j2ee:*"
               (result.find_all do |path|
                 path["service=EJB3"] && path["name="] && path["jar="]
               end).collect do |path|
@@ -151,38 +151,8 @@ module JBoss
         @mbeans
       end
 
-      def resources mbean_id = nil, *resources
-        @resources ||= {}
-        return @resources unless mbean_id
-        return @resources[mbean_id] unless resources
-        if mbean_id.is_a? Array
-          mbean_id.each do |id|
-            @resources[id] = resources
-          end
-        else
-          @resources[mbean_id] = resources
-        end
-      end
-
       def monitor mbean_id, params
         mbeans[mbean_id] = JBoss::MBean::new params.merge(:twiddle => @twiddle)
-      end
-
-      def with resource
-        resource = send resource if resource.is_a? Symbol
-        if block_given?
-          if resource.kind_of? Array
-            resource.each do |res|
-              @current_resource = res
-              yield res
-              @current_resource = nil
-            end
-          else
-            @current_resource = resource
-            yield
-            @current_resource = nil
-          end
-        end
       end
 
       def mbean mbean_id
@@ -191,13 +161,6 @@ module JBoss
           mbean.with @current_resource
         end
         mbean
-      end
-
-      def method_missing method, *args, &block
-        mbean_id = method
-        mbean = mbeans[mbean_id]
-        resource = args[0] || @current_resource
-        mbean.with resource
       end
 
     end

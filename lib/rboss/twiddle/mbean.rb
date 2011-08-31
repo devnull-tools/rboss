@@ -29,7 +29,7 @@ module JBoss
     attr_accessor :resource, :twiddle, :description
 
     @@__detail__resourced__ = proc do |resources, &block|
-      resouces = _parse_resource_ resources
+      resouces = parse_resource resources
       details = {}
       resouces.each do |resource|
         with resource do
@@ -89,7 +89,7 @@ module JBoss
       self
     end
 
-    def qualified_name
+    def name
       if pattern['#{resource}'] and not @resource
         domain,name = pattern.split ':'
         name.gsub! /[^,]+\{resource\}/, ''
@@ -119,11 +119,7 @@ module JBoss
       @twiddle.execute :set, query, property, value
     end
 
-    def method_missing(method, *args, &block)
-      _invoke_ method, args, block
-    end
-
-    def _invoke_ method, *args, &block
+    def invoke method, *args, &block
       resource = @resource
       query = eval("\"#{pattern} #{method}\"")
       return_value = @twiddle.execute :invoke, query, args
@@ -133,14 +129,14 @@ module JBoss
       return_value
     end
 
-    def _query_ query, &block
+    def query query, &block
       result = @twiddle.execute(:query, query)
       return [] unless result
       result = result.split /\s+/
       block ? result.collect(&block) : result
     end
 
-    def _parse_resource_ resources
+    def parse_resource resources
       return scan if resources == :all
       return [resources] unless resources.respond_to? :each
       resources
