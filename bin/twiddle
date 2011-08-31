@@ -31,7 +31,7 @@ mbeans = {}
 commands = {}
 no_details = false
 params[:jboss_home] = (ENV["JBOSS_HOME"] or ENV["TWIDDLE_HOME"] or Dir.pwd)
-exec_file = nil
+
 defaults = JBoss::Twiddle::Monitor::defaults
 
 opts = OptionParser::new
@@ -46,10 +46,6 @@ opts.on('--host HOST', 'Defines the JBoss host') do |host|
 end
 opts.on('--port PORT', 'Defines the JBoss jnp port') do |port|
   params[:jboss_port] = port
-end
-opts.on('-e', '--exec-file PATH',
-        'Defines the ruby file to exec using the vars twiddle and monitor') do |path|
-  exec_file = File.expand_path path
 end
 
 opts.on('--all', "Detail all mapped mbeans") do
@@ -123,17 +119,21 @@ opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.
 twiddle = JBoss::Twiddle::Invoker::new params
 monitor = twiddle.monitor
 
-if mbeans.empty? and commands.empty? and not exec_file
+if mbeans.empty? and commands.empty?
   puts opts
   exit
 end
-
-eval File.read(exec_file), binding, exec_file if exec_file
 
 def extract resource
   mbean, name = resource.split(/:/)
   mbean.gsub! /-/, '_'
   [mbean, name]
+end
+
+def normalize args
+  args.collect do |arg|
+    "\"#{arg}\""
+  end
 end
 
 if commands[:set]
@@ -160,14 +160,14 @@ if commands[:invoke]
   puts twiddle.invoke :mbean => mbean.to_sym,
                       :name => name,
                       :method => array[1],
-                      :args => array[2..-1]
+                      :args => normalize(array[2..-1])
 end
 if commands[:query]
   array = commands[:query]
   mbean, name = extract array[0]
   puts twiddle.query :mbean => mbean.to_sym,
                      :name => name,
-                     :args => array[1..-1]
+                     :args => normalize(array[1..-1])
 end
 
 if commands[:info]
@@ -175,7 +175,7 @@ if commands[:info]
   mbean, name = extract array[0]
   puts twiddle.info :mbean => mbean.to_sym,
                     :name => name,
-                    :args => array[1..-1]
+                    :args => normalize(array[1..-1])
 end
 
 
