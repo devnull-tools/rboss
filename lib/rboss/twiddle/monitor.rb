@@ -134,7 +134,7 @@ module JBoss
             :scan => proc do
               result = query "jboss.j2ee:*"
               (result.find_all do |path|
-                path["service=EJB3"] && path["name="] && path["jar="]
+                path["service=EJB3"] && path["name="] && path["jar="] && !path["ear="]
               end).collect do |path|
                 path.gsub("jboss.j2ee:", '').gsub(/,?service=EJB3/, '')
               end
