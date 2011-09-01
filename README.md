@@ -35,7 +35,7 @@ Combine with "watch" to get a simple and instantly monitoring:
 Retrieve property values with --get:
 
     twiddle --get webapp:jmx-console,maxSessions
-    twiddle --get server_info,FreeMemory
+    twiddle --get server-info,FreeMemory
 
 Set values with --set:
 
@@ -44,7 +44,7 @@ Set values with --set:
 Execute commands with --invoke:
 
     twiddle --invoke server,shutdown
-    twiddle --invoke web_deployment:jmx-console,stop
+    twiddle --invoke web-deployment:jmx-console,stop
 
 Extending mbeans
 
@@ -62,7 +62,7 @@ And use it normally
 
 You can do every action using custom mbeans
 
-    twiddle --invoke http_request,resetCounters
+    twiddle --invoke http-request,resetCounters
 
 Using jboss-profile
 -----------
