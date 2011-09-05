@@ -48,7 +48,7 @@ Execute commands with --invoke:
 
 Extending mbeans
 
-You can use a file in ~/.rboss.twiddle for mapping new mbeans or overriding the defaults
+You can use a file in ~/.rboss/twiddle.rb for mapping new mbeans or overriding the defaults
 
     JBoss::Twiddle::Monitor.defaults[:http_request] = {
       :description => 'Request for http protocol',
@@ -63,6 +63,14 @@ And use it normally
 You can do every action using custom mbeans
 
     twiddle --invoke http-request,resetCounters
+
+Configurations can be saved using --save
+
+    twiddle --save jon --port 2099
+
+And used with -c or --config
+
+    twiddle -c jon --server-config
 
 Using jboss-profile
 -----------
@@ -152,26 +160,40 @@ For saving the file, the configuration :name will be used in the form "${name}-d
 Example:
 
     - datasource:
-      :type: postgres
-      :attributes:
-        :user_name: postgres
-        :password: postgres
-        :connection_url: jdbc:postgresql://localhost:5432/sample_database
-        :min_pool_size: 5
-        :max_pool_size: 15
+        :type: postgres
+        :attributes:
+            :user_name: postgres
+            :password: postgres
+            :connection_url: jdbc:postgresql://localhost:5432/sample_database
+            :min_pool_size: 5
+            :max_pool_size: 15
 
 ### Replacing hypersonic
 
 The same as Datasouce, but use the "default_ds" component instead.
 
     - default_ds:
-      :type: postgres
-      :attributes:
-        :user_name: postgres
-        :password: postgres
-        :connection_url: jdbc:postgresql://localhost:5432/jboss_db
-        :min_pool_size: 5
-        :max_pool_size: 15
+        :type: postgres
+        :attributes:
+            :user_name: postgres
+            :password: postgres
+            :connection_url: jdbc:postgresql://localhost:5432/jboss_db
+            :min_pool_size: 5
+            :max_pool_size: 15
+
+This will change the DefaultDS mapping to the desired datasource. Since JBoss SOA-Platform
+already have a tool to do the work, it will be called with the correct mapped options
+(see the file $SOAP_HOME/tools/schema/build.properties for the supported options)
+
+    - default_ds:
+        source.dir: postgresql84
+        db.name: jboss_soap_db
+        db.hostname: localhost
+        db.port: 5432
+        db.username: postgres
+        db.password: postgres
+        db.minpoolsize: 5
+        db.maxpoolsize: 15
 
 ### Installing mod_cluster
 
