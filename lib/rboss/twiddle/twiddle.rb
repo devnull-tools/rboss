@@ -24,29 +24,29 @@ module JBoss
   module Twiddle
     class Invoker
 
-      attr_reader :jboss_host, :jboss_port, :jboss_home, :jmx_user, :jmx_password
+      attr_reader :server, :host, :port, :home, :user, :password
       attr_accessor :command
 
       def initialize params = {}
         params = {
           :jboss_home => ENV["JBOSS_HOME"],
-          :jboss_server => nil,
-          :jboss_host => '127.0.0.1',
-          :jboss_port => 1099,
-          :jmx_user => "admin",
-          :jmx_password => "admin"
+          :server => nil,
+          :host => '127.0.0.1',
+          :port => 1099,
+          :user => "admin",
+          :password => "admin"
         }.merge! params
         @jboss_home = params[:jboss_home]
 
-        @jboss_host = params[:jboss_host]
-        @jboss_port = params[:jboss_port]
-        @jboss_server = params[:jboss_server]
-        @jboss_server ||= [@jboss_host, @jboss_port].join ':'
+        @server = params[:server]
+        @host = params[:host]
+        @port = params[:port]
+        @server ||= [@host, @port].join ':'
 
-        @jmx_user = params[:jmx_user]
-        @jmx_password = params[:jmx_password]
+        @user = params[:user]
+        @password = params[:password]
 
-        @command = "#{@jboss_home}/bin/twiddle.sh -s #{@jboss_server} -u '#{@jmx_user}' -p '#{@jmx_password}'"
+        @command = "#{@jboss_home}/bin/twiddle.sh -s #{@server} -u '#{@user}' -p '#{@password}'"
       end
 
       def home
