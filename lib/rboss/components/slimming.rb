@@ -80,15 +80,16 @@ module JBoss
     def slim service
       sym = service.to_s.gsub(/-/, '_').to_sym
       entry = @mapping[sym]
-      if entry
+      method = "remove_#{service}".to_sym
+      if respond_to? method
+        self.send method
+      elsif entry
         entry.each do |file|
           reject file if file.is_a? String
           slim file if file.is_a? Symbol
         end
       else
-        method = "remove_#{service}".to_sym
-        raise "Unrecognized service #{service}" if respond_to? method
-        self.send method
+        raise "Unrecognized service: #{service}"
       end
     end
 

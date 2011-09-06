@@ -68,7 +68,7 @@ end
 opts.on("--encrypt PASSWORD", "Encrypts the given password for using with a SecureIdentityLoginModule") do |password|
   params[:encrypt] = password
 end
-opts.on("--slimming SERVICES", Array, "Slim an existent JBoss profile") do |services|
+opts.on("--slimming SERVICES", Array, "Slim the desired JBoss profile") do |services|
   params[:slimming] = services
 end
 opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
@@ -84,8 +84,6 @@ profile = JBoss::Profile::new params
 
 if params[:slimming]
   profile.slim *params[:slimming]
-  profile.update
-  exit
 end
 
 if params[:encrypt]
