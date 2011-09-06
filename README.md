@@ -220,15 +220,31 @@ Use an array with the services to remove, the current supported are:
 * Admin Console       => :admin_console
 * Web Console         => :web_console
 * Mail Service        => :mail
-* Bsh Deployer        => :bsh_deployer
+* BeanShell           => :bean_shell
 * Hot Deploy          => :hot_deploy
-* JUDDI               => :juddi
+* UDDI                => :uddi
 * UUID Key Generator  => :key_generator
 * Scheduling          => :scheduling
 * JMX Console         => :jmx_console
 * JBoss WS            => :jboss_ws
 * JMX Remoting        => :jmx_remoting
 * ROOT Page           => :root_page
+* Management          => :management
+* IIOP                => :iiop
+* JBoss Web           => :jboss_web
+* SNMP                => :snmp
+* Profile Service     => :profile
+* EJB3                => :ejb3
+* EJB2                => :ejb2
+* JMX Invoker         => :jmx_invoker
+* HA HTTP Invoker     => :ha_http_invoker
+* Legacy Invoker      => :legacy_invoker
+* Transaction         => :transaction
+* Remoting            => :remoting
+* Properties Service  => :properties
+* Database/Datasource => :database
+* JSR-88              => :jsr88
+* XNIO                => :xnio
 
 Any slimmed service will be removed logically by using a ".rej" suffix in the files/directories.
 
