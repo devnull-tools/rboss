@@ -27,9 +27,11 @@ class MBeanTest < Test::Unit::TestCase
 
   def twiddle
     twiddle = Object.new
-    def twiddle.invoke command, *args
+
+    def twiddle.execute command, *args
       "#{command} #{args.join " "}".strip
     end
+
     twiddle
   end
 
@@ -46,8 +48,8 @@ class MBeanTest < Test::Unit::TestCase
 
   def test_invoke
     mbean = JBoss::MBean::new :pattern => 'jboss.system:type=Server', :twiddle => twiddle
-    assert_equal "invoke jboss.system:type=Server shutdown", mbean.shutdown
-    assert_equal "invoke jboss.system:type=Server traceInstructions true", mbean.traceInstructions(true)
+    assert_equal "invoke jboss.system:type=Server shutdown", mbean.invoke(:shutdown)
+    assert_equal "invoke jboss.system:type=Server traceInstructions true", mbean.invoke(:traceInstructions, true)
   end
 
 end

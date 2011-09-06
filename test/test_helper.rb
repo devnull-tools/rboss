@@ -34,10 +34,9 @@ module TestHelper
 
   def all
     @all ||= {
-      :org => [5.1, 6.0],
-      :eap => [5.0, 5.1],
-      :soa_p => 5,
-      :epp => 5.1
+      #:org => [5.1],
+      :eap => [5.1],
+      #:soa_p => 5
     }
     @all
   end
@@ -93,9 +92,12 @@ module TestHelper
                                   :profile => :rboss,
                                   :logger => @logger
     @jboss = @jboss_profile.jboss
-    blocks[:configure].call @jboss_profile
-    @jboss_profile.create
-    blocks[:assertion].call @jboss
+    block = blocks[:configure]
+    if block
+      block.call @jboss_profile
+      @jboss_profile.create
+      blocks[:assertion].call @jboss
+    end
   end
 
   def create_file_processor
