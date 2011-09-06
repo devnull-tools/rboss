@@ -24,6 +24,8 @@ require_relative "../file_processor"
 require_relative "../jboss_path"
 require_relative "../utils"
 
+require 'yaml'
+
 module JBoss
 
   # A base helper module for JBoss Components
@@ -46,6 +48,10 @@ module JBoss
     # jboss path as the variable
     def new_file_processor
       FileProcessor::new :logger => @logger, :var => @jboss
+    end
+
+    def load_yaml resource
+      YAML::load_file File::join(File.dirname(__FILE__), "#{resource}.yaml")
     end
 
   end

@@ -68,6 +68,9 @@ end
 opts.on("--encrypt PASSWORD", "Encrypts the given password for using with a SecureIdentityLoginModule") do |password|
   params[:encrypt] = password
 end
+opts.on("--slimming SERVICES", Array, "Slim an existent JBoss profile") do |services|
+  params[:slimming] = services
+end
 opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
 
@@ -79,8 +82,14 @@ end
 params[:jboss_home] ||= Dir.pwd unless ENV["JBOSS_HOME"]
 profile = JBoss::Profile::new params
 
+if params[:slimming]
+  profile.slim *params[:slimming]
+  profile.update
+  exit
+end
+
 if params[:encrypt]
-  puts "Encrypted password: " + profile.jboss.encrypt(params.delete :encrypt)
+  puts "Encrypted password: " + profile.jboss.encrypt(params[:encrypt])
   exit
 end
 

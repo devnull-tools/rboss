@@ -1,0 +1,48 @@
+hot_deploy:
+    - deploy/hdscanner-jboss-beans.xml
+
+juddi:
+    - deploy/juddi-service.sar
+
+key_generator:
+    - deploy/uuid-key-generator.sar
+
+mail:
+    - deploy/mail-ra.rar
+    - deploy/mail-service.xml
+
+scheduling:
+    - deploy/scheduler-manager-service.xml
+    - deploy/scheduler-service.xml
+
+bsh_deployer:
+    - deployers/bsh.deployer
+
+jboss_ws:
+    - conf/jax-ws-catalog.xml
+    - conf/props/jbossws-users.properties
+    - conf/props/jbossws-roles.properties
+    - deploy/jbossws.sar
+    - deployers/jbossws.deployer
+
+jmx_console:
+    - deploy/jmx-console.war
+
+admin_console:
+    - deploy/admin-console.war
+
+web_console:
+    - deploy/management
+
+jmx_remoting:
+    - deploy/jmx-remoting.sar
+
+root_page:
+    - deploy/ROOT.war
+
+management:
+    - :admin_console
+    - :web_console
+    - :root_page
+    - :jmx_console
+    - deploy/monitoring-service.xml

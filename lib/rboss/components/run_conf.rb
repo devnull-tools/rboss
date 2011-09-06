@@ -77,7 +77,7 @@ module JBoss
     end
 
     def parse_config
-      map = YAML::load File.open(File::join(File.dirname(__FILE__), "run_conf.yaml"))
+      map = load_yaml "run_conf"
 
       (@config.find_all { |key, value| map.has_key? key.to_s }).each do |key, value|
         @jvm_args << "-D#{map[key.to_s]}=#{value}"
