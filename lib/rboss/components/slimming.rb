@@ -32,9 +32,9 @@ module JBoss
   #   Admin Console       => :admin_console
   #   Web Console         => :web_console
   #   Mail Service        => :mail
-  #   Bsh Deployer        => :bsh_deployer
+  #   BeanShell           => :bean_shell
   #   Hot Deploy          => :hot_deploy
-  #   JUDDI               => :juddi
+  #   UDDI                => :uddi
   #   UUID Key Generator  => :key_generator
   #   Scheduling          => :scheduling
   #   JMX Console         => :jmx_console
@@ -42,6 +42,21 @@ module JBoss
   #   JMX Remoting        => :jmx_remoting
   #   ROOT Page           => :root_page
   #   Management          => :management
+  #   IIOP                => :iiop
+  #   JBoss Web           => :jboss_web
+  #   SNMP                => :snmp
+  #   Profile Service     => :profile
+  #   EJB3                => :ejb3
+  #   EJB2                => :ejb2
+  #   JMX Invoker         => :jmx_invoker
+  #   HA HTTP Invoker     => :ha_http_invoker
+  #   Legacy Invoker      => :legacy_invoker
+  #   Transaction         => :transaction
+  #   Remoting            => :remoting
+  #   Properties Service  => :properties
+  #   Database/Datasource => :database
+  #   JSR-88              => :jsr88
+  #   XNIO                => :xnio
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class Slimming
@@ -79,7 +94,7 @@ module JBoss
 
     def reject file
       file = "#{@jboss.profile}/" + file unless file.start_with? '/'
-      mv(file, file + ".rej")
+      mv(file, file + ".rej") if File.exist? file
     end
 
   end

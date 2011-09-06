@@ -1,7 +1,7 @@
 hot_deploy:
     - deploy/hdscanner-jboss-beans.xml
 
-juddi:
+uddi:
     - deploy/juddi-service.sar
 
 key_generator:
@@ -15,7 +15,7 @@ scheduling:
     - deploy/scheduler-manager-service.xml
     - deploy/scheduler-service.xml
 
-bsh_deployer:
+bean_shell:
     - deployers/bsh.deployer
 
 jboss_ws:
@@ -46,3 +46,65 @@ management:
     - :root_page
     - :jmx_console
     - deploy/monitoring-service.xml
+
+iiop:
+    - deploy/iiop-service.xml
+
+jboss_web:
+    - deploy/jbossweb.sar
+    - deployers/jbossweb.deployer
+
+snmp:
+    - deploy/snmp-adaptor.sar
+
+profile:
+    - deploy/profileservice-jboss-beans.xml
+
+ejb3:
+
+    - deploy/ejb3-connectors-jboss-beans.xml
+    - deploy/ejb3-container-jboss-beans.xml
+    - deploy/ejb3-interceptors-aop.xml
+    - deploy/ejb3-timerservice-jboss-beans.xml
+    - deploy/quartz-ra.rar
+    - deployers/ejb3.deployer
+    - deployers/ejb3-deployers-jboss-beans.xml
+    - deployers/jboss-ejb3-endpoint-deployer.jar
+    - deployers/jboss-ejb3-metrics-deployer.jar
+
+ejb2:
+    - deploy/ejb2-container-jboss-beans.xml
+    - deploy/ejb2-timer-service.xml
+    - deployers/ejb-deployer-jboss-beans.xml
+
+jmx_invoker:
+    - jmx-invoker-service.xml
+
+ha_http_invoker:
+    - deploy/httpha-invoker.sar
+
+legacy_invoker:
+    - deploy/legacy-invokers-service.xml
+
+transaction:
+    - deploy/transaction-jboss-beans.xml
+    - deploy/transaction-service.xml
+
+remoting:
+    - deploy/remoting-jboss-beans.xml
+
+properties:
+    - deploy/properties-service.xml
+
+database:
+    - deploy/hsqldb-ds.xml
+    - deploy/jboss-local-jdbc.rar
+    - deploy/jboss-xa-jdbc.jar
+    - deploy/sqlexception-service.xml
+
+jsr88:
+    - deploy/jsr88-service.xml
+
+xnio:
+    - deploy/xnio-provider.jar
+    - deployers/xnio.deployer
