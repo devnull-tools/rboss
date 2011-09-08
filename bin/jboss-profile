@@ -95,7 +95,7 @@ if config
   config.each do |var|
     if var.is_a? Hash
       var.each do |key, value|
-        key = key.to_sym if key.is_a? String
+        key = key.gsub(/-/,'_').to_sym if key.is_a? String
         profile.add key, value
       end
     else
