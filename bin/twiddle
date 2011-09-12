@@ -139,8 +139,6 @@ opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.
 twiddle = JBoss::Twiddle::Invoker::new params
 monitor = twiddle.monitor
 
-no_process = mbeans.empty? and commands.empty?
-
 if save
   config = load_yaml
   config[save] ||= {}
@@ -154,15 +152,7 @@ if save
   f = File.open(@servers_file, 'w')
   YAML::dump(config, f)
   f.close
-  if no_process
-    puts "Configuration saved!"
-    exit
-  end
-end
-
-if no_process
-  puts opts
-  exit
+  puts "Configuration saved!"
 end
 
 def extract resource
@@ -176,6 +166,8 @@ def normalize args
     "\"#{arg}\""
   end
 end
+
+puts opts if mbeans.empty? and commands.empty?
 
 if commands[:set]
   array = commands[:set]
@@ -218,7 +210,6 @@ if commands[:info]
                     :name => name,
                     :args => normalize(array[1..-1])
 end
-
 
 mbeans.each do |mbean_id, resources|
   puts "  - #{defaults[mbean_id][:description]}"
