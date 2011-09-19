@@ -22,16 +22,15 @@
 
 require 'test/unit'
 require 'test/unit/testsuite'
-#require_relative 'deploy_folder_test'
-#require_relative 'datasource_test'
+require_relative 'deploy_folder_test'
+require_relative 'datasource_test'
 require_relative 'jbossweb_test'
-#require_relative 'mbean_test'
+require_relative 'mbean_test'
 
 class TestSuite < Test::Unit::TestSuite
 
   def initialize
-    #self << DeployFolderTest << DatasourceTest << JBossWebTest << MBeanTest
-    self << JBossWebTest
+    self << DeployFolderTest << DatasourceTest << JBossWebTest << MBeanTest
   end
 
 end
