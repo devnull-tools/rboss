@@ -299,9 +299,9 @@ module JBoss
                  :path => "#{@base_dir}/resources/mod_cluster.sar",
                }
 
-      register :jboss_web,
+      register :jbossweb,
 
-               :type => JBoss::Web,
+               :type => JBoss::JBossWeb,
                :priority => @@setup
 
       register :run_conf,
