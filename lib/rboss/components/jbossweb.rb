@@ -27,7 +27,7 @@ require "rexml/document"
 include REXML
 
 module JBoss
-  class Web
+  class JBossWeb
     include Component
 
     def defaults
@@ -53,7 +53,9 @@ module JBoss
         :https => {
           :addres => "${jboss.bind.address}",
           :port => 8443,
+          :protocol => "HTTP/1.1",
           :scheme => "https",
+          'SSLEnabled' => true,
           :secure => true,
           :ssl_protocol => "TLS",
           :client_auth => false,

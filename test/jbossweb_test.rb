@@ -20,18 +20,34 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'test/unit'
-require 'test/unit/testsuite'
-#require_relative 'deploy_folder_test'
-#require_relative 'datasource_test'
-require_relative 'jbossweb_test'
-#require_relative 'mbean_test'
+require_relative 'test_helper'
 
-class TestSuite < Test::Unit::TestSuite
+class JBossWebTest < Test::Unit::TestCase
 
-  def initialize
-    #self << DeployFolderTest << DatasourceTest << JBossWebTest << MBeanTest
-    self << JBossWebTest
+  def test_http_connector
+    for_test_with :all do |profile|
+      profile.add :jbossweb,
+                  :connectors => {
+                    :http => {
+                      :max_threads => 600
+                    }
+                  }
+    end
+
+    for_assertions_with :all do |jboss|
+      file = "#{jboss.profile}/deploy/jbossweb.sar/server.xml"
+      xml = REXML::Document::new File::new(file)
+      max_threads = XPath::first xml, "//Connector[@port='8080'][@protocol='HTTP/1.1'][@maxThreads='600']"
+      assert max_threads
+    end
+
+    do_test
+  end
+
+  def assert_tag xml, path, value, parent_name = nil
+    tag = XPath::first xml, path
+    assert tag.text.strip == value.to_s
+    assert tag.parent.name == parent_name if parent_name
   end
 
 end

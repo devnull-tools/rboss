@@ -34,9 +34,9 @@ module TestHelper
 
   def all
     @all ||= {
-      #:org => [5.1],
+      :org => [5.1],
       :eap => [5.1],
-      #:soa_p => 5
+      :soa_p => 5
     }
     @all
   end
