@@ -24,6 +24,7 @@
 
 require_relative '../lib/rboss'
 require 'optparse'
+require 'logger'
 require 'yaml'
 require 'fileutils'
 
@@ -130,6 +131,9 @@ opts.on('-u', '--user USER', 'Defines the JMX User') do |user|
 end
 opts.on('-p', '--password PASSWORD', 'Defines the JMX Password') do |password|
   params[:password] = password
+end
+opts.on('-v', '--verbose', 'Shows the twiddle commands before execution') do
+  params[:log_level] = Logger::DEBUG
 end
 opts.on("-h", "--help", "Shows this help message") do
   puts opts; exit

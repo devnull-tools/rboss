@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'logger'
+
 module JBoss
   module Twiddle
     class Invoker
@@ -47,6 +49,19 @@ module JBoss
         @password = params[:password]
 
         @command = "#{@jboss_home}/bin/twiddle.sh -s #{@server} -u '#{@user}' -p '#{@password}'"
+
+        @logger = params[:logger]
+        unless @logger
+          @logger = Logger::new STDOUT
+          @logger.level = params[:log_level] || Logger::INFO
+          formatter = Logger::Formatter.new
+
+          def formatter.call(severity, time, program_name, message)
+            "#{severity} : #{message}\n"
+          end
+
+          @logger.formatter = formatter
+        end
       end
 
       def home
@@ -58,7 +73,9 @@ module JBoss
       end
 
       def execute command, *arguments
-        result = `#{shell command, arguments}`.chomp
+        exec = shell command, arguments
+        @logger.debug exec
+        result = `#{exec}`.chomp
         return nil if result["ERROR [Twiddle] Command failure"]
         result
       end
