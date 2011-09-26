@@ -44,10 +44,44 @@ class JBossWebTest < Test::Unit::TestCase
     do_test
   end
 
-  def assert_tag xml, path, value, parent_name = nil
-    tag = XPath::first xml, path
-    assert tag.text.strip == value.to_s
-    assert tag.parent.name == parent_name if parent_name
+  def test_https_connector
+    for_test_with :all do |profile|
+      profile.add :jbossweb,
+                  :connectors => {
+                    :https => {
+                      :max_threads => 600
+                    }
+                  }
+    end
+
+    for_assertions_with :all do |jboss|
+      file = "#{jboss.profile}/deploy/jbossweb.sar/server.xml"
+      xml = REXML::Document::new File::new(file)
+      max_threads = XPath::first xml, "//Connector[@port='8443'][@protocol='HTTP/1.1'][@maxThreads='600']"
+      assert max_threads
+    end
+
+    do_test
+  end
+
+  def test_ajp_connector
+    for_test_with :all do |profile|
+      profile.add :jbossweb,
+                  :connectors => {
+                    :ajp => {
+                      :max_threads => 600
+                    }
+                  }
+    end
+
+    for_assertions_with :all do |jboss|
+      file = "#{jboss.profile}/deploy/jbossweb.sar/server.xml"
+      xml = REXML::Document::new File::new(file)
+      max_threads = XPath::first xml, "//Connector[@port='8009'][@protocol='AJP/1.3'][@maxThreads='600']"
+      assert max_threads
+    end
+
+    do_test
   end
 
 end

@@ -95,7 +95,9 @@ module TestHelper
     block = blocks[:configure]
     if block
       block.call @jboss_profile
+      puts "Creating #{type} #{version}"
       @jboss_profile.create
+      puts "Running assertion block"
       blocks[:assertion].call @jboss
     end
   end
