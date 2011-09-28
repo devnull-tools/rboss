@@ -63,7 +63,7 @@ module JBoss
     include Component, FileUtils
 
     def configure services_to_remove
-      @services_to_remove = services_to_remove
+      @services_to_remove = services_to_remove.is_a?(Array) ? services_to_remove : [services_to_remove]
       @mapping = {}
       load_yaml('slimming').each do |key, values|
         @mapping[key.to_sym] = values
@@ -72,7 +72,7 @@ module JBoss
 
     def process
       @services_to_remove.each do |service|
-        @logger.info "Removing #{service}"
+        log service
         slim service
       end
     end
@@ -85,7 +85,7 @@ module JBoss
         self.send method
       elsif entry
         entry.each do |file|
-          reject file if file.is_a? String
+          handle file if file.is_a? String
           slim file if file.is_a? Symbol
         end
       else
@@ -93,7 +93,11 @@ module JBoss
       end
     end
 
-    def reject file
+    def log service
+      @logger.info "Disabling #{service}"
+    end
+
+    def handle file
       file = "#{@jboss.profile}/" + file unless file.start_with? '/'
       mv(file, file + ".rej") if File.exist? file
     end

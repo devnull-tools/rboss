@@ -61,15 +61,24 @@ opts.on('-c', '--config-file FILE', 'Defines the configuration file for the inst
     end
   end
 end
-opts.on('-v', '--verbose', 'Displays shell commands') do
-  include FileUtils::Verbose
-  params[:log_level] = Logger::DEBUG
-end
 opts.on("--encrypt PASSWORD", "Encrypts the given password for using with a SecureIdentityLoginModule") do |password|
   params[:encrypt] = password
 end
-opts.on("--slimming SERVICES", Array, "Slim the desired JBoss profile") do |services|
+opts.on("--slim SERVICES", "--slimming SERVICES", Array, "Slim the desired JBoss profile") do |services|
   params[:slimming] = services
+end
+opts.on("--restore SERVICES", Array, "Restores slimmed services in the desired JBoss profile") do |services|
+  params[:restore] = services
+  create = false
+end
+opts.on("--this", "Defines the current dir as the profile folder and update mode") do
+  params[:jboss_home] = File.dirname(File.dirname(Dir.pwd))
+  params[:profile] = Dir.pwd.split('/')[-1]
+  create = false
+end
+opts.on('-v', '--verbose', 'Displays shell commands') do
+  include FileUtils::Verbose
+  params[:log_level] = Logger::DEBUG
 end
 opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
@@ -86,6 +95,10 @@ if params[:slimming]
   profile.slim *params[:slimming]
 end
 
+if params[:restore]
+  profile.add :restore, *params[:restore]
+end
+
 if params[:encrypt]
   puts "Encrypted password: " + profile.jboss.encrypt(params[:encrypt])
   exit
@@ -95,7 +108,7 @@ if config
   config.each do |var|
     if var.is_a? Hash
       var.each do |key, value|
-        key = key.gsub(/-/,'_').to_sym if key.is_a? String
+        key = key.gsub(/-/, '_').to_sym if key.is_a? String
         profile.add key, value
       end
     else

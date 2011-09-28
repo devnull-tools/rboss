@@ -325,6 +325,11 @@ module JBoss
                :type => JBoss::Slimming,
                :priority => @@post_setup
 
+      register :restore,
+
+               :type => JBoss::Restore,
+               :priority => @@post_setup + 5
+
       register :init_script,
 
                :type => JBoss::ServiceScript,
