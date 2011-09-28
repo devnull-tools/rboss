@@ -42,6 +42,7 @@ module JBoss
       @profile_name = params[:profile].to_s
       @type = params[:type]
       @version = params[:version]
+      @logger = params[:logger]
     end
 
     def to_s
@@ -62,7 +63,9 @@ module JBoss
 
     # Encrypts the given password using the SecureIdentityLoginModule
     def encrypt password
-      encrypted = `java -cp #{jboss_logging_lib_path}:#{jbosssx_lib_path} org.jboss.resource.security.SecureIdentityLoginModule #{password}`
+      command = "java -cp #{jboss_logging_lib_path}:#{jbosssx_lib_path} org.jboss.resource.security.SecureIdentityLoginModule #{password}"
+      @logger.debug command if @logger
+      encrypted = `#{command}`
       encrypted.chomp.split(/:/)[1].strip
     end
 

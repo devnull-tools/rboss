@@ -123,7 +123,7 @@ module JBoss
       @logger = @opts[:logger]
       unless @logger
         @logger = Logger::new STDOUT
-        @logger.level = opts[:log_level] if opts[:log_level]
+        @logger.level = opts[:log_level] || Logger::INFO
         formatter = Logger::Formatter.new
 
         def formatter.call(severity, time, program_name, message)
@@ -137,7 +137,8 @@ module JBoss
       @jboss = JBoss::Path::new @jboss_home,
         :profile => @profile,
         :type => @opts[:type],
-        :version => @opts[:version]
+        :version => @opts[:version],
+        :logger => @logger
       initialize_components
     end
 
