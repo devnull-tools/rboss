@@ -35,8 +35,7 @@ class JBossWebTest < Test::Unit::TestCase
     end
 
     for_assertions_with :all do |jboss|
-      file = "#{jboss.profile}/deploy/jbossweb.sar/server.xml"
-      xml = REXML::Document::new File::new(file)
+      xml = xml(jboss)
       max_threads = XPath::first xml, "//Connector[@port='8080'][@protocol='HTTP/1.1'][@maxThreads='600']"
       assert max_threads
     end
@@ -55,8 +54,7 @@ class JBossWebTest < Test::Unit::TestCase
     end
 
     for_assertions_with :all do |jboss|
-      file = "#{jboss.profile}/deploy/jbossweb.sar/server.xml"
-      xml = REXML::Document::new File::new(file)
+      xml = xml(jboss)
       max_threads = XPath::first xml, "//Connector[@port='8443'][@protocol='HTTP/1.1'][@maxThreads='600']"
       assert max_threads
     end
@@ -75,13 +73,29 @@ class JBossWebTest < Test::Unit::TestCase
     end
 
     for_assertions_with :all do |jboss|
-      file = "#{jboss.profile}/deploy/jbossweb.sar/server.xml"
-      xml = REXML::Document::new File::new(file)
+      xml = xml(jboss)
       max_threads = XPath::first xml, "//Connector[@port='8009'][@protocol='AJP/1.3'][@maxThreads='600']"
       assert max_threads
     end
 
     do_test
+  end
+
+
+  def test_engine
+    for_test_with :all do |profile|
+      profile.add :jbossweb,
+                  :jvm_route => 'route'
+    end
+    for_assertions_with :all do |jboss|
+      xml = xml(jboss)
+      jvm_route = XPath::first xml, "//Engine[@name='jboss.web'][@jvmRoute='route']"
+      assert jvm_route
+    end
+  end
+
+  def xml(jboss)
+    REXML::Document::new File::new("#{jboss.profile}/deploy/jbossweb.sar/server.xml")
   end
 
 end
