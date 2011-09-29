@@ -96,7 +96,7 @@ if params[:slimming]
 end
 
 if params[:restore]
-  profile.add :restore, *params[:restore]
+  profile.add :restore, params[:restore]
 end
 
 if params[:encrypt]
