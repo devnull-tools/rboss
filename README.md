@@ -248,6 +248,29 @@ Use an array with the services to remove, the current supported are:
 
 Any slimmed service will be removed logically by using a ".rej" suffix in the files/directories.
 
-### Configuring jbossweb
-
 ### Configuring connectors
+
+Tools
+-----------
+
+### Command Line Slimming
+
+You can do a slimming using only the command line, just put your terminal in the profile dir
+and do the following:
+
+    jboss-profile --this --slimming services-here
+
+This will slim the defined services and if you use a --verbose option rboss will tell you what
+is be doing with the instance.
+
+To restore slimmed services, use the --restore option
+
+    jboss-profile --this --restore services-here
+
+### Password Encryption
+
+You can use the SecureIdentityLoginModule to encrypt a password for use with a login module
+to secure a datasource password.
+
+    jboss-profile --encrypt your-password-here
+
