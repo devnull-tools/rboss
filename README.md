@@ -260,10 +260,9 @@ and do the following:
 
     jboss-profile --this --slimming services-here
 
-This will slim the defined services and if you use a --verbose option rboss will tell you what
-is be doing with the instance.
+This will slim the defined services. Use --verbose to see the changed files.
 
-To restore slimmed services, use the --restore option
+To restore slimmed services, use --restore.
 
     jboss-profile --this --restore services-here
 
