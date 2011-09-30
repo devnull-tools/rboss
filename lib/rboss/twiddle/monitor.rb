@@ -127,6 +127,10 @@ module JBoss
               end
             end
           },
+          :jndi => {
+            :description => 'JNDI View',
+            :pattern => 'jboss:service=JNDIView'
+          },
           :ejb => {
             :description => 'EJB',
             :pattern => 'jboss.j2ee:#{resource},service=EJB3',
@@ -169,3 +173,4 @@ module JBoss
   end
 
 end
+
