@@ -144,8 +144,8 @@ opts.on("-h", "--help", "Shows this help message") do
 end
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
 
-twiddle = JBoss::Twiddle::Invoker::new params
-monitor = twiddle.monitor
+@twiddle = JBoss::Twiddle::Invoker::new params
+@monitor = @twiddle.monitor
 
 if save
   config = load_yaml
@@ -177,63 +177,58 @@ end
 
 puts opts if mbeans.empty? and commands.empty?
 
-if commands[:native]
-  command = commands[:native]
-  puts twiddle.execute(command)
+def native command
+  puts @twiddle.execute(command)
 end
-if commands[:set]
-  array = commands[:set]
-  raise "Wrong number of arguments" if array.size != 3
-  mbean, name = extract array[0]
-  puts twiddle.set :mbean => mbean.to_sym,
+def set id, property, value
+  mbean, name = extract id
+  puts @twiddle.set :mbean => mbean.to_sym,
                    :name => name,
-                   :property => array[1],
-                   :value => array[2]
+                   :property => property,
+                   :value => value
 end
-if commands[:get]
-  array = commands[:get]
-  raise "Wrong number of arguments" if array.size != 2
-  mbean, name = extract array[0]
-  puts twiddle.get :mbean => mbean.to_sym,
+def get id, property
+  mbean, name = extract id
+  puts @twiddle.get :mbean => mbean.to_sym,
                    :name => name,
-                   :property => array[1]
+                   :property => property
 end
-if commands[:invoke]
-  array = commands[:invoke]
-  raise "Wrong number of arguments" if array.size < 2
-  mbean, name = extract array[0]
-  puts twiddle.invoke :mbean => mbean.to_sym,
+def invoke id, method, *args
+  mbean, name = extract id
+  puts @twiddle.invoke :mbean => mbean.to_sym,
                       :name => name,
-                      :method => array[1],
-                      :args => normalize(array[2..-1])
+                      :method => method,
+                      :args => normalize(args)
 end
-if commands[:query]
-  array = commands[:query]
-  mbean, name = extract array[0]
-  puts twiddle.query :mbean => mbean.to_sym,
+def query id, *args
+  mbean, name = extract id
+  puts @twiddle.query :mbean => mbean.to_sym,
                      :name => name,
-                     :args => normalize(array[1..-1])
+                     :args => normalize(args)
 end
-if commands[:info]
-  array = commands[:info]
-  mbean, name = extract array[0]
-  puts twiddle.info :mbean => mbean.to_sym,
+def info id, *args
+  mbean, name = extract id
+  puts @twiddle.info :mbean => mbean.to_sym,
                     :name => name,
-                    :args => normalize(array[1..-1])
+                    :args => normalize(args)
+end
+
+commands.each do |method, args|
+  send method, *args
 end
 
 mbeans.each do |mbean_id, resources|
   puts "  - #{defaults[mbean_id][:description]}"
   if resources.is_a? TrueClass
-    monitor.mbean(mbean_id).detail do |name, value|
+    @monitor.mbean(mbean_id).detail do |name, value|
       puts "    - #{name}=#{value}"
     end
   elsif no_details
-    monitor.mbean(mbean_id).scan.each do |name|
+    @monitor.mbean(mbean_id).scan.each do |name|
       puts "    - #{name}"
     end
   else
-    monitor.mbean(mbean_id).detail resources do |resource, detail|
+    @monitor.mbean(mbean_id).detail resources do |resource, detail|
       puts "    - #{resource}"
       detail.each do |name, value|
         puts "      - #{name}=#{value}"
