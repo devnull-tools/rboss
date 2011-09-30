@@ -32,7 +32,8 @@ params = {}
 mbeans = {}
 commands = {}
 no_details = false
-servers_file = "~/.rboss/twiddle.yaml"
+@conf_dir = File.expand_path "~/.rboss"
+servers_file = "#{@conf_dir}/twiddle.yaml"
 @servers_file = File.expand_path(servers_file)
 save = false
 params[:jboss_home] = (ENV["JBOSS_HOME"] or ENV["TWIDDLE_HOME"] or Dir.pwd)
@@ -154,7 +155,7 @@ if save
   params.each do |key, value|
     server_config[key.to_s] = value
   end
-  FileUtils::mkdir_p File.expand_path("~/.rboss")
+  FileUtils::mkdir_p File.expand_path(@conf_dir)
   FileUtils::touch @servers_file
   f = File.open(@servers_file, 'w')
   YAML::dump(config, f)
