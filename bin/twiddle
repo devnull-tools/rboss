@@ -132,6 +132,9 @@ end
 opts.on('-p', '--password PASSWORD', 'Defines the JMX Password') do |password|
   params[:password] = password
 end
+opts.on('-n COMMAND', '--native COMMAND', 'Executes the given command as is') do |command|
+  commands[:native] = command
+end
 opts.on('-v', '--verbose', 'Shows the twiddle commands before execution') do
   params[:log_level] = Logger::DEBUG
 end
@@ -173,6 +176,10 @@ end
 
 puts opts if mbeans.empty? and commands.empty?
 
+if commands[:native]
+  command = commands[:native]
+  puts twiddle.execute(command)
+end
 if commands[:set]
   array = commands[:set]
   raise "Wrong number of arguments" if array.size != 3
@@ -206,7 +213,6 @@ if commands[:query]
                      :name => name,
                      :args => normalize(array[1..-1])
 end
-
 if commands[:info]
   array = commands[:info]
   mbean, name = extract array[0]

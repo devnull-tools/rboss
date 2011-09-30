@@ -157,6 +157,7 @@ module JBoss
 
       def mbean mbean_id
         mbean = mbeans[mbean_id]
+        return JBoss::MBean::new :pattern => mbean_id.to_s, :twiddle => @twiddle unless mbean
         if @current_resource
           mbean.with @current_resource
         end
