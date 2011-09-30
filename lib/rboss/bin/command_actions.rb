@@ -36,6 +36,7 @@ module JBoss
       def native command
         puts @twiddle.execute(command)
       end
+
       def set id, property, value
         mbean, name = extract id
         puts @twiddle.set :mbean => mbean.to_sym,
@@ -43,12 +44,14 @@ module JBoss
                          :property => property,
                          :value => value
       end
+
       def get id, property
         mbean, name = extract id
         puts @twiddle.get :mbean => mbean.to_sym,
                          :name => name,
                          :property => property
       end
+
       def invoke id, method, *args
         mbean, name = extract id
         puts @twiddle.invoke :mbean => mbean.to_sym,
@@ -56,12 +59,14 @@ module JBoss
                             :method => method,
                             :args => normalize(args)
       end
+
       def query id, *args
         mbean, name = extract id
         puts @twiddle.query :mbean => mbean.to_sym,
                            :name => name,
                            :args => normalize(args)
       end
+
       def info id, *args
         mbean, name = extract id
         puts @twiddle.info :mbean => mbean.to_sym,
@@ -73,5 +78,6 @@ module JBoss
 
   end
 
+end
 end
 
