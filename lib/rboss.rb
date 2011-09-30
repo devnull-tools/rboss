@@ -23,3 +23,5 @@
 require_relative "rboss/version"
 require_relative "rboss/jboss_profile"
 require_relative "rboss/twiddle"
+require_relative "rboss/bin/command_actions"
+

@@ -1,0 +1,33 @@
+11:51:35,223 DEBUG [Twiddle] args[0]=-s
+11:51:35,223 DEBUG [Twiddle] args[1]=fireball:1099
+11:51:35,223 DEBUG [Twiddle] args[2]=-u
+11:51:35,224 DEBUG [Twiddle] args[3]=admin
+11:51:35,224 DEBUG [Twiddle] args[4]=-p
+11:51:35,224 DEBUG [Twiddle] args[5]=xxxx
+11:51:35,224 DEBUG [Twiddle] args[6]=get
+11:51:35,224 DEBUG [Twiddle] args[7]=jboss.jca:service=ManagedConnectionPool,name=censoDatasource
+11:51:35,224 DEBUG [Twiddle] args[8]=ConnectionCount
+11:51:35,286 DEBUG [SecurityAssociation] Using ThreadLocal: false
+11:51:35,301 DEBUG [Twiddle] Command name: get
+11:51:35,311 DEBUG [Twiddle] Command arguments: jboss.jca:service=ManagedConnectionPool,name=censoDatasource,ConnectionCount
+11:51:35,312 DEBUG [Twiddle] command proto type properties: jar:file:/home/ataxexe/jboss/eap/jboss-eap-5.1/jboss-as/bin/twiddle.jar!/org/jboss/console/twiddle/commands.properties
+11:51:35,322 DEBUG [Twiddle] Adding command 'jsr77'; proto: org.jboss.console.twiddle.command.JSR77Command@1faba46
+11:51:35,325 DEBUG [Twiddle] Adding command 'xmbean'; proto: org.jboss.console.twiddle.command.XMBeanCommand@12b3d53
+11:51:35,326 DEBUG [Twiddle] Adding command 'info'; proto: org.jboss.console.twiddle.command.InfoCommand@21b220
+11:51:35,328 DEBUG [Twiddle] Adding command 'get'; proto: org.jboss.console.twiddle.command.GetCommand@79717e
+11:51:35,330 DEBUG [Twiddle] Adding command 'invoke'; proto: org.jboss.console.twiddle.command.InvokeCommand@89cf1e
+11:51:35,332 DEBUG [Twiddle] Adding command 'create'; proto: org.jboss.console.twiddle.command.CreateCommand@c88440
+11:51:35,333 DEBUG [Twiddle] Adding command 'setattrs'; proto: org.jboss.console.twiddle.command.SetAttrsCommand@cfec48
+11:51:35,335 DEBUG [Twiddle] Adding command 'unregister'; proto: org.jboss.console.twiddle.command.UnregisterCommand@e1d5ea
+11:51:35,336 DEBUG [Twiddle] Adding command 'queryMethod'; proto: org.jboss.console.twiddle.command.QueryMethodCommand@10da5eb
+11:51:35,338 DEBUG [Twiddle] Adding command 'listDomains'; proto: org.jboss.console.twiddle.command.ListDomainsCommand@1b3f829
+11:51:35,339 DEBUG [Twiddle] Adding command 'query'; proto: org.jboss.console.twiddle.command.QueryCommand@15a0305
+11:51:35,340 DEBUG [Twiddle] Adding command 'set'; proto: org.jboss.console.twiddle.command.SetCommand@765a16
+11:51:35,342 DEBUG [Twiddle] Adding command 'serverinfo'; proto: org.jboss.console.twiddle.command.ServerInfoCommand@e80842
+11:51:35,344 DEBUG [GetCommand] processing arguments: jboss.jca:service=ManagedConnectionPool,name=censoDatasource,ConnectionCount
+11:51:35,345 DEBUG [GetCommand] mbean name: jboss.jca:service=ManagedConnectionPool,name=censoDatasource
+11:51:35,345 DEBUG [GetCommand] adding attribute name: ConnectionCount
+11:51:35,345 DEBUG [GetCommand] attribute names: [ConnectionCount]
+11:51:35,377 DEBUG [TimedSocketFactory] createSocket, hostAddr: fireball/10.168.200.237, port: 1099, localAddr: null, localPort: 0, timeout: 0
+11:51:35,625 DEBUG [GetCommand] as string[]: ConnectionCount
+11:51:35,667 DEBUG [GetCommand] attribute list: [ConnectionCount = 1]

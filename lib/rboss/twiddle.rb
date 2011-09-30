@@ -27,3 +27,4 @@ require_relative 'twiddle/monitor'
 file = ENV["RBOSS_TWIDDLE"] || File.expand_path("~/.rboss/twiddle.rb")
 
 eval File.read(file), binding, file if File.exist? file
+
