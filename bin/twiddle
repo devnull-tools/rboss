@@ -142,10 +142,9 @@ end
 opts.on("-h", "--help", "Shows this help message") do
   puts opts; exit
 end
-opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
+opts.parse!(ARGV) #rescue abort 'Invalid Option! Use --help or -h for usage help.'
 
 @twiddle = JBoss::Twiddle::Invoker::new params
-@monitor = @twiddle.monitor
 
 if save
   config = load_yaml
@@ -177,27 +176,11 @@ end
 
 puts opts if mbeans.empty? and commands.empty?
 
-actions = JBoss::CommandActions::Twiddle::new @twiddle
+actions = JBoss::CommandActions::Twiddle::new @twiddle,
+  :no_details => no_details,
+  :mbeans => defaults
 
 actions.parse_and_execute commands
 
-mbeans.each do |mbean_id, resources|
-  puts "  - #{defaults[mbean_id][:description]}"
-  if resources.is_a? TrueClass
-    @monitor.mbean(mbean_id).detail do |name, value|
-      puts "    - #{name}=#{value}"
-    end
-  elsif no_details
-    @monitor.mbean(mbean_id).scan.each do |name|
-      puts "    - #{name}"
-    end
-  else
-    @monitor.mbean(mbean_id).detail resources do |resource, detail|
-      puts "    - #{resource}"
-      detail.each do |name, value|
-        puts "      - #{name}=#{value}"
-      end
-    end
-  end
-end
+actions.detail mbeans
 

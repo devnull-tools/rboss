@@ -24,13 +24,16 @@ module JBoss
   module CommandActions
     class Twiddle
 
-      def initialize invoker
-        @twiddle = invoker
+      def initialize twiddle, opts = {}
+        @monitor = twiddle.monitor
+        @twiddle = twiddle
+        @opts = opts
       end
 
       def parse_and_execute commands
         commands.each do |method, args|
-        send method, *args
+          send method, *args
+        end
       end
 
       def native command
@@ -74,10 +77,31 @@ module JBoss
                           :args => normalize(args)
       end
 
+      def detail mbeans
+        mbeans.each do |mbean_id, resources|
+          puts "  - #{@opts[:mbeans][mbean_id][:description]}"
+          if resources.is_a? TrueClass
+            @monitor.mbean(mbean_id).detail do |name, value|
+              puts "    - #{name}=#{value}"
+            end
+          elsif @opts[:no_details]
+            @monitor.mbean(mbean_id).scan.each do |name|
+              puts "    - #{name}"
+            end
+          else
+            @monitor.mbean(mbean_id).detail resources do |resource, detail|
+              puts "    - #{resource}"
+              detail.each do |name, value|
+                puts "      - #{name}=#{value}"
+              end
+            end
+          end
+        end
+      end
+
     end
 
   end
 
-end
 end
 
