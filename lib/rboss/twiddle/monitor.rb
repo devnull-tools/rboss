@@ -32,7 +32,8 @@ module JBoss
           :webapp => {
             :description => 'Deployed webapps',
             :pattern => 'jboss.web:type=Manager,host=localhost,path=/#{resource}',
-            :properties => %W(activeSessions maxActive),
+            :properties => %W(activeSessions maxActive distributable maxActiveSessions
+                              expiredSessions rejectedSessions),
             :scan => proc do
               query "jboss.web:type=Manager,*" do |path|
                 path.gsub! "jboss.web:type=Manager,path=/", ""
