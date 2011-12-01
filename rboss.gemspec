@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/ataxexe/rboss"
   s.summary     = %q{A Ruby way to do a JBoss work!}
   s.description = %q{A tool to create profiles for JBoss Application Server and use
- twiddle to scan a running JBoss AS or execute scripts.}
+ twiddle to manage a running JBoss AS.}
 
   s.rubyforge_project = "rboss"
 
