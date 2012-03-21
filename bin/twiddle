@@ -58,7 +58,7 @@ end
 opts.on('--port PORT', 'Defines the JBoss jnp port') do |port|
   params[:port] = port
 end
-opts.on('-c', '--config SERVER_NAME',
+opts.on('-c', '--connect SERVER_NAME',
         "Uses a configured server in #{servers_file}") do |server|
   config = load_yaml[server]
   abort "No configuration for #{server}" unless config
