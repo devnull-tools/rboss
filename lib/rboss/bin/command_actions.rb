@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'wirble'
+
 module JBoss
   module CommandActions
     class Twiddle
@@ -43,38 +45,38 @@ module JBoss
       def set id, property, value
         mbean, name = extract id
         puts @twiddle.set :mbean => mbean.to_sym,
-                         :name => name,
-                         :property => property,
-                         :value => value
+                          :name => name,
+                          :property => property,
+                          :value => value
       end
 
       def get id, property
         mbean, name = extract id
         puts @twiddle.get :mbean => mbean.to_sym,
-                         :name => name,
-                         :property => property
+                          :name => name,
+                          :property => property
       end
 
       def invoke id, method, *args
         mbean, name = extract id
         puts @twiddle.invoke :mbean => mbean.to_sym,
-                            :name => name,
-                            :method => method,
-                            :args => normalize(args)
+                             :name => name,
+                             :method => method,
+                             :args => normalize(args)
       end
 
       def query id, *args
         mbean, name = extract id
         puts @twiddle.query :mbean => mbean.to_sym,
-                           :name => name,
-                           :args => normalize(args)
+                            :name => name,
+                            :args => normalize(args)
       end
 
       def info id, *args
         mbean, name = extract id
         puts @twiddle.info :mbean => mbean.to_sym,
-                          :name => name,
-                          :args => normalize(args)
+                           :name => name,
+                           :args => normalize(args)
       end
 
       def detail mbeans
@@ -101,7 +103,51 @@ module JBoss
 
     end
 
+    class TableBuilder
+
+      def initialize colors = {}
+        @colors = {
+            :title => :yellow,
+            :header => :light_blue,
+            :good => :green,
+            :bad => :red,
+            :warn => :gray,
+            :normal => nil
+        }.merge! colors
+        @data = []
+        @types = []
+      end
+
+      def add(type, *args)
+        @types << type
+        @data << args
+      end
+
+      def print colspan = 2
+        @data.each_index do |i|
+          type = @types[i]
+          @data[i].each_index do |j|
+            column = @data[i][j]
+            width = max_width j
+            value = column.to_s.ljust(width) if j == 0
+            value ||= column.to_s.rjust(width)
+            printf Wirble::Colorize::colorize_string(value, @colors[type])
+            printf(" " * colspan)
+          end
+          puts
+        end
+      end
+
+      def max_width column
+        max = 0
+        @data.each do |row|
+          max = [row[column].to_s.length, max].max
+        end
+        max
+      end
+
+    end
+
   end
 
 end
-
