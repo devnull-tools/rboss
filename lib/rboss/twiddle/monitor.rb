@@ -55,6 +55,13 @@ module JBoss
             :description => 'JBossWeb connector',
             :pattern => 'jboss.web:type=ThreadPool,name=#{resource}',
             :properties => %W(maxThreads currentThreadCount currentThreadsBusy),
+            :header => ['Connector', 'Max Threads', 'Current Threads', 'Busy Threads'],
+            :health => {
+              :indexes => {
+                :max => 1,
+                :using => 2
+              }
+            },
             :scan => proc do
               query "jboss.web:type=ThreadPool,*" do |path|
                 path.gsub "jboss.web:type=ThreadPool,name=", ""
@@ -64,7 +71,9 @@ module JBoss
           :cached_connection_manager => {
             :description => 'JBoss JCA cached connections',
             :pattern => 'jboss.jca:service=CachedConnectionManager',
-            :properties => %W(InUseConnections)
+            :properties => %W(InUseConnections),
+            :header => ['In Use Connections'],
+            :print_as => :single_list
           },
           :main_deployer => {
             :description => 'Main Deployer',
@@ -73,17 +82,23 @@ module JBoss
           :engine => {
             :description => 'JBossWeb engine',
             :pattern => 'jboss.web:type=Engine',
-            :properties => %W(jvmRoute name defaultHost)
+            :properties => %W(jvmRoute name defaultHost),
+            :header => ['JVM Route', 'Name', 'Default Host'],
+            :print_as => :single_list
           },
           :log4j => {
             :description => 'JBoss Log4J Service',
             :pattern => 'jboss.system:service=Logging,type=Log4jService',
-            :properties => %W(DefaultJBossServerLogThreshold)
+            :properties => %W(DefaultJBossServerLogThreshold),
+            :header => ['Default Server Log Threshold'],
+            :print_as => :single_list
           },
           :server => {
             :description => 'JBoss Server specifications',
             :pattern => 'jboss.system:type=Server',
-            :properties => %W(VersionName VersionNumber Version)
+            :properties => %W(VersionName VersionNumber Version),
+            :header => ['Version Name', 'Version Number', 'Version'],
+            :print_as => :single_list
           },
           :server_info => {
             :description => 'JBoss Server runtime info',
@@ -93,22 +108,14 @@ module JBoss
             :header => ['Active Threads', 'Max Memory', 'Free Memory',
                         'Processors', 'Java Vendor',
                         'Java Version', 'OS Name', 'OS Arch'],
-            :formatter => proc do |row|
-              row[1] = humanize row[1]
-              row[2] = humanize row[2]
-              row
-            end,
+            :formatter => {:humanize => [1, 2]},
             :print_as => :single_list,
-            :health => proc do |row|
-              threshold = 0.15
-              max = row[1].to_i
-              in_use = row[2].to_i
-              if under_limit? :using => in_use, :max => max, :threshold => threshold
-                :bad
-              else
-                :good
-              end
-            end
+            :health => {
+              :indexes => {
+                :max => 1,
+                :free => 2
+              }
+            },
           },
           :server_config => {
             :description => 'JBoss Server configuration',
@@ -125,6 +132,13 @@ module JBoss
             :description => 'JBossWeb connector requests',
             :pattern => 'jboss.web:type=GlobalRequestProcessor,name=#{resource}',
             :properties => %W(requestCount errorCount maxTime),
+            :header => ['Connector', 'Requests', 'Errors', 'Max Time'],
+            :health => {
+              :indexes => {
+                :max => 1,
+                :using => 2
+              }
+            },
             :scan => proc do
               query "jboss.web:type=ThreadPool,*" do |path|
                 path.gsub "jboss.web:type=ThreadPool,name=", ""
@@ -140,19 +154,12 @@ module JBoss
               ['JNDI Name', 'Min', 'Max', 'Connections', 'Connections', 'Connection'],
               ['', 'Size', 'Size', 'Avaliable', 'In Use', 'Count']
             ],
-            :health => proc do |row|
-              threshold = 0.15
-              count = row[5].to_i
-              max = row[2].to_i
-              in_use = row[4].to_i
-              if under_limit? :using => in_use, :max => max, :threshold => threshold
-                :bad
-              elsif under_limit? :using => count, :max => max, :threshold => threshold
-                :warn
-              else
-                :good
-              end
-            end,
+            :health => {
+              :indexes => {
+                :max => 2,
+                :using => 4
+              }
+            },
             :scan => proc do
               query "jboss.jca:service=ManagedConnectionPool,*" do |path|
                 path.gsub "jboss.jca:service=ManagedConnectionPool,name=", ""
@@ -162,8 +169,10 @@ module JBoss
           :queue => {
             :description => 'JMS Queue',
             :pattern => 'jboss.messaging.destination:service=Queue,name=#{resource}',
-            :properties => %W(Name JNDIName MessageCount DeliveringCount
+            :properties => %W(JNDIName MessageCount DeliveringCount
               ScheduledMessageCount MaxSize FullSize Clustered ConsumerCount),
+            :header => ['Name', 'JNDI', 'Messages', 'Deliveries', 'Scheduleded', 'Max Size',
+                        'Full Size', 'Clustered', 'Consumed'],
             :scan => proc do
               query "jboss.messaging.destination:service=Queue,*" do |path|
                 path.gsub "jboss.messaging.destination:service=Queue,name=", ""
@@ -178,6 +187,7 @@ module JBoss
             :description => 'EJB',
             :pattern => 'jboss.j2ee:#{resource},service=EJB3',
             :properties => %W(CreateCount RemoveCount CurrentSize AvailableCount),
+            :header => ['EJB', 'Created', 'Removed', 'Current', 'Available'],
             :scan => proc do
               result = query "jboss.j2ee:*"
               (result.find_all do |path|
@@ -191,28 +201,6 @@ module JBoss
       end
 
       module_function :defaults
-
-      def under_limit? params = {}
-        if params[:free]
-          free = (params[:free] / params[:max].to_f)
-          (free < params[:threshold])
-        elsif params[:using]
-          free = params[:max] - params[:using]
-          under_limit? :free => free,
-                       :max => params[:max],
-                       :threshold => params[:threshold]
-        end
-      end
-
-      module_function :under_limit?
-
-      def humanize bytes
-        bytes = bytes.to_i
-        return (bytes / (1024 * 1024)).to_s << "MB" if bytes > (1024 * 1024)
-        (bytes / (1024)).to_s << "KB" if bytes > (1024)
-      end
-
-      module_function :humanize
 
       def mbeans
         @mbeans ||= {}
@@ -236,4 +224,3 @@ module JBoss
   end
 
 end
-

@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'wirble'
+require_relative '../table_builder'
 
 module JBoss
   module CommandActions
@@ -106,113 +106,6 @@ module JBoss
           rows.each { |row| table.add :normal, *row }
           table.print
         end
-      end
-
-    end
-
-    class TableBuilder
-
-      attr_writer :title
-
-      def initialize params = {}
-        params[:colors] ||= {}
-        @colors = {
-          :title => :yellow,
-          :header => :light_blue,
-          :good => :green,
-          :bad => :red,
-          :warn => :gray,
-          :line => :purple,
-          :normal => nil
-        }.merge! params[:colors]
-        @health = params[:health]
-        @header = params[:header]
-        @formatter = params[:formatter]
-        @print_type = (params[:print_as] or :table)
-        @single_result = params[:single_result]
-
-        @data = []
-        @types = []
-        @title = nil
-      end
-
-      def add(type, *args)
-        @types << type
-        @data << args
-      end
-
-      def print
-        build_header @header
-        check_health
-        puts colorize(:title, @title)
-        print_as_table if @print_type == :table
-        print_as_single_list if @print_type == :single_list
-      end
-
-      def print_as_single_list
-        header = @data[0]
-        data = @formatter.call(@data[1]) if @formatter
-        data ||= @data[1]
-        type = @types[1]
-
-        line = colorize :line, '-'
-        data.each_index do |i|
-          description = colorize :header, header[i]
-          value = colorize type, data[i]
-          puts "  #{line} #{description} = #{value}"
-        end
-      end
-
-      def print_as_table colspan = 2
-        @data.each_index do |i|
-          type = @types[i]
-          @data[i] = @formatter.call(@data[i]) if @formatter and type != :header
-          @data[i].each_index do |j|
-            column = @data[i][j]
-            width = max_width j
-            value = column.to_s.ljust(width) if j == 0
-            value ||= column.to_s.rjust(width)
-            printf colorize(type, value)
-            printf(" " * colspan)
-          end
-          puts
-        end
-      end
-
-      def check_health
-        return unless @health
-        @data.each_index do |i|
-          if @types[i] == :normal
-            row = @data[i]
-            @types[i] = @health.call(row)
-          end
-        end
-      end
-
-      def build_header header
-        return unless header
-        if header.is_a? Array
-          if header.first.is_a? Array
-            header.reverse.each do |value|
-              build_header value
-            end
-          else
-            @data = [header] + @data
-            @types = [:header] + @types
-          end
-        end
-      end
-
-      def colorize(type, value)
-        Wirble::Colorize::colorize_string(value, @colors[type])
-      end
-
-      def max_width column
-        max = 0
-        @data.each do |row|
-          max = [row[column].to_s.length, max].max
-        end
-        max
       end
 
     end
