@@ -81,9 +81,7 @@ module JBoss
 
       def detail mbeans
         mbeans.each do |mbean_id, resources|
-          table = TableBuilder::new :health => @opts[:mbeans][mbean_id][:health],
-                                    :header => @opts[:mbeans][mbean_id][:header],
-                                    :formatter => @opts[:mbeans][mbean_id][:formatter]
+          table = TableBuilder::new @opts[:mbeans][mbean_id]
           table.title = @opts[:mbeans][mbean_id][:description]
           rows = []
           if resources.is_a? TrueClass
@@ -124,11 +122,14 @@ module JBoss
           :good => :green,
           :bad => :red,
           :warn => :gray,
+          :line => :purple,
           :normal => nil
         }.merge! params[:colors]
         @health = params[:health]
         @header = params[:header]
         @formatter = params[:formatter]
+        @print_type = (params[:print_as] or :table)
+        @single_result = params[:single_result]
 
         @data = []
         @types = []
@@ -140,10 +141,29 @@ module JBoss
         @data << args
       end
 
-      def print colspan = 2
+      def print
         build_header @header
         check_health
         puts colorize(:title, @title)
+        print_as_table if @print_type == :table
+        print_as_single_list if @print_type == :single_list
+      end
+
+      def print_as_single_list
+        header = @data[0]
+        data = @formatter.call(@data[1]) if @formatter
+        data ||= @data[1]
+        type = @types[1]
+
+        line = colorize :line, '-'
+        data.each_index do |i|
+          description = colorize :header, header[i]
+          value = colorize type, data[i]
+          puts "  #{line} #{description} = #{value}"
+        end
+      end
+
+      def print_as_table colspan = 2
         @data.each_index do |i|
           type = @types[i]
           @data[i] = @formatter.call(@data[i]) if @formatter and type != :header

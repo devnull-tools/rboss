@@ -34,6 +34,11 @@ module JBoss
             :pattern => 'jboss.web:type=Manager,host=localhost,path=/#{resource}',
             :properties => %W(activeSessions maxActive distributable maxActiveSessions
                               expiredSessions rejectedSessions),
+            :header => [
+              ['Context', 'Active', 'Max', 'Distributable', 'Max Active', 'Expired', 'Rejected'],
+              ['', 'Sessions', 'Active', '',
+               'Sessions', 'Sessions', 'Sessions'],
+            ],
             :scan => proc do
               query "jboss.web:type=Manager,*" do |path|
                 path.gsub! "jboss.web:type=Manager,path=/", ""
@@ -84,20 +89,33 @@ module JBoss
             :description => 'JBoss Server runtime info',
             :pattern => 'jboss.system:type=ServerInfo',
             :properties => %W(ActiveThreadCount MaxMemory FreeMemory AvailableProcessors
-                              HostAddress JavaVendor JavaVersion OSName OSArch),
+                              JavaVendor JavaVersion OSName OSArch),
             :header => ['Active Threads', 'Max Memory', 'Free Memory',
-                        'Processors', 'HostAddress', 'Java Vendor',
+                        'Processors', 'Java Vendor',
                         'Java Version', 'OS Name', 'OS Arch'],
             :formatter => proc do |row|
               row[1] = humanize row[1]
               row[2] = humanize row[2]
               row
+            end,
+            :print_as => :single_list,
+            :health => proc do |row|
+              threshold = 0.15
+              max = row[1].to_i
+              in_use = row[2].to_i
+              if under_limit? :using => in_use, :max => max, :threshold => threshold
+                :bad
+              else
+                :good
+              end
             end
           },
           :server_config => {
             :description => 'JBoss Server configuration',
             :pattern => 'jboss.system:type=ServerConfig',
-            :properties => %W(ServerName HomeDir ServerLogDir ServerHomeURL)
+            :properties => %W(ServerName HomeDir ServerLogDir ServerHomeURL),
+            :header => ['Server Name', 'Home Dir', 'Log Dir', 'Home URL'],
+            :print_as => :single_list
           },
           :system_properties => {
             :description => 'System properties',
