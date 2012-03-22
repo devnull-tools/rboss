@@ -81,23 +81,32 @@ module JBoss
 
       def detail mbeans
         mbeans.each do |mbean_id, resources|
-          puts "  - #{@opts[:mbeans][mbean_id][:description]}"
+          table = TableBuilder::new :health => @opts[:mbeans][mbean_id][:health],
+                                    :header => @opts[:mbeans][mbean_id][:header],
+                                    :formatter => @opts[:mbeans][mbean_id][:formatter]
+          table.title = @opts[:mbeans][mbean_id][:description]
+          rows = []
           if resources.is_a? TrueClass
+            row = []
             @monitor.mbean(mbean_id).detail do |name, value|
-              puts "    - #{name}=#{value}"
+              row << value
             end
+            rows << row
           elsif @opts[:no_details]
             @monitor.mbean(mbean_id).scan.each do |name|
               puts "    - #{name}"
             end
           else
             @monitor.mbean(mbean_id).detail resources do |resource, detail|
-              puts "    - #{resource}"
+              row = [resource]
               detail.each do |name, value|
-                puts "      - #{name}=#{value}"
+                row << value
               end
+              rows << row
             end
           end
+          rows.each { |row| table.add :normal, *row }
+          table.print
         end
       end
 
@@ -105,17 +114,25 @@ module JBoss
 
     class TableBuilder
 
-      def initialize colors = {}
+      attr_writer :title
+
+      def initialize params = {}
+        params[:colors] ||= {}
         @colors = {
-            :title => :yellow,
-            :header => :light_blue,
-            :good => :green,
-            :bad => :red,
-            :warn => :gray,
-            :normal => nil
-        }.merge! colors
+          :title => :yellow,
+          :header => :light_blue,
+          :good => :green,
+          :bad => :red,
+          :warn => :gray,
+          :normal => nil
+        }.merge! params[:colors]
+        @health = params[:health]
+        @header = params[:header]
+        @formatter = params[:formatter]
+
         @data = []
         @types = []
+        @title = nil
       end
 
       def add(type, *args)
@@ -124,18 +141,50 @@ module JBoss
       end
 
       def print colspan = 2
+        build_header @header
+        check_health
+        puts colorize(:title, @title)
         @data.each_index do |i|
           type = @types[i]
+          @data[i] = @formatter.call(@data[i]) if @formatter and type != :header
           @data[i].each_index do |j|
             column = @data[i][j]
             width = max_width j
             value = column.to_s.ljust(width) if j == 0
             value ||= column.to_s.rjust(width)
-            printf Wirble::Colorize::colorize_string(value, @colors[type])
+            printf colorize(type, value)
             printf(" " * colspan)
           end
           puts
         end
+      end
+
+      def check_health
+        return unless @health
+        @data.each_index do |i|
+          if @types[i] == :normal
+            row = @data[i]
+            @types[i] = @health.call(row)
+          end
+        end
+      end
+
+      def build_header header
+        return unless header
+        if header.is_a? Array
+          if header.first.is_a? Array
+            header.reverse.each do |value|
+              build_header value
+            end
+          else
+            @data = [header] + @data
+            @types = [:header] + @types
+          end
+        end
+      end
+
+      def colorize(type, value)
+        Wirble::Colorize::colorize_string(value, @colors[type])
       end
 
       def max_width column

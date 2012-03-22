@@ -84,8 +84,15 @@ module JBoss
             :description => 'JBoss Server runtime info',
             :pattern => 'jboss.system:type=ServerInfo',
             :properties => %W(ActiveThreadCount MaxMemory FreeMemory AvailableProcessors
-                              HostAddress JavaVendor JavaVersion JavaVMVersion
-                              JavaVMVendor JavaVMName OSName OSArch)
+                              HostAddress JavaVendor JavaVersion OSName OSArch),
+            :header => ['Active Threads', 'Max Memory', 'Free Memory',
+                        'Processors', 'HostAddress', 'Java Vendor',
+                        'Java Version', 'OS Name', 'OS Arch'],
+            :formatter => proc do |row|
+              row[1] = humanize row[1]
+              row[2] = humanize row[2]
+              row
+            end
           },
           :server_config => {
             :description => 'JBoss Server configuration',
@@ -111,6 +118,23 @@ module JBoss
             :pattern => 'jboss.jca:service=ManagedConnectionPool,name=#{resource}',
             :properties => %W(MinSize MaxSize AvailableConnectionCount
                                 InUseConnectionCount ConnectionCount),
+            :header => [
+              ['JNDI Name', 'Min', 'Max', 'Connections', 'Connections', 'Connection'],
+              ['', 'Size', 'Size', 'Avaliable', 'In Use', 'Count']
+            ],
+            :health => proc do |row|
+              threshold = 0.15
+              count = row[5].to_i
+              max = row[2].to_i
+              in_use = row[4].to_i
+              if under_limit? :using => in_use, :max => max, :threshold => threshold
+                :bad
+              elsif under_limit? :using => count, :max => max, :threshold => threshold
+                :warn
+              else
+                :good
+              end
+            end,
             :scan => proc do
               query "jboss.jca:service=ManagedConnectionPool,*" do |path|
                 path.gsub "jboss.jca:service=ManagedConnectionPool,name=", ""
@@ -146,14 +170,34 @@ module JBoss
             end
           }
         }
-        @@defaults
       end
 
       module_function :defaults
 
+      def under_limit? params = {}
+        if params[:free]
+          free = (params[:free] / params[:max].to_f)
+          (free < params[:threshold])
+        elsif params[:using]
+          free = params[:max] - params[:using]
+          under_limit? :free => free,
+                       :max => params[:max],
+                       :threshold => params[:threshold]
+        end
+      end
+
+      module_function :under_limit?
+
+      def humanize bytes
+        bytes = bytes.to_i
+        return (bytes / (1024 * 1024)).to_s << "MB" if bytes > (1024 * 1024)
+        (bytes / (1024)).to_s << "KB" if bytes > (1024)
+      end
+
+      module_function :humanize
+
       def mbeans
         @mbeans ||= {}
-        @mbeans
       end
 
       def monitor mbean_id, params
