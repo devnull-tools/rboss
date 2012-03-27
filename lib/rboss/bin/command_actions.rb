@@ -92,7 +92,7 @@ module JBoss
             rows << row
           elsif @opts[:no_details]
             @monitor.mbean(mbean_id).scan.each do |name|
-              puts "    - #{name}"
+              rows << name
             end
           else
             @monitor.mbean(mbean_id).detail resources do |resource, detail|
