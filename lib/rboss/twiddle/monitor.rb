@@ -108,13 +108,10 @@ module JBoss
             :header => ['Active Threads', 'Max Memory', 'Free Memory',
                         'Processors', 'Java Vendor',
                         'Java Version', 'OS Name', 'OS Arch'],
-            :formatter => {:humanize => [1, 2]},
-            :print_as => :single_list,
+            :formatter => [:max_memory, :free_memory],
             :health => {
-              :indexes => {
-                :max => 1,
-                :free => 2
-              }
+              :max => :max_memory,
+              :free => :free_memory
             },
           },
           :server_config => {
@@ -150,15 +147,11 @@ module JBoss
             :pattern => 'jboss.jca:service=ManagedConnectionPool,name=#{resource}',
             :properties => %W(MinSize MaxSize AvailableConnectionCount
                                 InUseConnectionCount ConnectionCount),
-            :header => [
-              ['JNDI Name', 'Min', 'Max', 'Connections', 'Connections', 'Connection'],
-              ['', 'Size', 'Size', 'Avaliable', 'In Use', 'Count']
-            ],
+            :header => ["JNDI Name", "Min\nSize", "Max\nSize", "Avaliable\nConnections",
+                        "In Use\nConnections", "Connection\nCount"],
             :health => {
-              :indexes => {
-                :max => 2,
-                :using => 4
-              }
+              :max => :max_size,
+              :using => :in_use_connections
             },
             :scan => proc do
               query "jboss.jca:service=ManagedConnectionPool,*" do |path|

@@ -82,7 +82,6 @@ module JBoss
       def detail mbeans
         mbeans.each do |mbean_id, resources|
           table = TableBuilder::new @opts[:mbeans][mbean_id]
-          table.title = @opts[:mbeans][mbean_id][:description]
           rows = []
           if resources.is_a? TrueClass
             row = []
@@ -103,7 +102,7 @@ module JBoss
               rows << row
             end
           end
-          rows.each { |row| table.add :normal, *row }
+          table.data = rows
           table.print
         end
       end
