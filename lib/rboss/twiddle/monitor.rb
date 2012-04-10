@@ -33,12 +33,9 @@ module JBoss
             :description => 'Deployed webapps',
             :pattern => 'jboss.web:type=Manager,host=localhost,path=/#{resource}',
             :properties => %W(activeSessions maxActive distributable maxActiveSessions
-                              expiredSessions rejectedSessions),
-            :header => [
-              ['Context', 'Active', 'Max', 'Distributable', 'Max Active', 'Expired', 'Rejected'],
-              ['', 'Sessions', 'Active', '',
-               'Sessions', 'Sessions', 'Sessions'],
-            ],
+                                    expiredSessions rejectedSessions),
+            :header => ["Context", "Active\nSessions", "Max\nSessions", "Distributable",
+                        "Max Active\nSession", "Expired\nSessions", "Rejected\nSessions"],
             :scan => proc do
               query "jboss.web:type=Manager,*" do |path|
                 path.gsub! "jboss.web:type=Manager,path=/", ""
@@ -57,10 +54,8 @@ module JBoss
             :properties => %W(maxThreads currentThreadCount currentThreadsBusy),
             :header => ['Connector', 'Max Threads', 'Current Threads', 'Busy Threads'],
             :health => {
-              :indexes => {
-                :max => 1,
-                :using => 2
-              }
+              :max => :max_threads,
+              :using => :current_threads
             },
             :scan => proc do
               query "jboss.web:type=ThreadPool,*" do |path|
@@ -73,7 +68,6 @@ module JBoss
             :pattern => 'jboss.jca:service=CachedConnectionManager',
             :properties => %W(InUseConnections),
             :header => ['In Use Connections'],
-            :print_as => :single_list
           },
           :main_deployer => {
             :description => 'Main Deployer',
@@ -84,30 +78,27 @@ module JBoss
             :pattern => 'jboss.web:type=Engine',
             :properties => %W(jvmRoute name defaultHost),
             :header => ['JVM Route', 'Name', 'Default Host'],
-            :print_as => :single_list
           },
           :log4j => {
             :description => 'JBoss Log4J Service',
             :pattern => 'jboss.system:service=Logging,type=Log4jService',
             :properties => %W(DefaultJBossServerLogThreshold),
             :header => ['Default Server Log Threshold'],
-            :print_as => :single_list
           },
           :server => {
             :description => 'JBoss Server specifications',
             :pattern => 'jboss.system:type=Server',
             :properties => %W(VersionName VersionNumber Version),
             :header => ['Version Name', 'Version Number', 'Version'],
-            :print_as => :single_list
           },
           :server_info => {
             :description => 'JBoss Server runtime info',
             :pattern => 'jboss.system:type=ServerInfo',
             :properties => %W(ActiveThreadCount MaxMemory FreeMemory AvailableProcessors
-                              JavaVendor JavaVersion OSName OSArch),
-            :header => ['Active Threads', 'Max Memory', 'Free Memory',
-                        'Processors', 'Java Vendor',
-                        'Java Version', 'OS Name', 'OS Arch'],
+                                    JavaVendor JavaVersion OSName OSArch),
+            :header => ["Active\nThreads", "Max\nMemory", "Free\nMemory",
+                        "Processors", "Java Vendor",
+                        "Java\nVersion", "OS Name", "OS Arch"],
             :formatter => [:max_memory, :free_memory],
             :health => {
               :max => :max_memory,
@@ -119,7 +110,6 @@ module JBoss
             :pattern => 'jboss.system:type=ServerConfig',
             :properties => %W(ServerName HomeDir ServerLogDir ServerHomeURL),
             :header => ['Server Name', 'Home Dir', 'Log Dir', 'Home URL'],
-            :print_as => :single_list
           },
           :system_properties => {
             :description => 'System properties',
@@ -131,10 +121,8 @@ module JBoss
             :properties => %W(requestCount errorCount maxTime),
             :header => ['Connector', 'Requests', 'Errors', 'Max Time'],
             :health => {
-              :indexes => {
-                :max => 1,
-                :using => 2
-              }
+              :max => :request,
+              :using => :errors
             },
             :scan => proc do
               query "jboss.web:type=ThreadPool,*" do |path|
@@ -146,7 +134,7 @@ module JBoss
             :description => 'Datasource',
             :pattern => 'jboss.jca:service=ManagedConnectionPool,name=#{resource}',
             :properties => %W(MinSize MaxSize AvailableConnectionCount
-                                InUseConnectionCount ConnectionCount),
+                                      InUseConnectionCount ConnectionCount),
             :header => ["JNDI Name", "Min\nSize", "Max\nSize", "Avaliable\nConnections",
                         "In Use\nConnections", "Connection\nCount"],
             :health => {
@@ -163,7 +151,7 @@ module JBoss
             :description => 'JMS Queue',
             :pattern => 'jboss.messaging.destination:service=Queue,name=#{resource}',
             :properties => %W(JNDIName MessageCount DeliveringCount
-              ScheduledMessageCount MaxSize FullSize Clustered ConsumerCount),
+                    ScheduledMessageCount MaxSize FullSize Clustered ConsumerCount),
             :header => ['Name', 'JNDI', 'Messages', 'Deliveries', 'Scheduleded', 'Max Size',
                         'Full Size', 'Clustered', 'Consumed'],
             :scan => proc do

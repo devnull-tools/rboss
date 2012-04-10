@@ -35,7 +35,7 @@ class TableBuilder
     if params[:formatter]
       params[:formatter].each do |column|
         @table.format column do |value|
-          Yummi::Formatter::Unit.format value, :byte
+          Yummi::Formatter::Unit.format :byte, value.to_i
         end
       end
     end
