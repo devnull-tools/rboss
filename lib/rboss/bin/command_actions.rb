@@ -33,55 +33,58 @@ module JBoss
       end
 
       def parse_and_execute commands
+        buff = ""
         commands.each do |method, args|
-          send method, *args
+          buff << send(method, *args)
         end
+        buff
       end
 
       def native command
-        puts @twiddle.execute(command)
+        @twiddle.execute(command)
       end
 
       def set id, property, value
         mbean, name = extract id
-        puts @twiddle.set :mbean => mbean.to_sym,
-                          :name => name,
-                          :property => property,
-                          :value => value
+        @twiddle.set :mbean => mbean.to_sym,
+                     :name => name,
+                     :property => property,
+                     :value => value
       end
 
       def get id, property
         mbean, name = extract id
-        puts @twiddle.get :mbean => mbean.to_sym,
-                          :name => name,
-                          :property => property
+        @twiddle.get :mbean => mbean.to_sym,
+                     :name => name,
+                     :property => property
       end
 
       def invoke id, method, *args
         mbean, name = extract id
-        puts @twiddle.invoke :mbean => mbean.to_sym,
-                             :name => name,
-                             :method => method,
-                             :args => normalize(args)
+        @twiddle.invoke :mbean => mbean.to_sym,
+                        :name => name,
+                        :method => method,
+                        :args => normalize(args)
       end
 
       def query id, *args
         mbean, name = extract id
-        puts @twiddle.query :mbean => mbean.to_sym,
-                            :name => name,
-                            :args => normalize(args)
+        @twiddle.query :mbean => mbean.to_sym,
+                       :name => name,
+                       :args => normalize(args)
       end
 
       def info id, *args
         mbean, name = extract id
-        puts @twiddle.info :mbean => mbean.to_sym,
-                           :name => name,
-                           :args => normalize(args)
+        @twiddle.info :mbean => mbean.to_sym,
+                      :name => name,
+                      :args => normalize(args)
       end
 
       def detail mbeans
+        buff = ""
         mbeans.each do |mbean_id, resources|
-          table = TableBuilder::new @opts[:mbeans][mbean_id]
+          table_builder = TableBuilder::new @opts[:mbeans][mbean_id]
           rows = []
           if resources.is_a? TrueClass
             row = []
@@ -90,7 +93,7 @@ module JBoss
             end
             rows << row
           elsif @opts[:no_details]
-            table.no_details
+            table_builder.no_details
             @monitor.mbean(mbean_id).scan.each do |name|
               rows << [name]
             end
@@ -103,9 +106,10 @@ module JBoss
               rows << row
             end
           end
-          table.data = rows
-          table.print
+          table_builder.data = rows
+          buff << table_builder.table.to_s
         end
+        buff
       end
 
     end

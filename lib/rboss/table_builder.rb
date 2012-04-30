@@ -53,8 +53,8 @@ class TableBuilder
     @table.data = data
   end
 
-  def print
-    @table.print
+  def table
+    @table
   end
 
 end

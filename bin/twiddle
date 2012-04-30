@@ -27,10 +27,11 @@ require 'optparse'
 require 'logger'
 require 'yaml'
 require 'fileutils'
+require 'yummi'
 
 params = {}
-mbeans = {}
-commands = {}
+@mbeans = {}
+@commands = {}
 no_details = false
 @conf_dir = File.expand_path "~/.rboss"
 servers_file = "#{@conf_dir}/twiddle.yaml"
@@ -69,13 +70,16 @@ end
 opts.on('--save SERVER_NAME', "Saves the server configuration in #{servers_file}") do |server|
   save = server
 end
-
+opts.on('--loop INTERVAL', Float, 'Runs the mbean inside a loop') do |interval|
+  @loop = true
+  @interval = interval
+end
 opts.on('--all', "Detail all mapped mbeans") do
   defaults.each do |mbean_id, mbean|
     if mbean[:scan]
-      mbeans[mbean_id] = :all
+      @mbeans[mbean_id] = :all
     elsif mbean[:properties]
-      mbeans[mbean_id] = true
+      @mbeans[mbean_id] = true
     end
   end
 end
@@ -85,34 +89,34 @@ end
   if mbean[:scan]
     opts.on("--#{command} [name_a,name_b,...]", Array,
             "Detail \"#{mbean[:description]}\" based on the given names (no names for scan)") do |names|
-      mbeans[mbean_id] = names || :all
+      @mbeans[mbean_id] = names || :all
     end
   elsif mbean[:properties]
     opts.on("--#{command}", "Detail \"#{mbean[:description]}\"") do
-      mbeans[mbean_id] = true
+      @mbeans[mbean_id] = true
     end
   end
 end
 
 opts.on('--set mbean_id[:resource_name],property,value', Array,
         'Sets a value to a resource that the monitor knows') do |set|
-  commands[:set] = set
+  @commands[:set] = set
 end
 opts.on('--get mbean_id[:resource_name],property', Array,
         'Gets a value to a resource that the monitor knows') do |get|
-  commands[:get] = get
+  @commands[:get] = get
 end
 opts.on('--query mbean_id[:resource_name],[arguments]', Array,
         'Queries the mbean') do |query|
-  commands[:query] = query
+  @commands[:query] = query
 end
 opts.on('--info mbean_id[:resource_name],[arguments]', Array,
         'List mbean info') do |info|
-  commands[:info] = info
+  @commands[:info] = info
 end
 opts.on('--invoke mbean_id[:resource_name],method,[,args...]', Array,
         'Invokes a resoruce method') do |invoke|
-  commands[:invoke] = invoke
+  @commands[:invoke] = invoke
 end
 opts.on("-l", "--list", "List the mbeans mappings") do
   (defaults.sort_by { |k, v| k }).each do |mbean_id, mbean|
@@ -127,6 +131,9 @@ end
 opts.on('--no-detail', 'Do not detail mbeans that needs a name') do
   no_details = true
 end
+opts.on('--no-color', 'Do not colorize output') do
+  require 'yummi/no_colors'
+end
 opts.on('-u', '--user USER', 'Defines the JMX User') do |user|
   params[:user] = user
 end
@@ -134,7 +141,7 @@ opts.on('-p', '--password PASSWORD', 'Defines the JMX Password') do |password|
   params[:password] = password
 end
 opts.on('-n COMMAND', '--native COMMAND', 'Executes the given command as is') do |command|
-  commands[:native] = command
+  @commands[:native] = command
 end
 opts.on('-v', '--verbose', 'Shows the twiddle commands before execution') do
   params[:log_level] = Logger::DEBUG
@@ -174,13 +181,24 @@ def normalize args
   end
 end
 
-puts opts if mbeans.empty? and commands.empty?
+puts opts if @mbeans.empty? and @commands.empty?
 
-actions = JBoss::CommandActions::Twiddle::new @twiddle,
+@actions = JBoss::CommandActions::Twiddle::new @twiddle,
   :no_details => no_details,
   :mbeans => defaults
 
-actions.parse_and_execute commands
+def execute_actions
+  buff = ""
+  buff << Yummi.colorize(Time.now.strftime("At %H:%M:%S%n"), :white) if @loop
+  buff << @actions.parse_and_execute(@commands)
+  buff << @actions.detail(@mbeans)
+  system "clear" if @loop
+  puts buff
+end
 
-actions.detail mbeans
+while @loop
+  execute_actions
+  sleep @interval
+end
 
+execute_actions
