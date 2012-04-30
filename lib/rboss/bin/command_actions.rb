@@ -90,8 +90,9 @@ module JBoss
             end
             rows << row
           elsif @opts[:no_details]
+            table.no_details
             @monitor.mbean(mbean_id).scan.each do |name|
-              rows << name
+              rows << [name]
             end
           else
             @monitor.mbean(mbean_id).detail resources do |resource, detail|

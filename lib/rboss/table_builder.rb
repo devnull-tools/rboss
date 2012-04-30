@@ -25,10 +25,14 @@ require 'yummi'
 class TableBuilder
 
   def initialize params = {}
+    @params = params
     @table = Yummi::Table::new
     @table.title = params[:description]
     @table.header = params[:header]
-
+    if params[:layout] == :vertical
+      @table.layout = :vertical
+      @table.default_align = :left
+    end
     if params[:health]
       @table.row_colorizer HealthColorizer::new params[:health]
     end
@@ -39,6 +43,10 @@ class TableBuilder
         end
       end
     end
+  end
+
+  def no_details
+    @table.header = @params[:header][0]
   end
 
   def data= data
@@ -61,7 +69,7 @@ class HealthColorizer
 
   def call index, data
     max = data[@max].to_f
-    free = @using ?  max - data[@using].to_f : data[@free].to_f
+    free = @using ? max - data[@using].to_f : data[@free].to_f
 
     percentage = free / max
 

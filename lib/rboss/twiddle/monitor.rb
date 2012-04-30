@@ -96,9 +96,9 @@ module JBoss
             :pattern => 'jboss.system:type=ServerInfo',
             :properties => %W(ActiveThreadCount MaxMemory FreeMemory AvailableProcessors
                                     JavaVendor JavaVersion OSName OSArch),
-            :header => ["Active\nThreads", "Max\nMemory", "Free\nMemory",
-                        "Processors", "Java Vendor",
-                        "Java\nVersion", "OS Name", "OS Arch"],
+            :header => ["Active Threads", "Max Memory", "Free Memory",
+                        "Processors", "Java Vendor", "Java Version", "OS Name", "OS Arch"],
+            :layout => :vertical,
             :formatter => [:max_memory, :free_memory],
             :health => {
               :max => :max_memory,
@@ -109,6 +109,7 @@ module JBoss
             :description => 'JBoss Server configuration',
             :pattern => 'jboss.system:type=ServerConfig',
             :properties => %W(ServerName HomeDir ServerLogDir ServerHomeURL),
+            :layout => :vertical,
             :header => ['Server Name', 'Home Dir', 'Log Dir', 'Home URL'],
           },
           :system_properties => {
@@ -205,3 +206,4 @@ module JBoss
   end
 
 end
+
