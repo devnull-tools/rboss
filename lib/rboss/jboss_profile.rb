@@ -26,6 +26,7 @@ require_relative "component_processor"
 require_relative "jboss_path"
 
 require "logger"
+require "yummi"
 require "ostruct"
 require "fileutils"
 
@@ -124,9 +125,7 @@ module JBoss
       unless @logger
         @logger = Logger::new STDOUT
         @logger.level = opts[:log_level] || Logger::INFO
-        formatter = Logger::Formatter.new
-
-        def formatter.call(severity, time, program_name, message)
+        formatter = Yummi::Formatter::LogFormatter.new do |severity, time, program_name, message|
           "#{severity} : #{message}\n"
         end
 
@@ -135,10 +134,10 @@ module JBoss
       @profile = @opts[:profile].to_s
       @base_profile = @opts[:base_profile].to_s
       @jboss = JBoss::Path::new @jboss_home,
-        :profile => @profile,
-        :type => @opts[:type],
-        :version => @opts[:version],
-        :logger => @logger
+                                :profile => @profile,
+                                :type => @opts[:type],
+                                :version => @opts[:version],
+                                :logger => @logger
       initialize_components
     end
 
