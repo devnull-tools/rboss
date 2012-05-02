@@ -26,7 +26,7 @@ module JBoss
   module Twiddle
     class Invoker
 
-      attr_reader :server, :host, :port, :home, :user, :password
+      attr_reader :server, :host, :port, :user, :password
       attr_accessor :command
 
       def initialize params = {}
