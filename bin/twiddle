@@ -175,12 +175,6 @@ def extract resource
   [mbean, name]
 end
 
-def normalize args
-  args.collect do |arg|
-    "\"#{arg}\""
-  end
-end
-
 puts opts if @mbeans.empty? and @commands.empty?
 
 @actions = JBoss::CommandActions::Twiddle::new @twiddle,

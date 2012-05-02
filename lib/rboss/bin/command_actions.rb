@@ -81,6 +81,12 @@ module JBoss
                       :args => normalize(args)
       end
 
+      def normalize args
+        args.collect do |arg|
+          "\"#{arg}\""
+        end
+      end
+
       def detail mbeans
         buff = ""
         mbeans.each do |mbean_id, resources|
