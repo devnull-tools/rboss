@@ -85,6 +85,7 @@ opts.on('--all', "Detail all mapped mbeans") do
 end
 
 (defaults.sort_by { |k, v| k }).each do |mbean_id, mbean|
+  next if mbean[:properties] and not mbean[:scan] and mbean[:pattern]['#{resource}']
   command = mbean_id.to_s.gsub /_/, '-'
   if mbean[:scan]
     opts.on("--#{command} [name_a,name_b,...]", Array,
