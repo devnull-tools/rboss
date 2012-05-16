@@ -122,7 +122,7 @@ module JBoss
             :properties => %W(requestCount errorCount maxTime),
             :header => ['Connector', 'Requests', 'Errors', 'Max Time'],
             :health => {
-              :max => :request,
+              :max => :requests,
               :using => :errors
             },
             :scan => proc do
