@@ -89,6 +89,7 @@ module JBoss
             :description => 'JBoss Server specifications',
             :pattern => 'jboss.system:type=Server',
             :properties => %W(VersionName VersionNumber Version),
+            :layout => :vertical,
             :header => ['Version Name', 'Version Number', 'Version'],
           },
           :server_info => {
