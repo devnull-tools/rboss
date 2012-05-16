@@ -77,81 +77,81 @@ And used with -c or --config
 Every time you run the twiddle command, this gem will load the ~/.rboss/twiddle.rb file,
 which can be used to customize the mbeans.
 
-  defaults = JBoss::Twiddle::Monitor.defaults
-  defaults[:logger] = {
-    :description => 'Logger Service',
-    :pattern => 'jboss.system:service=Logging,type=Logger'
-  }
+    defaults = JBoss::Twiddle::Monitor.defaults
+    defaults[:logger] = {
+      :description => 'Logger Service',
+      :pattern => 'jboss.system:service=Logging,type=Logger'
+    }
 
 This will add a custom mbean whose identifier is 'logger'. From that, you can use the
 twiddle command on it.
 
-  twiddle --invoke logger debug,message
+    twiddle --invoke logger debug,message
 
 If your mbean name depends on a resource name (like the connector mbean), you can use
 a '#{resource}' string to pass the resource in the command line.
 
-  defaults[:mymbean] => {
-    :description => 'My Custom MBean',
-    :pattern => 'jboss.custom:type=CustomMBean,name=#{resource}'
-  }
+    defaults[:mymbean] => {
+      :description => 'My Custom MBean',
+      :pattern => 'jboss.custom:type=CustomMBean,name=#{resource}'
+    }
 
 Don't forget to use single quotes on that. The twiddle command will be:
 
-  twiddle --get mymbean:Name,MBeanProperty
+    twiddle --get mymbean:Name,MBeanProperty
 
 If this mbean is scannable, you can use a :scan key:
 
-  defaults[:mymbean] => {
-    :description => 'My Custom MBean',
-    :pattern => 'jboss.custom:type=CustomMBean,name=#{resource}',
-    :scan => proc do
-      # queries and pass each result do the block
-      query "jboss.custom:type=CustomMBean,*" do |path|
-        path.gsub "jboss.custom:type=CustomMBean,name=", ""
+    defaults[:mymbean] => {
+      :description => 'My Custom MBean',
+      :pattern => 'jboss.custom:type=CustomMBean,name=#{resource}',
+      :scan => proc do
+        # queries and pass each result do the block
+        query "jboss.custom:type=CustomMBean,*" do |path|
+          path.gsub "jboss.custom:type=CustomMBean,name=", ""
+        end
       end
-    end
-  }
+    }
 
 Now you can scan for resources of your custom MBean by using:
 
-  twiddle --mymbean
+    twiddle --mymbean
 
 If your MBean has some properties that should appear in a table for instant monitoring,
 just add a :properties key:
 
-  defaults[:mymbean] => {
-    :description => 'My Custom MBean',
-    :pattern => 'jboss.custom:type=CustomMBean,name=#{resource}',
-    :properties => %W(activeCount currentFree maxAvailable),
-    :header => ['Active Count', 'Current Free', 'Max Available'],
-    :scan => proc do
-      # queries and pass each result do the block
-      query "jboss.custom:type=CustomMBean,*" do |path|
-        path.gsub "jboss.custom:type=CustomMBean,name=", ""
+    defaults[:mymbean] => {
+      :description => 'My Custom MBean',
+      :pattern => 'jboss.custom:type=CustomMBean,name=#{resource}',
+      :properties => %W(activeCount currentFree maxAvailable),
+      :header => ['Active Count', 'Current Free', 'Max Available'],
+      :scan => proc do
+        # queries and pass each result do the block
+        query "jboss.custom:type=CustomMBean,*" do |path|
+          path.gsub "jboss.custom:type=CustomMBean,name=", ""
+        end
       end
-    end
-  }
+    }
 
 If this MBean maps a component that can be monitored for health state, you can map the
 limits by using a :health key:
 
-  defaults[:mymbean] => {
-    :description => 'My Custom MBean',
-    :pattern => 'jboss.custom:type=CustomMBean,name=#{resource}',
-    :properties => %W(activeCount currentFree maxAvailable),
-    :header => ['Active Count', 'Current Free', 'Max Available'],
-    :health => {
-      :max => :max_available,
-      :using => :active_count #or use :free if you have the number of free resources
-    },
-    :scan => proc do
-      # queries and pass each result do the block
-      query "jboss.custom:type=CustomMBean,*" do |path|
-        path.gsub "jboss.custom:type=CustomMBean,name=", ""
+    defaults[:mymbean] => {
+      :description => 'My Custom MBean',
+      :pattern => 'jboss.custom:type=CustomMBean,name=#{resource}',
+      :properties => %W(activeCount currentFree maxAvailable),
+      :header => ['Active Count', 'Current Free', 'Max Available'],
+      :health => {
+        :max => :max_available,
+        :using => :active_count #or use :free if you have the number of free resources
+      },
+      :scan => proc do
+        # queries and pass each result do the block
+        query "jboss.custom:type=CustomMBean,*" do |path|
+          path.gsub "jboss.custom:type=CustomMBean,name=", ""
+        end
       end
-    end
-  }
+    }
 
 You can use the indexes of the values (in that case, 2 for :max and 0 for :using) or the
 header values in downcase and underscores.
