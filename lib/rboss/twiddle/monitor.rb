@@ -100,7 +100,7 @@ module JBoss
             :header => ["Active Threads", "Max Memory", "Free Memory",
                         "Processors", "Java Vendor", "Java Version", "OS Name", "OS Arch"],
             :layout => :vertical,
-            :formatter => [:max_memory, :free_memory],
+            :byte_formatter => [:max_memory, :free_memory],
             :health => {
               :max => :max_memory,
               :free => :free_memory

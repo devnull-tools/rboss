@@ -36,11 +36,9 @@ class TableBuilder
     if params[:health]
       @table.row_colorizer HealthColorizer::new params[:health]
     end
-    if params[:formatter]
-      params[:formatter].each do |column|
-        @table.format column do |value|
-          Yummi::Formatter::Unit.format :byte, value.to_i
-        end
+    if params[:byte_formatter]
+      params[:byte_formatter].each do |column|
+        @table.format column, :using => Yummi::Formatters::byte
       end
     end
   end
