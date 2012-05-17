@@ -2,4 +2,4 @@ source "http://rubygems.org"
 
 gemspec
 
-gem 'yummi'
+gem 'yummi', '>=0.3'
