@@ -67,7 +67,7 @@ class HealthColorizer
     @using = params[:using]
   end
 
-  def call index, data
+  def call data, index
     max = data[@max].to_f
     free = @using ? max - data[@using].to_f : data[@free].to_f
 
