@@ -125,8 +125,8 @@ module JBoss
       unless @logger
         @logger = Logger::new STDOUT
         @logger.level = opts[:log_level] || Logger::INFO
-        formatter = Yummi::Formatter::LogFormatter.new do |severity, time, program_name, message|
-          "#{severity} : #{message}\n"
+        formatter = Yummi::Formatter::LogFormatter.new do |severity, message|
+          "#{severity} : #{message}"
         end
 
         @logger.formatter = formatter
