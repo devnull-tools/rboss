@@ -1,0 +1,126 @@
+#!/usr/bin/env ruby
+
+#                         The MIT License
+#
+# Copyright (c) 2011 Marcelo Guimarães <ataxexe@gmail.com>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+require_relative '../lib/rboss'
+require 'optparse'
+require 'logger'
+require 'yaml'
+require 'fileutils'
+require 'yummi'
+
+params = {}
+@conf_dir = File.expand_path "~/.rboss"
+servers_file = "#@conf_dir/jboss-servers.yaml"
+@components = {}
+@servers_file = File.expand_path(servers_file)
+save = false
+params[:jboss_home] = (ENV["JBOSS_HOME"] or ENV["RBOSS_CLI_JBOSS_HOME"] or Dir.pwd)
+
+def load_yaml
+  return Hash::new unless File.exist?(@servers_file)
+  YAML::load_file(@servers_file)
+end
+
+opts = OptionParser::new
+opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') do |home|
+  params[:jboss_home] = home
+end
+opts.on('-s URL', 'Defines the JBoss server') do |server|
+  params[:server] = server
+end
+opts.on('--host HOST', 'Defines the JBoss host') do |host|
+  params[:host] = host
+end
+opts.on('--port PORT', 'Defines the JBoss admin port') do |port|
+  params[:port] = port
+end
+opts.on('-c', '--connect SERVER_NAME',
+        "Uses a configured server in #{servers_file}") do |server|
+  config = load_yaml[server]
+  abort "No configuration for #{server}" unless config
+  config.each do |key, value|
+    params[key.to_sym] = value
+  end
+end
+opts.on('--save SERVER_NAME', "Saves the server configuration in #{servers_file}") do |server|
+  save = server
+end
+opts.on('--loop INTERVAL', Float, 'Runs the mbean inside a loop') do |interval|
+  @loop = true
+  @interval = interval
+end
+
+opts.on('--no-color', 'Do not colorize output') do
+  require 'yummi/no_colors'
+end
+opts.on('-u', '--user USER', 'Defines the Admin User') do |user|
+  params[:user] = user
+end
+opts.on('-p', '--password PASSWORD', 'Defines the Admin Password') do |password|
+  params[:password] = password
+end
+opts.on('--datasource [NAMES]', Array, 'Displays datasource information') do |resources|
+  @components[:datasource] = resources || :all
+end
+opts.on("-h", "--help", "Shows this help message") do
+  puts opts; exit
+end
+opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
+
+@jboss_cli = JBoss::Cli::Invoker::new params
+
+if $stdin.tty?
+  require 'yummi/no_colors'
+end
+
+if save
+  config = load_yaml
+  config[save] ||= {}
+  server_config = config[save]
+  params.delete :jboss_home
+  params.each do |key, value|
+    server_config[key.to_s] = value
+  end
+  FileUtils::mkdir_p File.expand_path(@conf_dir)
+  FileUtils::touch @servers_file
+  f = File.open(@servers_file, 'w')
+  YAML::dump(config, f)
+  f.close
+  puts "Configuration saved!"
+end
+
+puts opts if @components.empty?
+
+def execute_actions
+  @jboss_cli.print(@components)
+end
+
+while @loop
+  system "clear"
+  puts Yummi.colorize(Time.now.strftime("At %H:%M:%S%n"), :white)
+  execute_actions
+  sleep @interval
+end
+
+execute_actions
