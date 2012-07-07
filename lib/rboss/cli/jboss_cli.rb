@@ -54,7 +54,7 @@ module JBoss
         @user = params[:user]
         @password = params[:password]
 
-        @command = "#@jboss_home/bin/jboss-cli.sh --connect --controller=#@server --user='#@user' --password='#@password'"
+        @command = "#{jboss_cli} --connect --controller=#@server --user='#@user' --password='#@password'"
 
         @logger = params[:logger]
         unless @logger
