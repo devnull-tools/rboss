@@ -7,30 +7,69 @@ print:
     command: ${PATH}:read-resource(include-runtime=true)
     layout: vertical
     properties:
+    - scheme
+    - socket-binding
+    - protocol
     - bytesReceived
     - bytesSent
     - secure
-    - scheme
-    - socket-binding
     - processingTime
-    - protocol
     - requestCount
     - errorCount
     - max-connections
     - max-post-size
     - max-save-post-size
     - enabled
+
     header:
+    - Scheme
+    - Socket
+    - Protocol
     - Bytes Received
     - Bytes Sent
     - Secure
-    - Scheme
-    - Socket
     - Processing
-    - Protocol
     - Requests
     - Errors
     - Max Connnections
     - Max Post Size
     - Max Save Post Size
     - Enabled
+
+    format:
+      - column: bytes_received
+        component: byte
+
+      - column: bytes_sent
+        component: byte
+
+      - column: max_post_size
+        component: byte
+
+      - column: max_save_post_size
+        component: byte
+
+      - column: enabled
+        component: yes_or_no
+
+      - column: secure
+        component: yes_or_no
+
+    color:
+      - column: scheme
+        component: with
+        params:
+          color: purple
+
+      - column: enabled
+        component: boolean
+        params:
+          if_true: green
+          if_false: red
+
+      - column: secure
+        component: boolean
+        params:
+          if_true: green
+          if_false: brown
+
