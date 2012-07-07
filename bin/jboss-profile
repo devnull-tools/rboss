@@ -83,6 +83,10 @@ end
 opts.on("-h", "--help", "Shows this help message") { puts opts; exit }
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
 
+unless $stdout.isatty
+  require 'yummi/no_colors'
+end
+
 if params.empty?
   puts opts
   exit
