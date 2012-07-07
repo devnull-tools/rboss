@@ -1,0 +1,32 @@
+---
+datasource:
+  description: Detail Datasource Information
+  path: /subsystem=datasources/data-source=${NAME}
+  scan: ls ${PATH}
+  print:
+  - description: Datasource Details
+    command: ${PATH}:read-resource
+    properties:
+    - connection-url
+    - driver-name
+    - enabled
+    header:
+    - Connection URL
+    - Driver Name
+    - Enabled
+  - description: Datasource Pool Metrics
+    command: ${PATH}/statistics=pool:read-resource(include-runtime=true)
+    properties:
+    - ActiveCount
+    - AvailableCount
+    header:
+    - Active\nCount
+    - Available\nCount
+  - description: Datasource JDBC Metrics
+    command: ${PATH}/statistics=jdbc:read-resource(include-runtime=true)
+    properties:
+    - PreparedStatementCacheAccessCount
+    - PreparedStatementCacheAddCount
+    header:
+    - Access\nCount
+    - Add\nCount

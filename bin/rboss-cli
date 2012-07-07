@@ -80,9 +80,22 @@ end
 opts.on('-p', '--password PASSWORD', 'Defines the Admin Password') do |password|
   params[:password] = password
 end
-opts.on('--datasource [NAMES]', Array, 'Displays datasource information') do |resources|
-  @components[:datasource] = resources || :all
+opts.on('-v', '--verbose', 'Displays jboss-cli commands before execution') do
+  params[:log_level] = Logger::DEBUG
 end
+
+JBoss::Cli::Mappings.mappings.each do |name, config|
+  if config[:scan]
+    opts.on("--#{name} [NAMES]", Array, config[:description]) do |resources|
+      @components[name] = resources || :all
+    end
+  else
+    opts.on("--#{name}", config[:description]) do
+      @components[name] = true
+    end
+  end
+end
+
 opts.on("-h", "--help", "Shows this help message") do
   puts opts; exit
 end

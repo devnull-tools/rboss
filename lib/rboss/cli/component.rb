@@ -71,9 +71,9 @@ module JBoss
       end
 
       def parse(value)
-        result = value.scan /\[\w+\]/
+        result = value.scan /\$\{\w+\}/
         result.each do |matched|
-          key = matched[1...-1].downcase.to_sym
+          key = matched[2...-1].downcase.to_sym
           value = value.gsub(matched, @context[key])
         end
         value
@@ -90,19 +90,26 @@ module JBoss
         header = config[:header]
         header = %w(Name) + header if @config[:scan]
         table.header = header
+        table.layout = @config[:layout] if @config[:layout]
+
+        #TODO formatters and colorizers here based on config
 
         table
       end
 
       def get_data(config)
         result = @invoker.execute(parse config[:command])
-        undefined = nil #prevents error because undefined means nil in result object
-        result = eval(result)
+        result = eval_result(result)
         data = []
         config[:properties].each do |prop|
           data << result["result"][prop]
         end
         data
+      end
+
+      def eval_result(result)
+        undefined = nil #prevents error because undefined means nil in result object
+        eval(result)
       end
 
     end

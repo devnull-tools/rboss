@@ -22,6 +22,7 @@
 
 require_relative 'component'
 require_relative 'mappings'
+require 'logger'
 
 module JBoss
 
@@ -54,6 +55,16 @@ module JBoss
         @password = params[:password]
 
         @command = "#@jboss_home/bin/jboss-cli.sh --connect --controller=#@server --user='#@user' --password='#@password'"
+
+        @logger = params[:logger]
+        unless @logger
+          @logger = Logger::new STDOUT
+          @logger.level = params[:log_level] || Logger::INFO
+          formatter = Yummi::Formatter::LogFormatter.new do |severity, message|
+            "#{severity} : #{message}"
+          end
+          @logger.formatter = formatter
+        end
       end
 
       def print(components)
@@ -68,6 +79,7 @@ module JBoss
 
       def execute(*commands)
         exec = "#@command --commands=\"#{commands.join ','}\""
+        @logger.debug exec
         `#{exec}`.chomp
       end
 

@@ -31,3 +31,20 @@ class String
   end
 
 end
+
+class Hash
+  def symbolize_keys
+    replace(inject({}) do |h, (k, v)|
+      v = v.symbolize_keys if v.is_a? Hash
+      if v.is_a? Array
+        v.each do |e|
+          if e.is_a? Hash
+            e.symbolize_keys
+          end
+        end
+      end
+      h[k.to_sym] = v
+      h
+    end)
+  end
+end

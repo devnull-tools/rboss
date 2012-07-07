@@ -25,33 +25,19 @@ module JBoss
     module Mappings
 
       def mappings
-        @mappings ||= {
-          :datasource => {
-            :path => '/subsystem=datasources/data-source=[NAME]',
-            :scan => 'ls [PATH]',
-
-            :print_details => {
-              :description => 'Datasource Details',
-              :properties => %w{connection-url driver-name enabled},
-              :header => ["Connection URL", "Driver Name", "Enabled"],
-              :command => '[PATH]:read-resource',
-            },
-            :print_metrics =>
-              [{
-                 :description => 'Datasource Pool Metrics',
-                 :command => '[PATH]/statistics=pool:read-resource(include-runtime=true)',
-                 :properties => %w{ActiveCount AvailableCount},
-                 :header => %W(Active\nCount Available\nCount)
-               },
-               {
-                 :description => 'Datasource JDBC Metrics',
-                 :command => '[PATH]/statistics=jdbc:read-resource(include-runtime=true)',
-                 :properties => %w{PreparedStatementCacheAccessCount PreparedStatementCacheAddCount},
-                 :header => %W{Access\nCount Add\nCount}
-               }]
-          }
-        }
+        @mappings ||= {}
+        load_mappings(File.join(File.dirname(__FILE__), 'mappings.yaml')) if @mappings.empty?
+        @mappings
       end
+
+      def load_mappings(file)
+        loaded = YAML::load_file(file).symbolize_keys
+        loaded.each do |key, value|
+          @mappings[key] = value
+        end
+      end
+
+      module_function :load_mappings, :mappings
 
     end
 
