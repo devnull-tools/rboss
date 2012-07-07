@@ -31,7 +31,7 @@ require 'yummi'
 
 params = {}
 @conf_dir = File.expand_path "~/.rboss"
-servers_file = "#@conf_dir/jboss-servers.yaml"
+servers_file = "#@conf_dir/jboss-cli-servers.yaml"
 @components = {}
 @servers_file = File.expand_path(servers_file)
 save = false
@@ -84,7 +84,7 @@ opts.on('-v', '--verbose', 'Displays jboss-cli commands before execution') do
   params[:log_level] = Logger::DEBUG
 end
 
-JBoss::Cli::Mappings.mappings.each do |name, config|
+JBoss::Cli::Mappings.resource_mappings.each do |name, config|
   if config[:scan]
     opts.on("--#{name} [NAMES]", Array, config[:description]) do |resources|
       @components[name] = resources || :all

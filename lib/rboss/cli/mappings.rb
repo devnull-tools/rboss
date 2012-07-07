@@ -24,20 +24,30 @@ module JBoss
   module Cli
     module Mappings
 
-      def mappings
-        @mappings ||= {}
-        load_mappings(File.join(File.dirname(__FILE__), 'mappings.yaml')) if @mappings.empty?
-        @mappings
+      def resource_mappings
+        @resource_mappings ||= {}
+        load_default_resources if @resource_mappings.empty?
+        @resource_mappings
       end
 
-      def load_mappings(file)
-        loaded = YAML::load_file(file).symbolize_keys
-        loaded.each do |key, value|
-          @mappings[key] = value
+      def load_resource(file)
+        name = File.basename(file, '.yaml').gsub('_', '-')
+        mapping = YAML::load_file(file).symbolize_keys
+        @resource_mappings[name.to_sym] = mapping
+      end
+
+      def load_resources(dir)
+        resource_files = Dir.entries(dir).find_all { |f| f.end_with?('.yaml') }
+        resource_files.each do |file|
+          load_resource File.join(dir, file)
         end
       end
 
-      module_function :load_mappings, :mappings
+      def load_default_resources
+        load_resources File.join(File.dirname(__FILE__), 'mappings/resources')
+      end
+
+      module_function :load_resources, :load_resource, :resource_mappings, :load_default_resources
 
     end
 

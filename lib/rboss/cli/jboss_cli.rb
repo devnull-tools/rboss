@@ -22,6 +22,7 @@
 
 require_relative 'resource'
 require_relative 'mappings'
+
 require 'logger'
 
 module JBoss
@@ -69,9 +70,9 @@ module JBoss
 
       def print(components)
         components.each do |key, resources|
-          if mappings.has_key? key
-            mapping = mappings[key]
-            component = Resource::new(self, mapping)
+          if resource_mappings.has_key? key
+            mapping = resource_mappings[key]
+            component = JBoss::Cli::Resource::new(self, mapping)
             component.print resources
           end
         end

@@ -1,13 +1,11 @@
 require_relative 'cli/jboss_cli'
-require_relative 'cli/mappings'
-require_relative 'cli/resource'
-require_relative 'cli/formatters'
-require_relative 'cli/colorizers'
 
-file = File.expand_path("~/.rboss/rboss-cli.yaml")
+file = File.expand_path("~/.rboss/rboss-cli/resources")
 
 if File.exist? file
-  JBoss::Cli::Mappings.load_mappings file
+  JBoss::Cli::Mappings.load_resources file
+else
+
 end
 
 if RUBY_PLATFORM['linux']

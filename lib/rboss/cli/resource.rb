@@ -20,6 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require_relative 'formatters'
+require_relative 'colorizers'
+require_relative 'health_checkers'
+
 module JBoss
   module Cli
     class Resource
@@ -61,7 +65,7 @@ module JBoss
       def add_row(params)
         data = get_data(params)
         return unless data
-        data = [@context[:name]] + data if @config[:scan]
+        data = [@context[:name]] + data if scannable?
         @tables[@count % @tables.size].data << data
         @count += 1
       end
@@ -84,7 +88,12 @@ module JBoss
         table = Yummi::Table::new
         table.title = config[:description]
         header = config[:header]
-        header = %w(Name) + header if @config[:scan]
+        header = %w(Name) + header if scannable?
+        if config[:aliases]
+          aliases = config[:aliases]
+          aliases = [:name] + aliases if scannable?
+          table.aliases = aliases
+        end
         table.header = header
         table.layout = config[:layout].to_sym if config[:layout]
 
@@ -94,18 +103,27 @@ module JBoss
         parse_component config[:color], JBoss::Cli::Colorizers do |column, params|
           table.colorize column, params
         end
+        parse_component config[:health], JBoss::Cli::HealthCheckers do |column, params|
+          table.using_row do
+            table.colorize column, params
+          end
+        end
 
-        table.colorize :name, :with => :white if @config[:scan]
+        table.colorize :name, :with => :white if scannable?
 
         table
       end
 
-      def parse_component(config, location)
+      def scannable?
+        @config[:scan]
+      end
+
+      def parse_component(config, repository)
         if config
           config.each do |component_config|
-            yield(component_config[:column].to_sym,
-              :using => location.send(component_config[:component],
-                                      component_config[:params]))
+            component = repository.send(component_config[:component]) unless component_config[:params]
+            component ||= repository.send(component_config[:component], component_config[:params])
+            yield(component_config[:column].to_sym, :using => component)
           end
         end
       end

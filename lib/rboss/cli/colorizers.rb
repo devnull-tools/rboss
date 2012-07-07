@@ -11,7 +11,7 @@ module JBoss
         end
       end
 
-      def self.use params
+      def self.with params
         lambda do |value|
           params[:color]
         end
