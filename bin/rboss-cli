@@ -90,7 +90,7 @@ opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.
 
 @jboss_cli = JBoss::Cli::Invoker::new params
 
-if $stdin.tty?
+unless $stdout.isatty
   require 'yummi/no_colors'
 end
 
