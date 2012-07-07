@@ -1,16 +1,15 @@
-
 require 'yummi'
 
 module JBoss
   module Cli
     module Formatters
 
-      def self.yes_or_no
+      def self.yes_or_no params
         Yummi::Formatters.yes_or_no
       end
 
-      def self.byte
-        Yummi::Formatters.byte
+      def self.byte params = {}
+        Yummi::Formatters.byte params
       end
 
     end

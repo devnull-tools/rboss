@@ -86,14 +86,22 @@ module JBoss
         header = config[:header]
         header = %w(Name) + header if @config[:scan]
         table.header = header
-        table.layout = config[:layout] if config[:layout]
+        table.layout = config[:layout].to_sym if config[:layout]
 
         if config[:format]
-          config[:format].each do |index, formatter|
-            table.format index, :using => JBoss::Cli::Formatters.send(formatter)
+          config[:format].each do |formatter_config|
+            table.format formatter_config[:column].to_sym,
+                         :using => JBoss::Cli::Formatters.send(formatter_config[:formatter],
+                                                               formatter_config[:params])
           end
         end
-        #TODO formatters and colorizers here based on config
+        if config[:health]
+          config[:health].each do |health_config|
+            table.colorize health_config[:column].to_sym,
+                           :using => JBoss::Cli::HealthCheckers.send(health_config[:checker],
+                                                                     health_config[:params])
+          end
+        end
 
         table
       end

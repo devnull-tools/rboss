@@ -5,17 +5,31 @@ datasource:
   scan: ls ${PATH}
   print:
   - description: Datasource Details
-    command: ${PATH}:read-resource
+    command: ${PATH}:read-resource(include-defaults=true)
+    layout: vertical
     properties:
+    - jndi-name
     - connection-url
     - driver-name
+    - user-name
+    - password
     - enabled
     header:
+    - JNDI Name
     - Connection URL
     - Driver Name
+    - User Name
+    - Password
     - Enabled
     format:
-      enabled: yes_or_no
+      - column: enabled
+        formatter: yes_or_no
+    health:
+      - column: enabled
+        checker: boolean
+        params:
+          if_true: green
+          if_false: red
 
   - description: Datasource Pool Metrics
     command: ${PATH}/statistics=pool:read-resource(include-runtime=true)
@@ -23,8 +37,13 @@ datasource:
     - ActiveCount
     - AvailableCount
     header:
-    - Active\nCount
-    - Available\nCount
+    - Active
+
+      Count
+
+    - Available
+
+      Count
 
   - description: Datasource JDBC Metrics
     command: ${PATH}/statistics=jdbc:read-resource(include-runtime=true)
@@ -32,5 +51,10 @@ datasource:
     - PreparedStatementCacheAccessCount
     - PreparedStatementCacheAddCount
     header:
-    - Access\nCount
-    - Add\nCount
+    - Access
+
+      Count
+
+    - Add
+
+      Count
