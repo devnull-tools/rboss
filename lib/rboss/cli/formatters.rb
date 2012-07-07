@@ -8,15 +8,8 @@ module JBoss
         Yummi::Formatters.yes_or_no
       end
 
-      def self.byte params
+      def self.byte params = {}
         Yummi::Formatters.byte params
-      end
-
-      def self.undefined params = {:return => 'undefined'}
-        lambda do |value|
-          return params[:return] unless value
-          value
-        end
       end
 
     end
