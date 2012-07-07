@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'component'
+require_relative 'resource'
 require_relative 'mappings'
 require 'logger'
 
@@ -71,7 +71,7 @@ module JBoss
         components.each do |key, resources|
           if mappings.has_key? key
             mapping = mappings[key]
-            component = Component::new(self, mapping)
+            component = Resource::new(self, mapping)
             component.print resources
           end
         end

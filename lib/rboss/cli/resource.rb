@@ -22,7 +22,7 @@
 
 module JBoss
   module Cli
-    class Component
+    class Resource
 
       def initialize(invoker, config)
         @config = config
