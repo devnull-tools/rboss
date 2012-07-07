@@ -13,6 +13,9 @@ datasource:
     - driver-name
     - user-name
     - password
+    - jta
+    - min-pool-size
+    - max-pool-size
     - enabled
     header:
     - JNDI Name
@@ -20,10 +23,17 @@ datasource:
     - Driver Name
     - User Name
     - Password
+    - Using JTA
+    - Min Pool Size
+    - Max Pool Size
     - Enabled
     format:
       - column: enabled
         formatter: yes_or_no
+
+      - column: using_jta
+        formatter: yes_or_no
+
     health:
       - column: enabled
         checker: boolean
