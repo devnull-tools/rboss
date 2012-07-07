@@ -40,11 +40,7 @@ module JBoss
           resources = scan
         end
         resources = [resources] unless resources.is_a? Array
-
-        methods = @config.select do |key, value|
-          key.to_s.start_with? 'print_'
-        end
-        params = (methods.collect { |k, v| v }).flatten
+        params = @config[:print]
         params.each do |p|
           @tables << build_table(p)
         end
