@@ -36,6 +36,7 @@ module JBoss
         end
         @tables.each do |table|
           table.print
+          puts
         end
       end
 

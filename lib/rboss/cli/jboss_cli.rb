@@ -71,7 +71,6 @@ module JBoss
 
       def execute(*commands)
         exec = "#@command --commands=\"#{commands.join ','}\""
-        puts exec
         `#{exec}`.chomp
       end
 
