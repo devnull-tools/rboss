@@ -86,7 +86,7 @@ module JBoss
 
       def build_table(config)
         table = Yummi::Table::new
-        table.title = config[:description]
+        table.title = config[:title]
         header = config[:header]
         header = %w(Name) + header if scannable?
         if config[:aliases]
@@ -139,7 +139,7 @@ module JBoss
       end
 
       def eval_result(result)
-        undefined = nil #prevents error because undefined means nil in result object
+        undefined = 'undefined' #prevents error because undefined means nil in result object
         eval(result)
       end
 

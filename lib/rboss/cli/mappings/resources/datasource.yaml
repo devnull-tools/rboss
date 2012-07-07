@@ -3,7 +3,7 @@ description: Detail Datasource Information
 path: /subsystem=datasources/data-source=${NAME}
 scan: ls ${PATH}
 print:
-- description: Datasource Details
+- title: Datasource Details
   command: ${PATH}:read-resource(include-runtime=true)
   layout: vertical
   properties:
@@ -33,12 +33,6 @@ print:
     - column: using_jta
       component: yes_or_no
 
-    - column: min_pool_size
-      component: undefined
-
-    - column: max_pool_size
-      component: undefined
-
   color:
     - column: jndi_name
       component: with
@@ -51,7 +45,7 @@ print:
         if_true: green
         if_false: red
 
-- description: Datasource Pool Metrics
+- title: Datasource Pool Statistics
   command: ${PATH}/statistics=pool:read-resource(include-runtime=true)
   layout: vertical
   properties:
@@ -88,7 +82,7 @@ print:
       max: available
       using: active
 
-- description: Datasource JDBC Metrics
+- title: Datasource JDBC Statistics
   command: ${PATH}/statistics=jdbc:read-resource(include-runtime=true)
   properties:
   - PreparedStatementCacheCurrentSize
