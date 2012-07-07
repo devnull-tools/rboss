@@ -88,22 +88,26 @@ module JBoss
         table.header = header
         table.layout = config[:layout].to_sym if config[:layout]
 
-        if config[:format]
-          config[:format].each do |formatter_config|
-            table.format formatter_config[:column].to_sym,
-                         :using => JBoss::Cli::Formatters.send(formatter_config[:formatter],
-                                                               formatter_config[:params])
-          end
+        parse_component config[:format], JBoss::Cli::Formatters do |column, params|
+          table.format column, params
         end
-        if config[:health]
-          config[:health].each do |health_config|
-            table.colorize health_config[:column].to_sym,
-                           :using => JBoss::Cli::HealthCheckers.send(health_config[:checker],
-                                                                     health_config[:params])
-          end
+        parse_component config[:color], JBoss::Cli::Colorizers do |column, params|
+          table.colorize column, params
         end
 
+        table.colorize :name, :with => :white if @config[:scan]
+
         table
+      end
+
+      def parse_component(config, location)
+        if config
+          config.each do |component_config|
+            yield(component_config[:column].to_sym,
+              :using => location.send(component_config[:component],
+                                      component_config[:params]))
+          end
+        end
       end
 
       def get_data(config)

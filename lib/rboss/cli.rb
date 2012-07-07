@@ -2,7 +2,7 @@ require_relative 'cli/jboss_cli'
 require_relative 'cli/mappings'
 require_relative 'cli/resource'
 require_relative 'cli/formatters'
-require_relative 'cli/health_checkers'
+require_relative 'cli/colorizers'
 
 file = File.expand_path("~/.rboss/rboss-cli.yaml")
 

@@ -29,14 +29,14 @@ datasource:
     - Enabled
     format:
       - column: enabled
-        formatter: yes_or_no
+        component: yes_or_no
 
       - column: using_jta
-        formatter: yes_or_no
+        component: yes_or_no
 
-    health:
+    color:
       - column: enabled
-        checker: boolean
+        component: boolean
         params:
           if_true: green
           if_false: red
