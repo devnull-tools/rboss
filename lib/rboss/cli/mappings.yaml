@@ -14,6 +14,9 @@ datasource:
     - Connection URL
     - Driver Name
     - Enabled
+    format:
+      enabled: yes_or_no
+
   - description: Datasource Pool Metrics
     command: ${PATH}/statistics=pool:read-resource(include-runtime=true)
     properties:
@@ -22,6 +25,7 @@ datasource:
     header:
     - Active\nCount
     - Available\nCount
+
   - description: Datasource JDBC Metrics
     command: ${PATH}/statistics=jdbc:read-resource(include-runtime=true)
     properties:

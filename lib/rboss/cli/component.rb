@@ -86,8 +86,13 @@ module JBoss
         header = config[:header]
         header = %w(Name) + header if @config[:scan]
         table.header = header
-        table.layout = @config[:layout] if @config[:layout]
+        table.layout = config[:layout] if config[:layout]
 
+        if config[:format]
+          config[:format].each do |index, formatter|
+            table.format index, :using => JBoss::Cli::Formatters.send(formatter)
+          end
+        end
         #TODO formatters and colorizers here based on config
 
         table
