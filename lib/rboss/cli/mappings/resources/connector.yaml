@@ -1,0 +1,36 @@
+---
+description: Details Connectors
+path: /subsystem=web/connector=${NAME}
+scan: ls ${PATH}
+print:
+  - title: Connectors
+    command: ${PATH}:read-resource(include-runtime=true)
+    layout: vertical
+    properties:
+    - bytesReceived
+    - bytesSent
+    - secure
+    - scheme
+    - socket-binding
+    - processingTime
+    - protocol
+    - requestCount
+    - errorCount
+    - max-connections
+    - max-post-size
+    - max-save-post-size
+    - enabled
+    header:
+    - Bytes Received
+    - Bytes Sent
+    - Secure
+    - Scheme
+    - Socket
+    - Processing
+    - Protocol
+    - Requests
+    - Errors
+    - Max Connnections
+    - Max Post Size
+    - Max Save Post Size
+    - Enabled
