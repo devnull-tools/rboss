@@ -33,16 +33,10 @@ module JBoss
       include JBoss::Cli::Mappings
 
       attr_reader :server, :host, :port, :user, :password
-      attr_accessor :command
 
       def initialize(params = {})
         params = {
           :jboss_home => ENV["JBOSS_HOME"],
-          :server => nil,
-          :host => '127.0.0.1',
-          :port => 9999,
-          :user => "admin",
-          :password => "jboss"
         }.merge! params
 
         @jboss_home = params[:jboss_home]
@@ -50,12 +44,10 @@ module JBoss
         @server = params[:server]
         @host = params[:host]
         @port = params[:port]
-        @server ||= [@host, @port].join ':'
+        @server ||= [@host, @port].join ':' if @host and @port
 
         @user = params[:user]
         @password = params[:password]
-
-        @command = "#{jboss_cli} --connect --controller=#@server --user='#@user' --password='#@password'"
 
         @logger = params[:logger]
         unless @logger
@@ -66,6 +58,14 @@ module JBoss
           end
           @logger.formatter = formatter
         end
+      end
+
+      def command
+        command = "#{jboss_cli} --connect"
+        command << " --controller=#@server" if @server
+        command << " --user='#@user'" if @user
+        command << " --password='#@password'" if @password
+        command
       end
 
       def print(components)
@@ -79,7 +79,7 @@ module JBoss
       end
 
       def execute(*commands)
-        exec = "#@command --commands=\"#{commands.join ','}\""
+        exec = "#{command} --commands=\"#{commands.join ','}\""
         @logger.debug exec
         `#{exec}`.chomp
       end

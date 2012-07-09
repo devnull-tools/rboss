@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'yaml'
+
 module JBoss
   module Cli
     module Mappings
@@ -45,9 +47,16 @@ module JBoss
 
       def load_default_resources
         load_resources File.join(File.dirname(__FILE__), 'mappings/resources')
+        file = File.expand_path("~/.rboss/rboss-cli/resources")
+        if File.exist? file
+          load_resources file
+        end
       end
 
-      module_function :load_resources, :load_resource, :resource_mappings, :load_default_resources
+      module_function :load_resources,
+                      :load_resource,
+                      :resource_mappings,
+                      :load_default_resources
 
     end
 

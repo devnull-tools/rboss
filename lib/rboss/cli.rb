@@ -1,13 +1,5 @@
 require_relative 'cli/jboss_cli'
 
-file = File.expand_path("~/.rboss/rboss-cli/resources")
-
-if File.exist? file
-  JBoss::Cli::Mappings.load_resources file
-else
-
-end
-
 if RUBY_PLATFORM['linux']
   class JBoss::Cli::Invoker
 
