@@ -71,6 +71,7 @@ module JBoss
       end
 
       def parse(value)
+        return nil unless value
         result = value.scan /\$\{\w+\}/
         result.each do |matched|
           key = matched[2...-1].downcase.to_sym
