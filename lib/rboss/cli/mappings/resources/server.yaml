@@ -1,0 +1,75 @@
+---
+description: Detail Server Information
+path:
+print:
+- title: Server Runtime Information
+  command: /core-service=server-environment:read-resource(include-runtime=true)
+  properties:
+  - server-name
+  - node-name
+  - host-name
+  - initial-running-mode
+  - launch-type
+  header:
+  - Server Name
+  - Node Name
+  - Host Name
+  - Initial Running Mode
+  - Launch Type
+  color:
+  - column: server_name
+    component: with
+    params:
+      color: white
+
+  - column: node_name
+    component: with
+    params:
+      color: blue
+
+  - column: host_name
+    component: with
+    params:
+      color: brown
+
+  - column: initial_running_mode
+    component: with
+    params:
+      color: purple
+
+  - column: launch_type
+    component: with
+    params:
+      color: cyan
+
+- title: Server Configuration Resources
+  command: /core-service=server-environment:read-resource(include-runtime=true)
+  layout: vertical
+  properties:
+  - server-name
+  - home-dir
+  - base-dir
+  - config-dir
+  - config-file
+  - data-dir
+  - deploy-dir
+  - modules-dir
+  - log-dir
+  - temp-dir
+  header:
+  - Server Name
+  - Launch Type
+  - Home Directory
+  - Base Directory
+  - Config Directory
+  - Config File
+  - Data Directory
+  - Deploy Directory
+  - Modules Directory
+  - Log Directory
+  - Temp Directory
+  color:
+  - column: server_name
+    component: with
+    params:
+      color: white
