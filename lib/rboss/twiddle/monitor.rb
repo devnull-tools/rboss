@@ -34,7 +34,7 @@ module JBoss
             :pattern => 'jboss.web:type=Manager,host=localhost,path=/#{resource}',
             :properties => %W(activeSessions maxActive distributable maxActiveSessions
                                     expiredSessions rejectedSessions),
-            :header => ["Context", "Active\nSessions", "Max\nSessions", "Distributable",
+            :header => ["Active\nSessions", "Max\nSessions", "Distributable",
                         "Max Active\nSession", "Expired\nSessions", "Rejected\nSessions"],
             :scan => proc do
               query "jboss.web:type=Manager,*" do |path|
@@ -52,11 +52,16 @@ module JBoss
             :description => 'JBossWeb connector',
             :pattern => 'jboss.web:type=ThreadPool,name=#{resource}',
             :properties => %W(maxThreads currentThreadCount currentThreadsBusy),
-            :header => ['Connector', 'Max Threads', 'Current Threads', 'Busy Threads'],
-            :health => {
-              :max => :max_threads,
-              :using => :current_threads
-            },
+            :header => ['Max Threads', 'Current Threads', 'Busy Threads'],
+            :health => [
+              {:column => :current_threads,
+               :component => :percentage,
+               :params => {
+                 :max => :max_threads,
+                 :using => :current_threads
+               }
+              }
+            ],
             :scan => proc do
               query "jboss.web:type=ThreadPool,*" do |path|
                 path.gsub "jboss.web:type=ThreadPool,name=", ""
@@ -100,11 +105,26 @@ module JBoss
             :header => ["Active Threads", "Max Memory", "Free Memory",
                         "Processors", "Java Vendor", "Java Version", "OS Name", "OS Arch"],
             :layout => :vertical,
-            :byte_formatter => [:max_memory, :free_memory],
-            :health => {
-              :max => :max_memory,
-              :free => :free_memory
-            },
+            :format => [
+              {
+                :column => :max_memory,
+                :component => :byte
+              },
+              {
+                :column => :free_memory,
+                :component => :byte
+              }
+            ],
+            :health => [
+              {
+                :column => :free_memory,
+                :component => :percentage,
+                :params => {
+                  :max => :max_memory,
+                  :free => :free_memory
+                }
+              }
+            ],
           },
           :server_config => {
             :description => 'JBoss Server configuration',
@@ -121,11 +141,17 @@ module JBoss
             :description => 'JBossWeb connector requests',
             :pattern => 'jboss.web:type=GlobalRequestProcessor,name=#{resource}',
             :properties => %W(requestCount errorCount maxTime),
-            :header => ['Connector', 'Requests', 'Errors', 'Max Time'],
-            :health => {
-              :max => :requests,
-              :using => :errors
-            },
+            :header => ['Requests', 'Errors', 'Max Time'],
+            :health => [
+              {
+                :column => :errors,
+                :component => :percentage,
+                :params => {
+                  :max => :requests,
+                  :using => :errors
+                }
+              }
+            ],
             :scan => proc do
               query "jboss.web:type=ThreadPool,*" do |path|
                 path.gsub "jboss.web:type=ThreadPool,name=", ""
@@ -137,12 +163,18 @@ module JBoss
             :pattern => 'jboss.jca:service=ManagedConnectionPool,name=#{resource}',
             :properties => %W(MinSize MaxSize AvailableConnectionCount
                                       InUseConnectionCount ConnectionCount),
-            :header => ["JNDI Name", "Min\nSize", "Max\nSize", "Avaliable\nConnections",
+            :header => ["Min\nSize", "Max\nSize", "Avaliable\nConnections",
                         "In Use\nConnections", "Connection\nCount"],
-            :health => {
-              :max => :max_size,
-              :using => :in_use_connections
-            },
+            :health => [
+              {
+                :column => :in_use_connections,
+                :component => :percentage,
+                :params => {
+                  :max => :max_size,
+                  :using => :in_use_connections
+                }
+              }
+            ],
             :scan => proc do
               query "jboss.jca:service=ManagedConnectionPool,*" do |path|
                 path.gsub "jboss.jca:service=ManagedConnectionPool,name=", ""
@@ -154,7 +186,7 @@ module JBoss
             :pattern => 'jboss.messaging.destination:service=Queue,name=#{resource}',
             :properties => %W(JNDIName MessageCount DeliveringCount
                     ScheduledMessageCount MaxSize FullSize Clustered ConsumerCount),
-            :header => ['Name', 'JNDI', 'Messages', 'Deliveries', 'Scheduleded', 'Max Size',
+            :header => ['JNDI Name', 'Messages', 'Deliveries', 'Scheduleded', 'Max Size',
                         'Full Size', 'Clustered', 'Consumed'],
             :scan => proc do
               query "jboss.messaging.destination:service=Queue,*" do |path|
@@ -165,20 +197,6 @@ module JBoss
           :jndi => {
             :description => 'JNDI View',
             :pattern => 'jboss:service=JNDIView'
-          },
-          :ejb => {
-            :description => 'EJB',
-            :pattern => 'jboss.j2ee:#{resource},service=EJB3',
-            :properties => %W(CreateCount RemoveCount CurrentSize AvailableCount),
-            :header => ['EJB', 'Created', 'Removed', 'Current', 'Available'],
-            :scan => proc do
-              result = query "jboss.j2ee:*"
-              (result.find_all do |path|
-                path["service=EJB3"] && path["name="] && path["jar="] && !path["ear="]
-              end).collect do |path|
-                path.gsub("jboss.j2ee:", '').gsub(/,?service=EJB3/, '')
-              end
-            end
           }
         }
       end
@@ -189,11 +207,11 @@ module JBoss
         @mbeans ||= {}
       end
 
-      def monitor mbean_id, params
+      def monitor(mbean_id, params)
         mbeans[mbean_id] = JBoss::MBean::new params.merge(:twiddle => @twiddle)
       end
 
-      def mbean mbean_id
+      def mbean(mbean_id)
         mbean = mbeans[mbean_id]
         return JBoss::MBean::new :pattern => mbean_id.to_s, :twiddle => @twiddle unless mbean
         if @current_resource

@@ -58,7 +58,6 @@ print:
   - temp-dir
   header:
   - Server Name
-  - Launch Type
   - Home Directory
   - Base Directory
   - Config Directory

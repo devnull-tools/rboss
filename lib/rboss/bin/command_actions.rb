@@ -20,8 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../table_builder'
-
 module JBoss
   module CommandActions
     class Twiddle
@@ -90,7 +88,7 @@ module JBoss
       def detail mbeans
         buff = ""
         mbeans.each do |mbean_id, resources|
-          table_builder = TableBuilder::new @opts[:mbeans][mbean_id]
+          builder = TableBuilder::new @opts[:mbeans][mbean_id]
           rows = []
           if resources.is_a? TrueClass
             row = []
@@ -99,7 +97,7 @@ module JBoss
             end
             rows << row
           elsif @opts[:no_details]
-            table_builder.no_details
+            builder.show_only_name
             @monitor.mbean(mbean_id).scan.each do |name|
               rows << [name]
             end
@@ -112,8 +110,9 @@ module JBoss
               rows << row
             end
           end
-          table_builder.data = rows
-          buff << table_builder.table.to_s
+          table = builder.build_table
+          table.data = rows
+          buff << table.to_s
         end
         buff
       end

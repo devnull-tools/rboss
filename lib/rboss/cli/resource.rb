@@ -46,7 +46,9 @@ module JBoss
         resources = [resources] unless resources.is_a? Array
         params = @config[:print]
         params.each do |p|
-          @tables << build_table(p)
+          table_builder = TableBuilder::new p
+          table_builder.add_name_column if scannable?
+          @tables << table_builder.build_table
         end
         resources.each do |resource|
           @context[:name] = resource
@@ -85,51 +87,8 @@ module JBoss
         result.split "\n"
       end
 
-      def build_table(config)
-        table = Yummi::Table::new
-        table.title = config[:title]
-        header = config[:header]
-        header = %w(Name) + header if scannable?
-        if config[:aliases]
-          aliases = config[:aliases]
-          aliases = [:name] + aliases if scannable?
-          table.aliases = aliases
-        end
-        table.header = header
-        table.layout = config[:layout].to_sym if config[:layout]
-
-        parse_component config[:format], JBoss::Cli::Formatters do |column, params|
-          table.format column, params
-        end
-        parse_component config[:color], JBoss::Cli::Colorizers do |column, params|
-          table.colorize column, params
-        end
-        parse_component config[:health], JBoss::Cli::HealthCheckers do |column, params|
-          table.using_row do
-            table.colorize column, params
-          end
-        end
-
-        table.format_null :with => 'undefined'
-        table.colorize_null :with => :red
-
-        table.colorize :name, :with => :white if scannable?
-
-        table
-      end
-
       def scannable?
         @config[:scan]
-      end
-
-      def parse_component(config, repository)
-        if config
-          config.each do |component_config|
-            component = repository.send(component_config[:component]) unless component_config[:params]
-            component ||= repository.send(component_config[:component], component_config[:params])
-            yield(component_config[:column].to_sym, :using => component)
-          end
-        end
       end
 
       def get_data(config)
