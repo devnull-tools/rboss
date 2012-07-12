@@ -36,6 +36,8 @@ servers_file = "#@conf_dir/jboss-cli-servers.yaml"
 @servers_file = File.expand_path(servers_file)
 save = false
 params[:jboss_home] = (ENV["JBOSS_HOME"] or ENV["RBOSS_CLI_JBOSS_HOME"] or Dir.pwd)
+params[:host] = '127.0.0.1'
+params[:port] = '9999'
 
 def load_yaml
   return Hash::new unless File.exist?(@servers_file)

@@ -109,6 +109,9 @@ module JBoss
           end
         end
 
+        table.format_null :with => 'undefined'
+        table.colorize_null :with => :red
+
         table.colorize :name, :with => :white if scannable?
 
         table
@@ -139,7 +142,7 @@ module JBoss
       end
 
       def eval_result(result)
-        undefined = 'undefined' #prevents error because undefined means nil in result object
+        undefined = nil #prevents error because undefined means nil in result object
         eval(result)
       end
 
