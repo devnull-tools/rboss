@@ -5,7 +5,6 @@ scan: ls ${PATH}
 print:
 - title: JDBC Drivers
   command: ${PATH}:read-resource
-  layout: vertical
   properties:
   - driver-module-name
   - driver-xa-datasource-class-name
