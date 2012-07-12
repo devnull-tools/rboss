@@ -29,10 +29,7 @@ class TableBuilder
     @table = Yummi::Table::new
     @table.title = params[:description]
     @table.header = params[:header]
-    if params[:layout] == :vertical
-      @table.layout = :vertical
-      @table.default_align = :left
-    end
+    @table.layout = params[:layout] if params[:layout]
     if params[:health]
       @table.row_colorizer HealthColorizer::new params[:health]
     end
