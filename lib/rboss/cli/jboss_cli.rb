@@ -75,7 +75,6 @@ module RBoss
             mapping = resource_mappings[key]
             component = RBoss::Cli::Resource::new(self, mapping)
             buff << component.content(resources)
-            buff << $/
           end
         end
         buff

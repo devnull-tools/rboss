@@ -57,6 +57,7 @@ module RBoss
         result = ""
         @tables.each do |table|
           result << table.to_s
+          result << $/
         end
         result
       end
