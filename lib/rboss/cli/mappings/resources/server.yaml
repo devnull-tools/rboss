@@ -74,3 +74,79 @@ print:
     component: with
     params:
       color: white
+
+- id: memory
+  title: Server Memory Usage
+  layout: vertical
+  command: /core-service=platform-mbean/type=memory:read-resource(include-runtime=true)
+  properties:
+  - heap-memory-usage -> init
+  - heap-memory-usage -> used
+  - heap-memory-usage -> committed
+  - heap-memory-usage -> max
+  - non-heap-memory-usage -> init
+  - non-heap-memory-usage -> used
+  - non-heap-memory-usage -> committed
+  - non-heap-memory-usage -> max
+  - object-pending-finalization-count
+  header:
+  - Initial Heap
+  - Used Heap
+  - Committed Heap
+  - Max Heap
+  - Initial Non Heap
+  - Used Non Heap
+  - Committed Non Heap
+  - Max Non Heap
+  - Objects Pending Finalization
+  format:
+  - column: initial_heap
+    component: byte
+  - column: used_heap
+    component: byte
+  - column: committed_heap
+    component: byte
+  - column: max_heap
+    component: byte
+  - column: initial_non_heap
+    component: byte
+  - column: used_non_heap
+    component: byte
+  - column: committed_non_heap
+    component: byte
+  - column: max_non_heap
+    component: byte
+
+  color:
+  - column: max_heap
+    component: with
+    params:
+      color: intense_purple
+
+  - column: max_non_heap
+    component: with
+    params:
+      color: intense_purple
+
+  - column: committed_heap
+    component: with
+    params:
+      color: purple
+
+  - column: committed_non_heap
+    component: with
+    params:
+      color: purple
+
+  health:
+  - column: used_heap
+    component: percentage
+    params:
+      max: max_heap
+      using: used_heap
+
+  - column: used_non_heap
+    component: percentage
+    params:
+      max: max_non_heap
+      using: used_non_heap

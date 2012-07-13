@@ -94,13 +94,22 @@ module RBoss
         result = eval_result(result)
         data = []
         config[:properties].each do |prop|
-          data << result["result"][prop]
+          data << get_property(prop, result)
         end
         data
       end
 
+      def get_property(prop, result)
+        value = result["result"]
+        prop.split(/\s*->\s*/).each do |p|
+          value = value[p]
+        end
+        value
+      end
+
       def eval_result(result)
         undefined = nil #prevents error because undefined means nil in result object
+        result = result.gsub /(\d+)L/, '\1' #removes the long type mark
         eval(result)
       end
 
