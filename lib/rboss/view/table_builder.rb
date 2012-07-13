@@ -46,7 +46,7 @@ module RBoss
         aliases = [:name] + aliases if @name_column
         table.aliases = aliases
       end
-      table.header = header
+      table.header = header if header
       table.layout = @config[:layout].to_sym if @config[:layout]
 
       parse_component @config[:format], RBoss::Formatters do |column, params|
