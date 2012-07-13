@@ -38,7 +38,7 @@ module RBoss
       end
 
       def run_conf
-        "#{@jboss.profile}/run.conf"
+        "#{@jboss.profile}/run.conf.bat"
       end
     end
   else
