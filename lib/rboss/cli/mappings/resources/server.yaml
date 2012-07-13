@@ -1,10 +1,10 @@
 ---
 description: Detail Server Information
-path:
+path: /core-service=
 print:
 - id: runtime
   title: Server Runtime Information
-  command: /core-service=server-environment:read-resource(include-runtime=true)
+  command: ${PATH}server-environment:read-resource(include-runtime=true)
   properties:
   - server-name
   - node-name
@@ -43,42 +43,10 @@ print:
     params:
       color: cyan
 
-- id: config
-  title: Server Configuration Resources
-  command: /core-service=server-environment:read-resource(include-runtime=true)
-  layout: vertical
-  properties:
-  - server-name
-  - home-dir
-  - base-dir
-  - config-dir
-  - config-file
-  - data-dir
-  - deploy-dir
-  - modules-dir
-  - log-dir
-  - temp-dir
-  header:
-  - Server Name
-  - Home Directory
-  - Base Directory
-  - Config Directory
-  - Config File
-  - Data Directory
-  - Deploy Directory
-  - Modules Directory
-  - Log Directory
-  - Temp Directory
-  color:
-  - column: server_name
-    component: with
-    params:
-      color: white
-
 - id: memory
   title: Server Memory Usage
   layout: vertical
-  command: /core-service=platform-mbean/type=memory:read-resource(include-runtime=true)
+  command: ${PATH}=platform-mbean/type=memory:read-resource(include-runtime=true)
   properties:
   - heap-memory-usage -> init
   - heap-memory-usage -> used
@@ -150,3 +118,35 @@ print:
     params:
       max: max_non_heap
       using: used_non_heap
+
+- id: config
+  title: Server Configuration Resources
+  command: ${PATH}server-environment:read-resource(include-runtime=true)
+  layout: vertical
+  properties:
+  - server-name
+  - home-dir
+  - base-dir
+  - config-dir
+  - config-file
+  - data-dir
+  - deploy-dir
+  - modules-dir
+  - log-dir
+  - temp-dir
+  header:
+  - Server Name
+  - Home Directory
+  - Base Directory
+  - Config Directory
+  - Config File
+  - Data Directory
+  - Deploy Directory
+  - Modules Directory
+  - Log Directory
+  - Temp Directory
+  color:
+  - column: server_name
+    component: with
+    params:
+      color: white
