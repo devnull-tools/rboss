@@ -128,12 +128,13 @@ end
 puts opts if @components.empty?
 
 def execute_actions
-  @jboss_cli.print(@components)
+  content = @jboss_cli.content(@components)
+  system "clear" if @loop
+  puts Yummi.colorize(Time.now.strftime("At %H:%M:%S%n"), :white) if @loop
+  puts content
 end
 
 while @loop
-  system "clear"
-  puts Yummi.colorize(Time.now.strftime("At %H:%M:%S%n"), :white)
   execute_actions
   sleep @interval
 end

@@ -68,14 +68,16 @@ module JBoss
         command
       end
 
-      def print(components)
+      def content(components)
+        buff = ""
         components.each do |key, resources|
           if resource_mappings.has_key? key
             mapping = resource_mappings[key]
             component = JBoss::Cli::Resource::new(self, mapping)
-            component.print resources
+            buff << component.content(resources)
           end
         end
+        buff
       end
 
       def execute(*commands)

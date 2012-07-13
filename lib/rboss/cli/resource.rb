@@ -39,7 +39,7 @@ module JBoss
         @count = 0
       end
 
-      def print(resources)
+      def content(resources)
         if :all == resources
           resources = scan
         end
@@ -58,10 +58,11 @@ module JBoss
             add_row(p)
           end
         end
+        result = ""
         @tables.each do |table|
-          table.print
-          puts
+          result << table.to_s
         end
+        result
       end
 
       def add_row(params)
