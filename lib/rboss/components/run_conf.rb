@@ -39,7 +39,7 @@ module RBoss
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class RunConf
-    include Component
+    include Component, RBoss::Platform
 
     def defaults
       {:jvm_args => []}
@@ -61,11 +61,11 @@ module RBoss
           action.to_process do |content|
             process_template content
           end
-          processor.copy_to "#{@jboss.profile}/run.conf"
+          processor.copy_to run_conf
         end
         processor.process
       else
-        File.open("#{@jboss.profile}/run.conf", "w+") { |f| f.write process_template @template }
+        File.open(run_conf, "w+") { |f| f.write process_template @template }
       end
     end
 

@@ -25,6 +25,7 @@ require 'logger'
 module RBoss
   module Twiddle
     class Invoker
+      include RBoss::Platform
 
       attr_reader :server, :host, :port, :user, :password
       attr_accessor :command
@@ -48,7 +49,7 @@ module RBoss
         @user = params[:user]
         @password = params[:password]
 
-        @command = "#{@jboss_home}/bin/twiddle.sh -s #{@server} -u '#{@user}' -p '#{@password}'"
+        @command = "#{twiddle} -s #{@server} -u '#{@user}' -p '#{@password}'"
 
         @logger = params[:logger]
         unless @logger

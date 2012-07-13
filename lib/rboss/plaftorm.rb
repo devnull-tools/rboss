@@ -20,51 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative "rboss/version"
-require_relative "rboss/plaftorm"
-require_relative "rboss/jboss_profile"
-require_relative "rboss/twiddle"
-require_relative "rboss/cli/jboss_cli"
-require_relative "rboss/bin/command_actions"
-require_relative "rboss/view/colorizers"
-require_relative "rboss/view/formatters"
-require_relative "rboss/view/health_checkers"
-require_relative "rboss/view/table_builder"
 
-if RUBY_PLATFORM['mingw'] #Windows
-  module RBoss::Plaform
-    def twiddle
-      "#@jboss_home/bin/twiddle.bat"
-    end
-    def jboss_cli
-      "#@jboss_home/bin/jboss-cli.bat"
-    end
-    def run_conf_template
-      "#{@base_dir}/resources/run.conf.bat.erb"
-    end
-    def run_conf
-      "#{@jboss.profile}/run.conf"
-    end
+module RBoss
+
+  # A module to hold platform specific configurations
+  module Platform
+
   end
-else
-  class RBoss::Twiddle::Invoker
-    def twiddle
-      "#@jboss_home/bin/twiddle.sh"
-    end
-  end
-  class RBoss::Cli::Invoker
-    def jboss_cli
-      "#@jboss_home/bin/jboss-cli.sh"
-    end
-  end
-  class RBoss::Profile
-    def run_conf_template
-      "#{@base_dir}/resources/run.conf.erb"
-    end
-  end
-  class RBoss::RunConf
-    def run_conf
-      "#{@jboss.profile}/run.conf"
-    end
-  end
+
 end

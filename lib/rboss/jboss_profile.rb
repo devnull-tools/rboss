@@ -95,6 +95,7 @@ module RBoss
   #
   # author Marcelo Guimarães <ataxexe@gmail.com>
   class Profile < RBoss::ComponentProcessor
+    include RBoss::Platform
 
     # Priorities for components
     @@pre_install = 0
@@ -312,7 +313,7 @@ module RBoss
                  :to_init_script => [:service_binding]
                },
                :defaults => {
-                 :template_path => "#{@base_dir}/resources/run.conf.erb",
+                 :template_path => run_conf_template,
 
                  :stack_size => '128k',
                  :heap_size => '2048m',

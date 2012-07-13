@@ -30,7 +30,7 @@ module RBoss
   module Cli
 
     class Invoker
-      include RBoss::Cli::Mappings
+      include RBoss::Cli::Mappings, RBoss::Platform
 
       attr_reader :server, :host, :port, :user, :password
 
