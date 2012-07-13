@@ -2,7 +2,8 @@
 description: Detail Server Information
 path:
 print:
-- title: Server Runtime Information
+- id: runtime
+  title: Server Runtime Information
   command: /core-service=server-environment:read-resource(include-runtime=true)
   properties:
   - server-name
@@ -42,7 +43,8 @@ print:
     params:
       color: cyan
 
-- title: Server Configuration Resources
+- id: config
+  title: Server Configuration Resources
   command: /core-service=server-environment:read-resource(include-runtime=true)
   layout: vertical
   properties:

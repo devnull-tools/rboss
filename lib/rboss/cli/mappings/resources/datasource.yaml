@@ -3,7 +3,8 @@ description: Detail Datasource Information
 path: /subsystem=datasources/data-source=${NAME}
 scan: ls ${PATH}
 print:
-- title: Datasource Details
+- id: config
+  title: Datasource Details
   command: ${PATH}:read-resource(include-runtime=true)
   layout: vertical
   properties:

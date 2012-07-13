@@ -35,7 +35,16 @@ module RBoss
       def load_resource(file)
         name = File.basename(file, '.yaml').gsub('_', '-')
         mapping = YAML::load_file(file).symbolize_keys
-        @resource_mappings[name.to_sym] = mapping
+        @resource_mappings[name] = mapping
+        mapping[:print].each do |table|
+          if table[:id]
+            new_mapping = mapping.dup
+            new_mapping[:print] = [table]
+            new_mapping[:description] = table[:title]
+            new_key = "#{name}-#{table[:id]}"
+            @resource_mappings[new_key] = new_mapping
+          end
+        end
       end
 
       def load_resources(dir)
