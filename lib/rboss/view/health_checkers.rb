@@ -19,8 +19,8 @@ module RBoss
           :good => :green
         }
         @threshold = params[:threshold] || {
-          :warn => 0.15,
-          :bad => 0.30
+          :warn => 0.30,
+          :bad => 0.15
         }
       end
 
