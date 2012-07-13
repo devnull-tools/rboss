@@ -23,9 +23,42 @@
 
 module RBoss
 
-  # A module to hold platform specific configurations
-  module Platform
+  if RUBY_PLATFORM['mingw'] #Windows
+    module Platform
+      def twiddle
+        "#@jboss_home/bin/twiddle.bat"
+      end
 
+      def jboss_cli
+        "#@jboss_home/bin/jboss-cli.bat"
+      end
+
+      def run_conf_template
+        "#{@base_dir}/resources/run.conf.bat.erb"
+      end
+
+      def run_conf
+        "#{@jboss.profile}/run.conf"
+      end
+    end
+  else
+    module Platform
+      def twiddle
+        "#@jboss_home/bin/twiddle.sh"
+      end
+
+      def jboss_cli
+        "#@jboss_home/bin/jboss-cli.sh"
+      end
+
+      def run_conf_template
+        "#{@base_dir}/resources/run.conf.erb"
+      end
+
+      def run_conf
+        "#{@jboss.profile}/run.conf"
+      end
+    end
   end
 
 end
