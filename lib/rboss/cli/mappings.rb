@@ -22,7 +22,7 @@
 
 require 'yaml'
 
-module JBoss
+module RBoss
   module Cli
     module Mappings
 

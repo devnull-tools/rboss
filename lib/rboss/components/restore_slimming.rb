@@ -22,15 +22,15 @@
 
 require_relative 'slimming'
 
-module JBoss
+module RBoss
   # A class for restore slimmed services in a JBoss profile
   #
   # Configuration:
   #
-  # See the JBoss::Slimming class for supported services
+  # See the RBoss::Slimming class for supported services
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
-  class Restore < JBoss::Slimming
+  class Restore < RBoss::Slimming
 
     def log service
       @logger.info "Enabling #{service}"

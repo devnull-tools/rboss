@@ -93,7 +93,7 @@ if params.empty?
 end
 
 params[:jboss_home] ||= Dir.pwd unless ENV["JBOSS_HOME"]
-profile = JBoss::Profile::new params
+profile = RBoss::Profile::new params
 
 if params[:slimming]
   profile.slim *params[:slimming]

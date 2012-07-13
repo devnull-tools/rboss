@@ -22,7 +22,7 @@
 
 require_relative 'mbean'
 
-module JBoss
+module RBoss
   module Twiddle
 
     module Monitor
@@ -208,12 +208,12 @@ module JBoss
       end
 
       def monitor(mbean_id, params)
-        mbeans[mbean_id] = JBoss::MBean::new params.merge(:twiddle => @twiddle)
+        mbeans[mbean_id] = RBoss::MBean::new params.merge(:twiddle => @twiddle)
       end
 
       def mbean(mbean_id)
         mbean = mbeans[mbean_id]
-        return JBoss::MBean::new :pattern => mbean_id.to_s, :twiddle => @twiddle unless mbean
+        return RBoss::MBean::new :pattern => mbean_id.to_s, :twiddle => @twiddle unless mbean
         if @current_resource
           mbean.with @current_resource
         end

@@ -26,7 +26,7 @@ require_relative "../utils"
 
 require 'yaml'
 
-module JBoss
+module RBoss
 
   # A base helper module for JBoss Components
   #
@@ -47,7 +47,7 @@ module JBoss
     # Creates a FileProcessor using the same logger and
     # jboss path as the variable
     def new_file_processor
-      FileProcessor::new :logger => @logger, :var => @jboss
+      RBoss::FileProcessor::new :logger => @logger, :var => @jboss
     end
 
     def load_yaml resource

@@ -22,7 +22,7 @@
 
 require "logger"
 
-module JBoss
+module RBoss
 
   # A class that represents the JBoss structure.
   #

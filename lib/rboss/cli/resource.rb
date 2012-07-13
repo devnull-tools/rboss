@@ -20,11 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'formatters'
-require_relative 'colorizers'
-require_relative 'health_checkers'
-
-module JBoss
+module RBoss
   module Cli
     class Resource
 
@@ -46,7 +42,7 @@ module JBoss
         resources = [resources] unless resources.is_a? Array
         params = @config[:print]
         params.each do |p|
-          table_builder = TableBuilder::new p
+          table_builder = RBoss::TableBuilder::new p
           table_builder.add_name_column if scannable?
           @tables << table_builder.build_table
         end

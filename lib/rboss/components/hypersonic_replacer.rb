@@ -23,7 +23,7 @@
 require_relative "datasource"
 require_relative "component"
 
-module JBoss
+module RBoss
   # A class to replace the shipped Hypersonic datasource for a JBoss profile.
   #
   # Configuration:

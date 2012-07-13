@@ -103,7 +103,7 @@ module TestHelper
   end
 
   def create_file_processor
-    FileProcessor::new :logger => @logger, :var => @jboss
+    RBoss::FileProcessor::new :logger => @logger, :var => @jboss
   end
 
   private

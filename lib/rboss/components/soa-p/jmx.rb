@@ -24,7 +24,7 @@
 # for compatibillity with JBoss SOA-P
 #
 # author: Marcelo Guimarães <ataxexe@gmail.com>
-module JBoss
+module RBoss
   class JMX
 
     def defaults

@@ -22,7 +22,7 @@
 
 require_relative 'twiddle'
 
-module JBoss
+module RBoss
   class MBean
 
     attr_reader :pattern

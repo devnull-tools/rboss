@@ -25,7 +25,7 @@ require_relative "component"
 require 'yaml'
 require 'erb'
 
-module JBoss
+module RBoss
   # A class to create a custom run.conf file to a JBoss Profile
   #
   # The configuration is based on a erb template, variables and jvm args:

@@ -26,7 +26,7 @@ require "rexml/document"
 
 include REXML
 
-module JBoss
+module RBoss
   class JBossWeb
     include Component
 

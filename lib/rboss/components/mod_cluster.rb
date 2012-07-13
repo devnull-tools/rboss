@@ -28,7 +28,7 @@ require "rexml/document"
 
 include REXML
 
-module JBoss
+module RBoss
   # A class to install and configure a mod_cluster service in a JBoss profile
   #
   # Configuration:

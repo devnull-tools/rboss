@@ -22,7 +22,7 @@
 
 require_relative "component"
 
-module JBoss
+module RBoss
 
   class ServiceScript
     include Component

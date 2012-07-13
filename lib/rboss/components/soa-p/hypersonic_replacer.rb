@@ -22,7 +22,7 @@
 
 require 'fileutils'
 
-module JBoss
+module RBoss
 
   # A class to replace Hypersonic in SOA-P. This class makes a build.properties file
   # and calls the ant script present in $JBOSS_HOME/tools/schema/build.xml since this

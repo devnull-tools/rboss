@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-module JBoss
+module RBoss
   module CommandActions
     class Twiddle
 
@@ -88,7 +88,7 @@ module JBoss
       def detail mbeans
         buff = ""
         mbeans.each do |mbean_id, resources|
-          builder = TableBuilder::new @opts[:mbeans][mbean_id]
+          builder = RBoss::TableBuilder::new @opts[:mbeans][mbean_id]
           rows = []
           if resources.is_a? TrueClass
             row = []
@@ -113,6 +113,7 @@ module JBoss
           table = builder.build_table
           table.data = rows
           buff << table.to_s
+          buff << $/
         end
         buff
       end

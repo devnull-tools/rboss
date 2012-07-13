@@ -1,7 +1,7 @@
 require_relative 'cli/jboss_cli'
 
 if RUBY_PLATFORM['linux']
-  class JBoss::Cli::Invoker
+  class RBoss::Cli::Invoker
 
     def jboss_cli
       "#@jboss_home/bin/jboss-cli.sh"
@@ -9,7 +9,7 @@ if RUBY_PLATFORM['linux']
 
   end
 elsif RUBY_PLATFORM['mingw'] #Windows
-  class JBoss::Cli::Invoker
+  class RBoss::Cli::Invoker
 
     def jboss_cli
       "#@jboss_home/bin/jboss-cli.bat"

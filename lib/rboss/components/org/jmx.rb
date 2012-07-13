@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-module JBoss
+module RBoss
 
   # An extension to the base JXM class that secures the jmx-console
   # for the JBoss.org servers.

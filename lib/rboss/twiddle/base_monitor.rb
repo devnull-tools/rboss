@@ -23,11 +23,11 @@
 require_relative 'monitor'
 require_relative 'twiddle'
 
-module JBoss
+module RBoss
   module Twiddle
 
     class BaseMonitor
-      include JBoss::Twiddle::Monitor
+      include RBoss::Twiddle::Monitor
 
       def initialize twiddle
         @twiddle = twiddle

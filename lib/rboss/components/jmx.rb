@@ -22,7 +22,7 @@
 
 require_relative "component"
 
-module JBoss
+module RBoss
   # This class configures the JXM user for a JBoss profile.
   #
   # Configuration:

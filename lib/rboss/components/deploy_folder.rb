@@ -26,7 +26,7 @@ require "rexml/document"
 
 include REXML
 
-module JBoss
+module RBoss
 
   # A class to add deploy folders to a JBoss Profile.
   #

@@ -22,7 +22,7 @@
 
 require 'logger'
 
-module JBoss
+module RBoss
   module Twiddle
     class Invoker
 

@@ -27,7 +27,7 @@ require "rexml/document"
 
 include REXML
 
-module JBoss
+module RBoss
 
   # A class to configure a JBoss Datasource.
   #

@@ -28,13 +28,13 @@ require "rexml/document"
 
 include REXML
 
-module JBoss
+module RBoss
 
   # A class to configure a JBoss XADatasource.
   #
   # The configuration will change a <xa-datasource-property> value.
   #
-  # Configuration attributes are the same as for a JBoss::Datasource
+  # Configuration attributes are the same as for a RBoss::Datasource
   #
   # author: Marcelo Guimarães <ataxexe@gmail.com>
   class XADatasource < Datasource

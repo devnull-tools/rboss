@@ -50,7 +50,7 @@ Extending mbeans
 
 You can use a file in ~/.rboss/twiddle.rb for mapping new mbeans or overriding the defaults
 
-    JBoss::Twiddle::Monitor.defaults[:http_request] = {
+    RBoss::Twiddle::Monitor.defaults[:http_request] = {
       :description => 'Request for http protocol',
       :pattern => 'jboss.web:type=GlobalRequestProcessor,name=http-127.0.0.1-8080',
       :properties => %W(requestCount errorCount maxTime)
@@ -77,7 +77,7 @@ And used with -c or --config
 Every time you run the twiddle command, this gem will load the ~/.rboss/twiddle.rb file,
 which can be used to customize the mbeans.
 
-    defaults = JBoss::Twiddle::Monitor.defaults
+    defaults = RBoss::Twiddle::Monitor.defaults
     defaults[:logger] = {
       :description => 'Logger Service',
       :pattern => 'jboss.system:service=Logging,type=Logger'

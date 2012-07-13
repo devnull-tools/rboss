@@ -22,7 +22,7 @@
 
 require_relative 'component'
 
-module JBoss
+module RBoss
   # A class for slimming a JBoss profile
   #
   # Configuration:

@@ -25,12 +25,12 @@ require_relative 'mappings'
 
 require 'logger'
 
-module JBoss
+module RBoss
 
   module Cli
 
     class Invoker
-      include JBoss::Cli::Mappings
+      include RBoss::Cli::Mappings
 
       attr_reader :server, :host, :port, :user, :password
 
@@ -73,8 +73,9 @@ module JBoss
         components.each do |key, resources|
           if resource_mappings.has_key? key
             mapping = resource_mappings[key]
-            component = JBoss::Cli::Resource::new(self, mapping)
+            component = RBoss::Cli::Resource::new(self, mapping)
             buff << component.content(resources)
+            buff << $/
           end
         end
         buff

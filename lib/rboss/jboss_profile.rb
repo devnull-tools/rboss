@@ -30,14 +30,14 @@ require "yummi"
 require "ostruct"
 require "fileutils"
 
-module JBoss
+module RBoss
 
   # A Class to configure a JBoss Profile
   #
   # Basically, this class is a Component Processor with some components added to configure a JBoss profile, the built-in
   # components are:
   #
-  # :deploy_folder  => binded to a JBoss::DeployFolder
+  # :deploy_folder  => binded to a RBoss::DeployFolder
   #
   # :cluster        => a shortcut component for :run_conf, sends these attributes to it:
   #   :multicast_ip   => default "239.255.0.1"
@@ -52,18 +52,18 @@ module JBoss
   #   To :init_script
   #     :address      => default "localhost", sends as :bind_address
   #
-  # :resource       => binded to a JBoss::Resource
+  # :resource       => binded to a RBoss::Resource
   #
-  # :jmx            => binded to a JBoss::JMX, enabled by default and sends user and password
+  # :jmx            => binded to a RBoss::JMX, enabled by default and sends user and password
   #                    values to :init_script
   #
-  # :datasource     => binded to a JBoss::Datasource
+  # :datasource     => binded to a RBoss::Datasource
   #
-  # :xa_datasource  => binded to a JBoss::XADatasource
+  # :xa_datasource  => binded to a RBoss::XADatasource
   #
-  # :default_ds     => binded to a JBoss::HypersonicReplacer
+  # :default_ds     => binded to a RBoss::HypersonicReplacer
   #
-  # :mod_cluster    => binded to a JBoss::ModCluster
+  # :mod_cluster    => binded to a RBoss::ModCluster
   #   Defaults:
   #     :path => "resources/mod_cluster.sar"
   #   Move to :run_conf (for externalizing mod_cluster configuration)
@@ -74,16 +74,16 @@ module JBoss
   #     :excluded_contexts
   #     :auto_enable_contexts
   #
-  # :run_conf       => binded to a JBoss::RunConf
+  # :run_conf       => binded to a RBoss::RunConf
   #   Defaults:
   #     :path => 'resources/run.conf.erb'
   #     :stack_size => '128k'
   #     :heap_size => '2048m'
   #     :perm_size => '256m'
   #
-  # :slimming       => binded to a JBoss::Slimming
+  # :slimming       => binded to a RBoss::Slimming
   #
-  # :init_script    => binded to a JBoss::ServiceScritp
+  # :init_script    => binded to a RBoss::ServiceScritp
   #   Defaults:
   #     :path => 'resources/jboss_init_redhat.sh'
   #     :jmx_user => "admin"
@@ -94,7 +94,7 @@ module JBoss
   #     :jboss_user => "RUNASIS"
   #
   # author Marcelo Guimarães <ataxexe@gmail.com>
-  class Profile < ComponentProcessor
+  class Profile < RBoss::ComponentProcessor
 
     # Priorities for components
     @@pre_install = 0
@@ -133,7 +133,7 @@ module JBoss
       end
       @profile = @opts[:profile].to_s
       @base_profile = @opts[:base_profile].to_s
-      @jboss = JBoss::Path::new @jboss_home,
+      @jboss = RBoss::Path::new @jboss_home,
                                 :profile => @profile,
                                 :type => @opts[:type],
                                 :version => @opts[:version],
@@ -237,25 +237,25 @@ module JBoss
                }
 
       register :profile_folder,
-               :type => JBoss::ProfileFolder,
+               :type => RBoss::ProfileFolder,
                :priority => @@install
 
       register :deploy_folder,
 
-               :type => JBoss::DeployFolder,
+               :type => RBoss::DeployFolder,
                :priority => @@post_install,
                :multiple_instances => true
 
 
       register :resource,
 
-               :type => JBoss::Resource,
+               :type => RBoss::Resource,
                :priority => @@pre_setup,
                :multiple_instances => true
 
       register :jmx,
 
-               :type => JBoss::JMX,
+               :type => RBoss::JMX,
                :priority => @@setup,
                :send_config => {
                  :to_init_script => {
@@ -266,24 +266,24 @@ module JBoss
 
       register :datasource,
 
-               :type => JBoss::Datasource,
+               :type => RBoss::Datasource,
                :priority => @@setup,
                :multiple_instances => true
 
       register :xa_datasource,
 
-               :type => JBoss::XADatasource,
+               :type => RBoss::XADatasource,
                :priority => @@setup,
                :multiple_instances => true
 
       register :default_ds,
 
-               :type => JBoss::HypersonicReplacer,
+               :type => RBoss::HypersonicReplacer,
                :priority => @@setup
 
       register :mod_cluster,
 
-               :type => JBoss::ModCluster,
+               :type => RBoss::ModCluster,
                :priority => @@setup,
                :move_config => {
                  :to_run_conf => [
@@ -301,12 +301,12 @@ module JBoss
 
       register :jbossweb,
 
-               :type => JBoss::JBossWeb,
+               :type => RBoss::JBossWeb,
                :priority => @@setup
 
       register :run_conf,
 
-               :type => JBoss::RunConf,
+               :type => RBoss::RunConf,
                :priority => @@post_setup,
                :send_config => {
                  :to_init_script => [:service_binding]
@@ -321,17 +321,17 @@ module JBoss
 
       register :slimming,
 
-               :type => JBoss::Slimming,
+               :type => RBoss::Slimming,
                :priority => @@post_setup
 
       register :restore,
 
-               :type => JBoss::Restore,
+               :type => RBoss::Restore,
                :priority => @@post_setup + 5
 
       register :init_script,
 
-               :type => JBoss::ServiceScript,
+               :type => RBoss::ServiceScript,
                :priority => @@final,
                :defaults => {
                  :path => "#{@base_dir}/resources/jboss_init_redhat.sh.erb",

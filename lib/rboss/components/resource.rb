@@ -22,7 +22,7 @@
 
 require_relative "component"
 
-module JBoss
+module RBoss
 
   # A class to add resources to a JBoss Profile
   #
