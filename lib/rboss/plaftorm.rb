@@ -34,7 +34,7 @@ module RBoss
       end
 
       def run_conf_template
-        "#{@base_dir}/resources/run.conf.bat.erb"
+        "#@base_dir/resources/run.conf.bat.erb"
       end
 
       def run_conf
@@ -52,7 +52,7 @@ module RBoss
       end
 
       def run_conf_template
-        "#{@base_dir}/resources/run.conf.erb"
+        "#@base_dir/resources/run.conf.erb"
       end
 
       def run_conf
