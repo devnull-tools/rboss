@@ -37,7 +37,7 @@ module RBoss
       end
 
       def content(resources)
-        if :all == resources
+        if :all == resources and scannable?
           resources = scan
         end
         resources = [resources] unless resources.is_a? Array

@@ -41,6 +41,7 @@ module RBoss
             new_mapping = mapping.dup
             new_mapping[:print] = [table]
             new_mapping[:description] = table[:title]
+            new_mapping[:derived] = true
             new_key = "#{name}-#{table[:id]}"
             @resource_mappings[new_key] = new_mapping
           end
