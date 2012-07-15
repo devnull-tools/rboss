@@ -41,9 +41,11 @@ print:
 
     enabled:
       component: boolean
+
+    connection_url:
+      component: with
       params:
-        if_true: green
-        if_false: red
+        color: brown
 
 - id: pool
   title: Datasource Pool Statistics

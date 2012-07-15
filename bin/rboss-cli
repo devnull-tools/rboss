@@ -100,8 +100,7 @@ end
 
 opts.on('--all', 'Display all available info') do
   RBoss::Cli::Mappings.resource_mappings.each do |name, config|
-    next if config[:derived]
-    @components[name] = :all
+    @components[name] = :all unless config[:derived]
   end
 end
 
