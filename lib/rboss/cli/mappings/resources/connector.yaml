@@ -62,13 +62,6 @@ print:
 
       enabled:
         component: boolean
-        params:
-          if_true: green
-          if_false: red
 
       secure:
         component: boolean
-        params:
-          if_true: green
-          if_false: brown
-
