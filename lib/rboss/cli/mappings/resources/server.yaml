@@ -46,7 +46,7 @@ print:
 - id: memory
   title: Server Memory Usage
   layout: vertical
-  command: ${PATH}=platform-mbean/type=memory:read-resource(include-runtime=true)
+  command: ${PATH}platform-mbean/type=memory:read-resource(include-runtime=true)
   properties:
   - heap-memory-usage -> init
   - heap-memory-usage -> used
