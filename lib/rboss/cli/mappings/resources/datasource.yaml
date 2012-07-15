@@ -27,19 +27,19 @@ print:
   - Max Pool Size
   - Enabled
   format:
-    - column: enabled
+    enabled:
       component: yes_or_no
 
-    - column: using_jta
+    using_jta:
       component: yes_or_no
 
   color:
-    - column: jndi_name
+    jndi_name:
       component: with
       params:
         color: purple
 
-    - column: enabled
+    enabled:
       component: boolean
       params:
         if_true: green
@@ -77,11 +77,11 @@ print:
   - Total Creation
 
   health:
-  - column: active
-    component: percentage
-    params:
-      max: available
-      using: active
+    active:
+      component: percentage
+      params:
+        max: available
+        using: active
 
 - id: jdbc
   title: Datasource JDBC Statistics

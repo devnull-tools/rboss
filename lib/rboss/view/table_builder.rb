@@ -73,10 +73,10 @@ module RBoss
 
     def parse_component(config, repository)
       if config
-        config.each do |component_config|
+        config.each do |column, component_config|
           component = repository.send(component_config[:component]) unless component_config[:params]
           component ||= repository.send(component_config[:component], component_config[:params])
-          yield(component_config[:column].to_sym, :using => component)
+          yield(column, :using => component)
         end
       end
     end

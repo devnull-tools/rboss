@@ -18,8 +18,8 @@ print:
   - Processors
   - System Load
   format:
-  - column: system_load
-    component: percentage
+    system_load:
+      component: percentage
 
 - id: runtime
   title: Server Runtime Information
@@ -37,30 +37,30 @@ print:
   - Initial Running Mode
   - Launch Type
   color:
-  - column: server_name
-    component: with
-    params:
-      color: white
+    server_name:
+      component: with
+      params:
+        color: white
 
-  - column: node_name
-    component: with
-    params:
-      color: blue
+    node_name:
+      component: with
+      params:
+        color: blue
 
-  - column: host_name
-    component: with
-    params:
-      color: brown
+    host_name:
+      component: with
+      params:
+        color: brown
 
-  - column: initial_running_mode
-    component: with
-    params:
-      color: purple
+    initial_running_mode:
+      component: with
+      params:
+        color: purple
 
-  - column: launch_type
-    component: with
-    params:
-      color: cyan
+    launch_type:
+      component: with
+      params:
+        color: cyan
 
 - id: memory
   title: Server Memory Usage
@@ -87,56 +87,56 @@ print:
   - Max Non Heap
   - Objects Pending Finalization
   format:
-  - column: initial_heap
-    component: byte
-  - column: used_heap
-    component: byte
-  - column: committed_heap
-    component: byte
-  - column: max_heap
-    component: byte
-  - column: initial_non_heap
-    component: byte
-  - column: used_non_heap
-    component: byte
-  - column: committed_non_heap
-    component: byte
-  - column: max_non_heap
-    component: byte
+    initial_heap:
+      component: byte
+    used_heap:
+      component: byte
+    committed_heap:
+      component: byte
+    max_heap:
+      component: byte
+    initial_non_heap:
+      component: byte
+    used_non_heap:
+      component: byte
+    committed_non_heap:
+      component: byte
+    max_non_heap:
+      component: byte
 
   color:
-  - column: max_heap
-    component: with
-    params:
-      color: intense_purple
+    max_heap:
+      component: with
+      params:
+        color: intense_purple
 
-  - column: max_non_heap
-    component: with
-    params:
-      color: intense_purple
+    max_non_heap:
+      component: with
+      params:
+        color: intense_purple
 
-  - column: committed_heap
-    component: with
-    params:
-      color: purple
+    committed_heap:
+      component: with
+      params:
+        color: purple
 
-  - column: committed_non_heap
-    component: with
-    params:
-      color: purple
+    committed_non_heap:
+      component: with
+      params:
+        color: purple
 
   health:
-  - column: used_heap
-    component: percentage
-    params:
-      max: max_heap
-      using: used_heap
+    used_heap:
+      component: percentage
+      params:
+        max: max_heap
+        using: used_heap
 
-  - column: used_non_heap
-    component: percentage
-    params:
-      max: max_non_heap
-      using: used_non_heap
+    used_non_heap:
+      component: percentage
+      params:
+        max: max_non_heap
+        using: used_non_heap
 
 - id: config
   title: Server Configuration Resources
@@ -165,7 +165,7 @@ print:
   - Log Directory
   - Temp Directory
   color:
-  - column: server_name
-    component: with
-    params:
-      color: white
+    server_name:
+      component: with
+      params:
+        color: white

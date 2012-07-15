@@ -36,37 +36,37 @@ print:
     - Enabled
 
     format:
-      - column: bytes_received
+      bytes_received:
         component: byte
 
-      - column: bytes_sent
+      bytes_sent:
         component: byte
 
-      - column: max_post_size
+      max_post_size:
         component: byte
 
-      - column: max_save_post_size
+      max_save_post_size:
         component: byte
 
-      - column: enabled
+      enabled:
         component: yes_or_no
 
-      - column: secure
+      secure:
         component: yes_or_no
 
     color:
-      - column: scheme
+      scheme:
         component: with
         params:
           color: purple
 
-      - column: enabled
+      enabled:
         component: boolean
         params:
           if_true: green
           if_false: red
 
-      - column: secure
+      secure:
         component: boolean
         params:
           if_true: green

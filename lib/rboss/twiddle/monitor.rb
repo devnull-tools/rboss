@@ -53,15 +53,15 @@ module RBoss
             :pattern => 'jboss.web:type=ThreadPool,name=#{resource}',
             :properties => %W(maxThreads currentThreadCount currentThreadsBusy),
             :header => ['Max Threads', 'Current Threads', 'Busy Threads'],
-            :health => [
-              {:column => :current_threads,
-               :component => :percentage,
-               :params => {
-                 :max => :max_threads,
-                 :using => :current_threads
-               }
+            :health => {
+              :current_threads => {
+                :component => :percentage,
+                :params => {
+                  :max => :max_threads,
+                  :using => :current_threads
+                }
               }
-            ],
+            },
             :scan => proc do
               query "jboss.web:type=ThreadPool,*" do |path|
                 path.gsub "jboss.web:type=ThreadPool,name=", ""
@@ -105,26 +105,20 @@ module RBoss
             :header => ["Active Threads", "Max Memory", "Free Memory",
                         "Processors", "Java Vendor", "Java Version", "OS Name", "OS Arch"],
             :layout => :vertical,
-            :format => [
-              {
-                :column => :max_memory,
-                :component => :byte
-              },
-              {
-                :column => :free_memory,
-                :component => :byte
-              }
-            ],
-            :health => [
-              {
-                :column => :free_memory,
+            :format => {
+              :max_memory => {:component => :byte},
+              :free_memory => {:component => :byte}
+
+            },
+            :health => {
+              :free_memory => {
                 :component => :percentage,
                 :params => {
                   :max => :max_memory,
                   :free => :free_memory
                 }
               }
-            ],
+            }
           },
           :server_config => {
             :description => 'JBoss Server configuration',
@@ -142,16 +136,15 @@ module RBoss
             :pattern => 'jboss.web:type=GlobalRequestProcessor,name=#{resource}',
             :properties => %W(requestCount errorCount maxTime),
             :header => ['Requests', 'Errors', 'Max Time'],
-            :health => [
-              {
-                :column => :errors,
+            :health => {
+              :errors => {
                 :component => :percentage,
                 :params => {
                   :max => :requests,
                   :using => :errors
                 }
               }
-            ],
+            },
             :scan => proc do
               query "jboss.web:type=ThreadPool,*" do |path|
                 path.gsub "jboss.web:type=ThreadPool,name=", ""
@@ -165,16 +158,15 @@ module RBoss
                                       InUseConnectionCount ConnectionCount),
             :header => ["Min\nSize", "Max\nSize", "Avaliable\nConnections",
                         "In Use\nConnections", "Connection\nCount"],
-            :health => [
-              {
-                :column => :in_use_connections,
+            :health => {
+              :in_use_connections => {
                 :component => :percentage,
                 :params => {
                   :max => :max_size,
                   :using => :in_use_connections
                 }
               }
-            ],
+            },
             :scan => proc do
               query "jboss.jca:service=ManagedConnectionPool,*" do |path|
                 path.gsub "jboss.jca:service=ManagedConnectionPool,name=", ""
