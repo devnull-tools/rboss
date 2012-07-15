@@ -21,8 +21,8 @@ print:
     system_load:
       component: percentage
 
-- id: runtime
-  title: Server Runtime Information
+- id: env
+  title: Server Environment Information
   command: ${PATH}server-environment:${READ_RESOURCE}
   properties:
   - server-name
@@ -137,6 +137,71 @@ print:
       params:
         max: max_non_heap
         using: used_non_heap
+
+- id: thread
+  title: Server Thread Info
+  command: ${PATH}platform-mbean/type=threading:${READ_RESOURCE}
+  layout: vertical
+  properties:
+  - thread-contention-monitoring-supported
+  - thread-cpu-time-supported
+  - current-thread-cpu-time-supported
+  - object-monitor-usage-supported
+  - synchronizer-usage-supported
+  - thread-contention-monitoring-enabled
+  - thread-cpu-time-enabled
+  - thread-count
+  - peak-thread-count
+  - total-started-thread-count
+  - daemon-thread-count
+  - current-thread-cpu-time
+  - current-thread-user-time
+  header:
+  - Thread Contention Monitoring Supported
+  - Thread CPU Time Supported
+  - Current Thread CPU Time Supported
+  - Object Monitor Usage Supported
+  - Synchronizer Usage Supported
+  - Thread Contention Monitoring Enabled
+  - Thread CPU Time Enabled
+  - Thread Count
+  - Peak Thread Count
+  - Total Started Thread Count
+  - Daemon Thread Count
+  - Current Thread CPU Time
+  - CUrrent Thread User Time
+
+  format:
+    thread_contention_monitoring_supported:
+      component: yes_or_no
+    thread_cpu_time_supported:
+      component: yes_or_no
+    current_thread_cpu_time_supported:
+      component: yes_or_no
+    object_monitor_usage_supported:
+      component: yes_or_no
+    synchronizer_usage_supported:
+      component: yes_or_no
+    thread_contention_monitoring_enabled:
+      component: yes_or_no
+    thread_cpu_time_enabled:
+      component: yes_or_no
+
+  color:
+    thread_contention_monitoring_supported:
+      component: boolean
+    thread_cpu_time_supported:
+      component: boolean
+    current_thread_cpu_time_supported:
+      component: boolean
+    object_monitor_usage_supported:
+      component: boolean
+    synchronizer_usage_supported:
+      component: boolean
+    thread_contention_monitoring_enabled:
+      component: boolean
+    thread_cpu_time_enabled:
+      component: boolean
 
 - id: config
   title: Server Configuration Resources
