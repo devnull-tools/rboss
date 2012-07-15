@@ -27,25 +27,15 @@ print:
   - Max Pool Size
   - Enabled
   format:
-    enabled:
-      component: yes_or_no
-
-    using_jta:
-      component: yes_or_no
+    enabled: yes_or_no
+    using_jta: yes_or_no
 
   color:
     jndi_name:
-      component: with
-      params:
-        color: purple
-
-    enabled:
-      component: boolean
-
+      with: purple
+    enabled: boolean
     connection_url:
-      component: with
-      params:
-        color: brown
+      with: brown
 
 - id: pool
   title: Datasource Pool Statistics
@@ -80,8 +70,7 @@ print:
 
   health:
     active:
-      component: percentage
-      params:
+      percentage:
         max: available
         using: active
 

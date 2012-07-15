@@ -55,8 +55,7 @@ module RBoss
             :header => ['Max Threads', 'Current Threads', 'Busy Threads'],
             :health => {
               :current_threads => {
-                :component => :percentage,
-                :params => {
+                :percentage => {
                   :max => :max_threads,
                   :using => :current_threads
                 }
@@ -106,14 +105,12 @@ module RBoss
                         "Processors", "Java Vendor", "Java Version", "OS Name", "OS Arch"],
             :layout => :vertical,
             :format => {
-              :max_memory => {:component => :byte},
-              :free_memory => {:component => :byte}
-
+              :max_memory => :byte,
+              :free_memory => :byte
             },
             :health => {
               :free_memory => {
-                :component => :percentage,
-                :params => {
+                :percentage => {
                   :max => :max_memory,
                   :free => :free_memory
                 }
@@ -138,8 +135,7 @@ module RBoss
             :header => ['Requests', 'Errors', 'Max Time'],
             :health => {
               :errors => {
-                :component => :percentage,
-                :params => {
+                :percentage => {
                   :max => :requests,
                   :using => :errors
                 }
@@ -160,8 +156,7 @@ module RBoss
                         "In Use\nConnections", "Connection\nCount"],
             :health => {
               :in_use_connections => {
-                :component => :percentage,
-                :params => {
+                :percentage => {
                   :max => :max_size,
                   :using => :in_use_connections
                 }

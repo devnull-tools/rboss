@@ -10,9 +10,9 @@ module RBoss
       end
     end
 
-    def self.with params
+    def self.with color
       lambda do |value|
-        params[:color]
+        color
       end
     end
 

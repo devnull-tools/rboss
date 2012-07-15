@@ -74,8 +74,15 @@ module RBoss
     def parse_component(config, repository)
       if config
         config.each do |column, component_config|
-          component = repository.send(component_config[:component]) unless component_config[:params]
-          component ||= repository.send(component_config[:component], component_config[:params])
+          component = nil
+          if component_config.is_a? Hash
+            component = Yummi::GroupedComponent::new
+            component_config.each do |component_name, params|
+              component << repository.send(component_name, params)
+            end
+          else
+            component = repository.send(component_config)
+          end
           yield(column, :using => component)
         end
       end
