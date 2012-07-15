@@ -11,5 +11,11 @@ module RBoss
       Yummi::Formatters.byte params
     end
 
+    def self.percentage
+      Yummi::to_format do |value|
+        "%.2f%%" % (value * 100)
+      end
+    end
+
   end
 end

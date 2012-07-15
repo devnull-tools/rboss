@@ -2,9 +2,28 @@
 description: Detail Server Information
 path: /core-service=
 print:
+- id: platform
+  title: Operating System Information
+  command: ${PATH}platform-mbean/type=operating-system:${READ_RESOURCE}
+  properties:
+  - name
+  - arch
+  - version
+  - available-processors
+  - system-load-average
+  header:
+  - Name
+  - Arch
+  - Version
+  - Processors
+  - System Load
+  format:
+  - column: system_load
+    component: percentage
+
 - id: runtime
   title: Server Runtime Information
-  command: ${PATH}server-environment:read-resource(include-runtime=true)
+  command: ${PATH}server-environment:${READ_RESOURCE}
   properties:
   - server-name
   - node-name
@@ -46,7 +65,7 @@ print:
 - id: memory
   title: Server Memory Usage
   layout: vertical
-  command: ${PATH}platform-mbean/type=memory:read-resource(include-runtime=true)
+  command: ${PATH}platform-mbean/type=memory:${READ_RESOURCE}
   properties:
   - heap-memory-usage -> init
   - heap-memory-usage -> used
@@ -121,7 +140,7 @@ print:
 
 - id: config
   title: Server Configuration Resources
-  command: ${PATH}server-environment:read-resource(include-runtime=true)
+  command: ${PATH}server-environment:${READ_RESOURCE}
   layout: vertical
   properties:
   - server-name

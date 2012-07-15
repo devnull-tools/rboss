@@ -5,7 +5,6 @@ scan: ls ${PATH}
 print:
 - id: config
   title: Datasource Details
-  command: ${PATH}:read-resource(include-runtime=true)
   layout: vertical
   properties:
   - jndi-name
@@ -48,7 +47,7 @@ print:
 
 - id: pool
   title: Datasource Pool Statistics
-  command: ${PATH}/statistics=pool:read-resource(include-runtime=true)
+  command: ${PATH}/statistics=pool:${READ_RESOURCE}
   layout: vertical
   properties:
   - ActiveCount
@@ -86,7 +85,7 @@ print:
 
 - id: jdbc
   title: Datasource JDBC Statistics
-  command: ${PATH}/statistics=jdbc:read-resource(include-runtime=true)
+  command: ${PATH}/statistics=jdbc:${READ_RESOURCE}
   properties:
   - PreparedStatementCacheCurrentSize
   - PreparedStatementCacheAccessCount

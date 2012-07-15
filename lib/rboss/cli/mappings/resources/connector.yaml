@@ -4,7 +4,6 @@ path: /subsystem=web/connector=${NAME}
 scan: ls ${PATH}
 print:
   - title: Connectors
-    command: ${PATH}:read-resource(include-runtime=true)
     layout: vertical
     properties:
     - scheme

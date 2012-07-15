@@ -4,7 +4,6 @@ path: /subsystem=datasources/jdbc-driver=${NAME}
 scan: ls ${PATH}
 print:
 - title: JDBC Drivers
-  command: ${PATH}:read-resource
   properties:
   - driver-module-name
   - driver-xa-datasource-class-name

@@ -28,7 +28,8 @@ module RBoss
         @config = config
         @invoker = invoker
         @context = {
-          :name => ''
+          :name => '',
+          :read_resource => 'read-resource(include-runtime=true)'
         }
         @context[:path] = parse(@config[:path])
         @tables = []
@@ -90,7 +91,8 @@ module RBoss
       end
 
       def get_data(config)
-        result = @invoker.execute(parse config[:command])
+        command = (config[:command] or '${PATH}:${READ_RESOURCE}')
+        result = @invoker.execute(parse command)
         result = eval_result(result)
         data = []
         config[:properties].each do |prop|
