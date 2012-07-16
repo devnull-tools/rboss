@@ -58,7 +58,7 @@ module RBoss
         result = result.gsub /(\d+)L/, '\1' #removes the long type mark
 
         result = eval(result)
-                        #TODO raise an error if outcome is fail
+        raise result["failure-description"] if result["outcome"] == "failed"
         result["result"]
       end
 

@@ -89,6 +89,7 @@ module RBoss
 
       def gets_and_invoke(path, operation)
         result = result("#{path}:read-operation-description(name=#{operation})")
+        result["request-properties"] ||= {}
         puts Yummi.colorize(result['description'], :yellow)
         builder = CommandBuilder::new operation
         result["request-properties"].each do |name, detail|
@@ -102,7 +103,7 @@ module RBoss
           next if input.empty?
           builder << {:name => name, :value => detail['type'].convert(input)}
         end
-        puts("#{path}:#{builder}")
+        result("#{path}:#{builder}")
       end
 
       def execute(*commands)
