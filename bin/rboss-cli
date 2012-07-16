@@ -32,8 +32,9 @@ require 'yummi'
 params = {}
 @conf_dir = File.expand_path "~/.rboss"
 servers_file = "#@conf_dir/jboss-cli-servers.yaml"
-@components = {}
+@arguments = {}
 @servers_file = File.expand_path(servers_file)
+@operation = :read_resource
 save = false
 params[:jboss_home] = (ENV["JBOSS_HOME"] or ENV["RBOSS_CLI_JBOSS_HOME"] or Dir.pwd)
 params[:host] = '127.0.0.1'
@@ -86,21 +87,34 @@ opts.on('-v', '--verbose', 'Displays jboss-cli commands before execution') do
   params[:log_level] = Logger::DEBUG
 end
 
+opts.on('-o', '--operation NAME',
+        'Sets the operation to invoke (Defaults to "read-resource")') do |name|
+  @operation = name.to_key
+end
+
+opts.on('--skip-optional', 'Skips optional parameters while invoking a command ') do
+  params[:skip_optional] = true
+end
+
+opts.on('--skip-default', 'Skips parameters with a default value while invoking a command ') do
+  params[:skip_default] = true
+end
+
 RBoss::Cli::Mappings.resource_mappings.each do |name, config|
   if config[:scan]
     opts.on("--#{name} [NAMES]", Array, config[:description]) do |resources|
-      @components[name] = resources || :all
+      @arguments[name] = resources
     end
   else
     opts.on("--#{name}", config[:description]) do
-      @components[name] = true
+      @arguments[name] = true
     end
   end
 end
 
 opts.on('--all', 'Display all available info') do
   RBoss::Cli::Mappings.resource_mappings.each do |name, config|
-    @components[name] = :all unless config[:derived]
+    @arguments[name] = nil unless config[:derived]
   end
 end
 
@@ -131,10 +145,10 @@ if save
   puts "Configuration saved!"
 end
 
-puts opts if @components.empty?
+puts opts if @arguments.empty?
 
 def execute_actions
-  content = @jboss_cli.content(@components)
+  content = @jboss_cli.invoke(@operation, @arguments)
   system "clear" if @loop
   puts Yummi.colorize(Time.now.strftime("At %H:%M:%S%n"), :white) if @loop
   puts content

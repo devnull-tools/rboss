@@ -30,6 +30,18 @@ class String
     self[0, 1].downcase + self[1..-1]
   end
 
+  def to_key
+    self.gsub('-', '_').to_sym
+  end
+
+end
+
+class Symbol
+
+  def to_key
+    self
+  end
+
 end
 
 class Hash

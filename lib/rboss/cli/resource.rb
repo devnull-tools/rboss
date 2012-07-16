@@ -20,10 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+
 module RBoss
   module Cli
     class Resource
-      include RBoss::Cli::ResultParser
 
       def initialize(invoker, config)
         @config = config
@@ -37,21 +37,27 @@ module RBoss
         @count = 0
       end
 
-      def content(resources)
-        if :all == resources and scannable?
-          resources = scan
+      def invoke(operation, argument)
+        if respond_to? operation
+          send operation, argument
+        else
+          interact_to_invoke operation, argument
+          Yummi.colorize('Operation Executed!', :green)
         end
+      end
+
+      def read_resource(resources)
+        resources ||= scan
         params = @config[:print]
         params.each do |p|
           table_builder = RBoss::TableBuilder::new p
           table_builder.add_name_column if scannable?
           @tables << table_builder.build_table
         end
-        [*resources].each do |resource|
-          @context[:name] = resource
-          @context[:path] = parse(@config[:path])
-
+        with resources do
           params.each do |p|
+            @context[:path] = parse(@config[:path])
+            @context[:path] = parse(p[:path]) if p[:path]
             add_row(p)
           end
         end
@@ -61,6 +67,23 @@ module RBoss
           result << $/
         end
         result
+      end
+
+      private
+
+      def interact_to_invoke(operation, resource_name)
+        resource_name ||= operation
+        with resource_name do
+          @invoker.gets_and_invoke(@context[:path], operation)
+        end
+      end
+
+      def with(resources)
+        [*resources].each do |resource|
+          @context[:name] = resource
+          @context[:path] = parse(@config[:path])
+          yield
+        end
       end
 
       def add_row(params)
@@ -76,12 +99,13 @@ module RBoss
         result = value.scan /\$\{\w+\}/
         result.each do |matched|
           key = matched[2...-1].downcase.to_sym
-          value = value.gsub(matched, @context[key])
+          value = value.gsub(matched, @context[key].to_s)
         end
         value
       end
 
       def scan
+        return '' unless scannable?
         result = @invoker.execute(parse @config[:scan])
         result.split "\n"
       end
@@ -91,9 +115,8 @@ module RBoss
       end
 
       def get_data(config)
-        command = (config[:command] or '${PATH}:${READ_RESOURCE}')
-        result = @invoker.execute(parse command)
-        result = eval_result(result)
+        command = parse((config[:command] or '${PATH}:read-resource(include-runtime=true)'))
+        result = @invoker.result(command)
         data = []
         config[:properties].each do |prop|
           data << get_property(prop, result)
@@ -102,7 +125,7 @@ module RBoss
       end
 
       def get_property(prop, result)
-        value = result["result"]
+        value = result
         prop.split(/\s*->\s*/).each do |p|
           value = value[p]
         end

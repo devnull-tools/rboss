@@ -24,11 +24,44 @@ module RBoss
   module Cli
     module ResultParser
 
+      class Type
+
+        def initialize (name, &block)
+          @name = name
+          @converter_block = block
+        end
+
+        def convert (value)
+          @converter_block.call value
+        end
+
+      end
+
+      STRING = Type::new 'STRING' do |string|
+        "\"#{string}\""
+      end
+      BOOLEAN = Type::new 'BOOLEAN' do |string|
+        'true' == string.downcase
+      end
+      INT = Type::new 'INT' do |string|
+        string.to_i
+      end
+      LONG = Type::new 'LONG' do |string|
+        string.to_i
+      end
+      OBJECT = Type::new 'OBJECT' do |string|
+        "\"#{string}\""
+      end
+
       def eval_result(result)
         undefined = nil #prevents error because undefined means nil in result object
         result = result.gsub /(\d+)L/, '\1' #removes the long type mark
-        eval(result)
+
+        result = eval(result)
+                        #TODO raise an error if outcome is fail
+        result["result"]
       end
+
 
     end
   end

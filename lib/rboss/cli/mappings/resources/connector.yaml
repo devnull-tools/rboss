@@ -1,7 +1,7 @@
 ---
 description: Details Connectors
 path: /subsystem=web/connector=${NAME}
-scan: ls ${PATH}
+scan: ls /subsystem=web/connector
 print:
   - title: Connectors
     layout: vertical

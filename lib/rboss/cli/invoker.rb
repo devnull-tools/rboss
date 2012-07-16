@@ -26,12 +26,14 @@ require_relative 'mappings'
 
 require 'logger'
 
+require 'yummi'
+
 module RBoss
 
   module Cli
 
     class Invoker
-      include RBoss::Cli::Mappings, RBoss::Platform
+      include RBoss::Cli::Mappings, RBoss::Platform, RBoss::Cli::ResultParser
 
       attr_reader :server, :host, :port, :user, :password
 
@@ -59,6 +61,9 @@ module RBoss
           end
           @logger.formatter = formatter
         end
+
+        @skip_default = params[:skip_default]
+        @skip_optional = params[:skip_optional]
       end
 
       def command
@@ -69,22 +74,63 @@ module RBoss
         command
       end
 
-      def content(components)
+      def invoke(operation, components)
         buff = ""
-        components.each do |key, resources|
+        components.each do |key, resource_names|
           if resource_mappings.has_key? key
             mapping = resource_mappings[key]
-            component = RBoss::Cli::Resource::new(self, mapping)
-            buff << component.content(resources)
+            resource = RBoss::Cli::Resource::new(self, mapping)
+            result = resource.invoke(operation, resource_names)
+            buff << result.to_s if result
           end
         end
         buff
+      end
+
+      def gets_and_invoke(path, operation)
+        result = result("#{path}:read-operation-description(name=#{operation})")
+        puts Yummi.colorize(result['description'], :yellow)
+        builder = CommandBuilder::new operation
+        result["request-properties"].each do |name, detail|
+          required = detail['required']
+          default_vakue = detail['default']
+          next if (@skip_optional and not required) or (@skip_default and default_vakue)
+          puts Yummi.colorize(name, :intense_blue)
+          puts Yummi.colorize(detail['description'], :intense_gray)
+          puts "Enter parameter value: "
+          input = gets.chomp
+          next if input.empty?
+          builder << {:name => name, :value => detail['type'].convert(input)}
+        end
+        puts("#{path}:#{builder}")
       end
 
       def execute(*commands)
         exec = "#{command} --commands=\"#{commands.join ','}\""
         @logger.debug exec
         `#{exec}`.chomp
+      end
+
+      def result(*commands)
+        eval_result(execute commands)
+      end
+
+    end
+
+    class CommandBuilder
+
+      def initialize (operation)
+        @operation = operation
+        @params = {}
+      end
+
+      def << (param)
+        @params[param[:name]] = param[:value]
+      end
+
+      def to_s
+        params = (@params.collect() { |k, v| "#{k}=#{v}" }).join ','
+        "#@operation(#{params})"
       end
 
     end

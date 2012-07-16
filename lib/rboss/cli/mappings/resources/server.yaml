@@ -4,7 +4,7 @@ path: /core-service=
 print:
 - id: platform
   title: Operating System Information
-  command: ${PATH}platform-mbean/type=operating-system:${READ_RESOURCE}
+  path: ${PATH}platform-mbean/type=operating-system
   properties:
   - name
   - arch
@@ -22,7 +22,7 @@ print:
 
 - id: env
   title: Server Environment Information
-  command: ${PATH}server-environment:${READ_RESOURCE}
+  path: ${PATH}server-environment
   properties:
   - server-name
   - node-name
@@ -54,7 +54,7 @@ print:
 - id: memory
   title: Server Memory Usage
   layout: vertical
-  command: ${PATH}platform-mbean/type=memory:${READ_RESOURCE}
+  path: ${PATH}platform-mbean/type=memory
   properties:
   - heap-memory-usage -> init
   - heap-memory-usage -> used
@@ -111,7 +111,7 @@ print:
 
 - id: thread
   title: Server Thread Info
-  command: ${PATH}platform-mbean/type=threading:${READ_RESOURCE}
+  path: ${PATH}platform-mbean/type=threading
   layout: vertical
   properties:
   - thread-contention-monitoring-supported
@@ -162,7 +162,7 @@ print:
 
 - id: config
   title: Server Configuration Resources
-  command: ${PATH}server-environment:${READ_RESOURCE}
+  path: ${PATH}server-environment
   layout: vertical
   properties:
   - server-name

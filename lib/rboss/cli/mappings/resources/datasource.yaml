@@ -1,7 +1,7 @@
 ---
-description: Detail Datasource Information
+description: Datasource Information
 path: /subsystem=datasources/data-source=${NAME}
-scan: ls ${PATH}
+scan: ls /subsystem=datasources/data-source
 print:
 - id: config
   title: Datasource Details
@@ -39,7 +39,7 @@ print:
 
 - id: pool
   title: Datasource Pool Statistics
-  command: ${PATH}/statistics=pool:${READ_RESOURCE}
+  path: ${PATH}/statistics=pool
   layout: vertical
   properties:
   - ActiveCount
@@ -76,7 +76,7 @@ print:
 
 - id: jdbc
   title: Datasource JDBC Statistics
-  command: ${PATH}/statistics=jdbc:${READ_RESOURCE}
+  path: ${PATH}/statistics=jdbc
   properties:
   - PreparedStatementCacheCurrentSize
   - PreparedStatementCacheAccessCount
