@@ -40,8 +40,7 @@ module RBoss
     def process
       @logger.info "Including resources..."
       @config.each do |to_path, resources|
-        resources = [resources] unless resources.is_a? Array
-        resources.each do |resource|
+        [*resources].each do |resource|
           to_path = "#{@jboss.profile}/#{to_path}" unless to_path.to_s.start_with? '/'
           cp_r File.expand_path(resource), to_path
         end

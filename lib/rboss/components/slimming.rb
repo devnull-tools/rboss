@@ -63,7 +63,7 @@ module RBoss
     include Component, FileUtils
 
     def configure services_to_remove
-      @services_to_remove = services_to_remove.is_a?(Array) ? services_to_remove : [services_to_remove]
+      @services_to_remove = [*services_to_remove]
       @mapping = {}
       load_yaml('slimming').each do |key, values|
         @mapping[key.to_sym] = values

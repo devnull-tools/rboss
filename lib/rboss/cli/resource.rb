@@ -40,14 +40,13 @@ module RBoss
         if :all == resources and scannable?
           resources = scan
         end
-        resources = [resources] unless resources.is_a? Array
         params = @config[:print]
         params.each do |p|
           table_builder = RBoss::TableBuilder::new p
           table_builder.add_name_column if scannable?
           @tables << table_builder.build_table
         end
-        resources.each do |resource|
+        [*resources].each do |resource|
           @context[:name] = resource
           @context[:path] = parse(@config[:path])
 
