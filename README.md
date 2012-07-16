@@ -142,8 +142,12 @@ limits by using a :health key:
       :properties => %W(activeCount currentFree maxAvailable),
       :header => ['Active Count', 'Current Free', 'Max Available'],
       :health => {
-        :max => :max_available,
-        :using => :active_count #or use :free if you have the number of free resources
+        :active_count => {
+          :percentage => { # uses a percentage based check
+            :max => :max_available,
+            :using => :active_count #or use :free if you have the number of free resources
+          }
+        }
       },
       :scan => proc do
         # queries and pass each result do the block
