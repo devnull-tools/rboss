@@ -68,7 +68,7 @@ end
 opts.on('--save SERVER_NAME', "Saves the server configuration in #{servers_file}") do |server|
   save = server
 end
-opts.on('--loop INTERVAL', Float, 'Runs the mbean inside a loop') do |interval|
+opts.on('--loop INTERVAL', Float, 'Run inside a loop') do |interval|
   @loop = true
   @interval = interval
 end
