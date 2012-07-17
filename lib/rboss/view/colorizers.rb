@@ -9,6 +9,22 @@ module RBoss
       end
     end
 
+    def self.type type
+      Yummi::to_colorize do |value|
+        case type
+          when RBoss::Cli::ResultParser::STRING then
+            :green
+          when RBoss::Cli::ResultParser::INT,
+            RBoss::Cli::ResultParser::LONG then
+            :brown
+          when RBoss::Cli::ResultParser::BOOLEAN then
+            :purple
+          else
+            :gray
+        end
+      end
+    end
+
     def self.with color
       Yummi::to_colorize do |value|
         color

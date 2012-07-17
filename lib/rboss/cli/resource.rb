@@ -38,8 +38,8 @@ module RBoss
       end
 
       def invoke(operation, resource_names, arguments)
-        if respond_to? operation
-          send operation, resource_names, arguments
+        if respond_to? operation.to_key
+          send operation.to_key, resource_names, arguments
         else
           interact_to_invoke operation, resource_names, arguments
           Yummi.colorize('Operation Executed!', :green)
@@ -93,22 +93,10 @@ module RBoss
           table.aliases = %w(name type required default)
           table.colorize('name', :with => :white)
 
-          type_colorizer = Yummi::to_colorize do |value|
-            case value['type']
-              when RBoss::Cli::ResultParser::STRING then
-                :green
-              when RBoss::Cli::ResultParser::INT,
-                RBoss::Cli::ResultParser::LONG then
-                :brown
-              when RBoss::Cli::ResultParser::BOOLEAN then
-                :purple
-              else
-                :gray
-            end
-          end
-
           table.using_row do
-            table.colorize %w(type default), :using => type_colorizer
+            table.colorize %w(type default) do |value|
+              RBoss::Colorizers.type(value['type']).colorize(value)
+            end
           end
 
           table.format 'required', :using => RBoss::Formatters.yes_or_no

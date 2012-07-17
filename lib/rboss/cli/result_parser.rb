@@ -64,9 +64,8 @@ module RBoss
       LONG = Type::new 'LONG' do |string|
         string.to_i
       end
-      OBJECT = Type::new 'OBJECT' do |string|
-        "\"#{string}\""
-      end
+      LIST = Type::new 'LIST'
+      OBJECT = Type::new 'OBJECT'
 
       def eval_result(result)
         undefined = nil #prevents error because undefined means nil in result object

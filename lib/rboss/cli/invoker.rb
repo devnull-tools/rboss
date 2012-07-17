@@ -27,6 +27,7 @@ require_relative 'mappings'
 require 'logger'
 
 require 'yummi'
+require 'yaml'
 
 module RBoss
 
@@ -101,6 +102,7 @@ module RBoss
               puts Yummi::colorize(detail['description'], :intense_gray)
               required = detail['required']
               default_value = detail['default']
+              puts RBoss::Colorizers.type(detail['type']).colorize(detail['type'])
               puts Yummi::colorize("Required", :red) if required
               puts Yummi::colorize("Default: #{default_value}", :brown) if default_value
             end
@@ -108,7 +110,8 @@ module RBoss
           next if input.empty?
           builder << {:name => name, :value => detail['type'].convert(input)}
         end
-        result("#{path}:#{builder}")
+        result = result("#{path}:#{builder}")
+        puts YAML::dump(result)
       end
 
       def execute(*commands)

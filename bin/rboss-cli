@@ -90,7 +90,7 @@ end
 
 opts.on('-o', '--operation NAME',
         'Sets the operation to invoke (Defaults to "read-resource")') do |name|
-  @operation = name.to_key
+  @operation = name
 end
 
 opts.on('--skip-optional', 'Skips optional parameters while invoking a command ') do
