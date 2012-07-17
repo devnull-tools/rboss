@@ -32,7 +32,8 @@ require 'yummi'
 params = {}
 @conf_dir = File.expand_path "~/.rboss"
 servers_file = "#@conf_dir/jboss-cli-servers.yaml"
-@arguments = {}
+@resources = {}
+@parameters = {}
 @servers_file = File.expand_path(servers_file)
 @operation = :read_resource
 save = false
@@ -100,21 +101,26 @@ opts.on('--skip-default', 'Skips parameters with a default value while invoking 
   params[:skip_default] = true
 end
 
+opts.on('-a', '--args PARAMETERS', Array,
+        'Specifies parameters in form of (name=value) for use with operation') do |parameters|
+  @parameters = Hash[(parameters.collect {|p| p.split(/=/,2)})]
+end
+
 RBoss::Cli::Mappings.resource_mappings.each do |name, config|
   if config[:scan]
     opts.on("--#{name} [NAMES]", Array, config[:description]) do |resources|
-      @arguments[name] = resources
+      @resources[name] = resources
     end
   else
     opts.on("--#{name}", config[:description]) do
-      @arguments[name] = true
+      @resources[name] = true
     end
   end
 end
 
 opts.on('--all', 'Display all available info') do
   RBoss::Cli::Mappings.resource_mappings.each do |name, config|
-    @arguments[name] = nil unless config[:derived]
+    @resources[name] = nil unless config[:derived]
   end
 end
 
@@ -145,13 +151,17 @@ if save
   puts "Configuration saved!"
 end
 
-puts opts if @arguments.empty?
+puts opts if @resources.empty?
 
 def execute_actions
-  content = @jboss_cli.invoke(@operation, @arguments)
-  system "clear" if @loop
-  puts Yummi.colorize(Time.now.strftime("At %H:%M:%S%n"), :white) if @loop
-  puts content
+  begin
+    content = @jboss_cli.invoke(@operation, @resources, @parameters)
+    system "clear" if @loop
+    puts Yummi.colorize(Time.now.strftime("At %H:%M:%S%n"), :white) if @loop
+    puts content
+  rescue Exception => e
+    puts Yummi::colorize e.message, :intense_red
+  end
 end
 
 while @loop

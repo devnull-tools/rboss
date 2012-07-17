@@ -37,16 +37,16 @@ module RBoss
         @count = 0
       end
 
-      def invoke(operation, argument)
+      def invoke(operation, resource_names, arguments)
         if respond_to? operation
-          send operation, argument
+          send operation, resource_names, arguments
         else
-          interact_to_invoke operation, argument
+          interact_to_invoke operation, resource_names, arguments
           Yummi.colorize('Operation Executed!', :green)
         end
       end
 
-      def read_resource(resources)
+      def read_resource(resources, arguments)
         resources ||= scan
         params = @config[:print]
         params.each do |p|
@@ -69,12 +69,28 @@ module RBoss
         result
       end
 
+      def read_operation_names(resource_name, arguments)
+        resource_name ||= ''
+        operations = Yummi::colorize('Operations:', :yellow)
+        operations << $/
+        with resource_name do
+          result = @invoker.result("#{@context[:path]}:read-operation-names")
+          result.each do |operation|
+            operations << Yummi::colorize('- ', :intense_purple)
+            operations << Yummi::colorize(operation, :intense_blue) << $/
+          end
+        end
+        operations
+      end
+
+      alias_method :list_operations, :read_operation_names
+
       private
 
-      def interact_to_invoke(operation, resource_name)
+      def interact_to_invoke(operation, resource_name, arguments)
         resource_name ||= operation
         with resource_name do
-          @invoker.gets_and_invoke(@context[:path], operation)
+          @invoker.gets_and_invoke(@context[:path], operation, arguments)
         end
       end
 
@@ -116,12 +132,16 @@ module RBoss
 
       def get_data(config)
         command = parse((config[:command] or '${PATH}:read-resource(include-runtime=true)'))
-        result = @invoker.result(command)
-        data = []
-        config[:properties].each do |prop|
-          data << get_property(prop, result)
+        begin
+          result = @invoker.result(command)
+          data = []
+          config[:properties].each do |prop|
+            data << get_property(prop, result)
+          end
+          data
+        rescue
+          nil
         end
-        data
       end
 
       def get_property(prop, result)

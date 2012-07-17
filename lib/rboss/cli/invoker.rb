@@ -74,20 +74,20 @@ module RBoss
         command
       end
 
-      def invoke(operation, components)
+      def invoke(operation, resources, parameters)
         buff = ""
-        components.each do |key, resource_names|
+        resources.each do |key, resource_names|
           if resource_mappings.has_key? key
             mapping = resource_mappings[key]
             resource = RBoss::Cli::Resource::new(self, mapping)
-            result = resource.invoke(operation, resource_names)
+            result = resource.invoke(operation, resource_names, parameters)
             buff << result.to_s if result
           end
         end
         buff
       end
 
-      def gets_and_invoke(path, operation)
+      def gets_and_invoke(path, operation, parameters)
         result = result("#{path}:read-operation-description(name=#{operation})")
         result["request-properties"] ||= {}
         puts Yummi.colorize(result['description'], :yellow)
@@ -96,10 +96,14 @@ module RBoss
           required = detail['required']
           default_vakue = detail['default']
           next if (@skip_optional and not required) or (@skip_default and default_vakue)
-          puts Yummi.colorize(name, :intense_blue)
-          puts Yummi.colorize(detail['description'], :intense_gray)
-          puts "Enter parameter value: "
-          input = gets.chomp
+          input = parameters[name]
+          unless input
+            puts Yummi.colorize(name, :intense_blue)
+            puts "Enter parameter value (type --help for a description): "
+            while (input = gets.chomp) == '--help'
+              puts Yummi.colorize(detail['description'], :intense_gray)
+            end
+          end
           next if input.empty?
           builder << {:name => name, :value => detail['type'].convert(input)}
         end
