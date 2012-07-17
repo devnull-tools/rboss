@@ -89,16 +89,16 @@ module RBoss
       def gets_and_invoke(path, operation, parameters)
         result = result("#{path}:read-operation-description(name=#{operation})")
         result["request-properties"] ||= {}
-        puts Yummi.colorize(result['description'], :yellow)
+        puts Yummi::colorize("Please input the requested parameters", :yellow)
         builder = CommandBuilder::new operation
         result["request-properties"].each do |name, detail|
           next if (@skip_optional and not detail['required'] or detail['default'])
           input = parameters[name]
           unless input
-            puts Yummi.colorize(name, :intense_blue)
+            puts Yummi::colorize(name, :intense_blue)
             puts "Enter parameter value (type --help to get the parameter description): "
             while (input = gets.chomp) == '--help'
-              puts Yummi.colorize(detail['description'], :intense_gray)
+              puts Yummi::colorize(detail['description'], :intense_gray)
               required = detail['required']
               default_value = detail['default']
               puts Yummi::colorize("Required", :red) if required
