@@ -97,10 +97,6 @@ opts.on('--skip-optional', 'Skips optional parameters while invoking a command '
   params[:skip_optional] = true
 end
 
-opts.on('--skip-default', 'Skips parameters with a default value while invoking a command ') do
-  params[:skip_default] = true
-end
-
 opts.on('-a', '--args PARAMETERS', Array,
         'Specifies parameters in form of (name=value) for use with operation') do |parameters|
   @parameters = Hash[(parameters.collect {|p| p.split(/=/,2)})]
@@ -159,7 +155,7 @@ def execute_actions
     system "clear" if @loop
     puts Yummi.colorize(Time.now.strftime("At %H:%M:%S%n"), :white) if @loop
     puts content
-  rescue Exception => e
+  rescue RBoss::Cli::InvocationFailed => e
     puts Yummi::colorize e.message, :intense_red
   end
 end

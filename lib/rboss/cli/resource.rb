@@ -70,7 +70,6 @@ module RBoss
       end
 
       def read_operation_names(resource_name, arguments)
-        resource_name ||= ''
         operations = Yummi::colorize('Operations:', :yellow)
         operations << $/
         with resource_name do
@@ -83,7 +82,49 @@ module RBoss
         operations
       end
 
+      def read_operation_description (resource_name, arguments)
+        table = Yummi::Table::new
+        with resource_name do
+          result = @invoker.result(
+            "#{@context[:path]}:read-operation-description(name=#{arguments['name']})"
+          )
+          table.title = result['description']
+          table.header = %w(Parameter Type Required Default)
+          table.aliases = %w(name type required default)
+          table.colorize('name', :with => :white)
+
+          type_colorizer = Yummi::to_colorize do |value|
+            case value['type']
+              when RBoss::Cli::ResultParser::STRING then
+                :green
+              when RBoss::Cli::ResultParser::INT,
+                RBoss::Cli::ResultParser::LONG then
+                :brown
+              when RBoss::Cli::ResultParser::BOOLEAN then
+                :purple
+              else
+                :gray
+            end
+          end
+
+          table.using_row do
+            table.colorize %w(type default), :using => type_colorizer
+          end
+
+          table.format 'required', :using => RBoss::Formatters.yes_or_no
+          table.colorize 'required', :using => RBoss::Colorizers.boolean
+
+          result["request-properties"] ||= {}
+          result["request-properties"].each do |name, detail|
+            detail['name'] = name
+            table << detail
+          end
+        end
+        table
+      end
+
       alias_method :list_operations, :read_operation_names
+      alias_method :detail_operation, :read_operation_description
 
       private
 
@@ -95,6 +136,7 @@ module RBoss
       end
 
       def with(resources)
+        resources ||= ''
         [*resources].each do |resource|
           @context[:name] = resource
           @context[:path] = parse(@config[:path])

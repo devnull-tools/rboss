@@ -62,7 +62,6 @@ module RBoss
           @logger.formatter = formatter
         end
 
-        @skip_default = params[:skip_default]
         @skip_optional = params[:skip_optional]
       end
 
@@ -93,15 +92,17 @@ module RBoss
         puts Yummi.colorize(result['description'], :yellow)
         builder = CommandBuilder::new operation
         result["request-properties"].each do |name, detail|
-          required = detail['required']
-          default_vakue = detail['default']
-          next if (@skip_optional and not required) or (@skip_default and default_vakue)
+          next if (@skip_optional and not detail['required'] or detail['default'])
           input = parameters[name]
           unless input
             puts Yummi.colorize(name, :intense_blue)
-            puts "Enter parameter value (type --help for a description): "
+            puts "Enter parameter value (type --help to get the parameter description): "
             while (input = gets.chomp) == '--help'
               puts Yummi.colorize(detail['description'], :intense_gray)
+              required = detail['required']
+              default_value = detail['default']
+              puts Yummi::colorize("Required", :red) if required
+              puts Yummi::colorize("Default: #{default_value}", :brown) if default_value
             end
           end
           next if input.empty?

@@ -4,14 +4,13 @@ module RBoss
   module Colorizers
 
     def self.boolean params = {}
-      lambda do |value|
-        return (params[:if_true] or :green) if value
-        params[:if_false] or :brown
+      Yummi::to_colorize do |value|
+        value ? (params[:if_true] or :green) : (params[:if_false] or :brown)
       end
     end
 
     def self.with color
-      lambda do |value|
+      Yummi::to_colorize do |value|
         color
       end
     end

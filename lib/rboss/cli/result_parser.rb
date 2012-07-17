@@ -22,9 +22,20 @@
 
 module RBoss
   module Cli
+
+    class InvocationFailed < Exception
+
+      def initialize(message)
+        super(message)
+      end
+
+    end
+
     module ResultParser
 
       class Type
+
+        attr_reader :name
 
         def initialize (name, &block)
           @name = name
@@ -35,12 +46,8 @@ module RBoss
           @converter_block.call value
         end
 
-      end
-
-      class InvocationFailed < Exception
-
-        def initialize(message)
-          super(message)
+        def to_s
+          @name
         end
 
       end
