@@ -115,7 +115,7 @@ module RBoss
       end
 
       def execute(*commands)
-        exec = "#{command} --commands=\"#{commands.join ','}\""
+        exec = "#{command} --command#{commands.size > 1 ? 's' : ''}=\"#{commands.join ','}\""
         @logger.debug exec
         `#{exec}`.chomp
       end
