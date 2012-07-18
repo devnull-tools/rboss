@@ -83,15 +83,19 @@ module RBoss
       end
 
       def read_operation_description (resource_name, arguments)
-        table = Yummi::Table::new
-        resource_name ||= 'any' if scannable?
+        # scannable resources requires a name
+        resource_name ||= 'any' if scannable? # to get operation description (even if the
+                                              # name does not belong to any resource)
+        buff = ''
         with resource_name do
           operation_name = arguments['name']
+          table = Yummi::Table::new
+          buff << Yummi::colorize(operation_name, :intense_green) << $/
           result = @invoker.result(
             "#{@context[:path]}:read-operation-description(name=#{operation_name})"
           )
-          table.title = operation_name
-          table.description = result['description']
+          buff << Yummi::colorize(result['description'], :intense_gray) << $/ * 2
+          table.title = 'Request'
           table.header = %w(Parameter Type Required Default)
           table.aliases = %w(name type required default)
           table.colorize('name', :with => :white)
@@ -110,14 +114,52 @@ module RBoss
             detail['name'] = name
             table << detail
           end
+          buff << table.to_s << $/
+
+          table = Yummi::Table::new
+          table.title = 'Response'
+          table.header = %w(Parameter Type Nilable Unit)
+          table.aliases = %w(name type nilable unit)
+
+          table.colorize 'name', :with => :white
+
+          table.using_row do
+            table.colorize 'type' do |value|
+              RBoss::Colorizers.type(value['type']).color_for(value)
+            end
+          end
+
+          table.format 'nilable', :using => RBoss::Formatters.yes_or_no
+          table.colorize 'nilable', :using => RBoss::Colorizers.boolean
+
+          result["reply-properties"] ||= {}
+          result = result["reply-properties"]
+          table.description = result['description']
+          table << result
+          build_nested(result).each do |nested|
+            table << nested
+          end
+          buff << table.to_s << $/
         end
-        table
+        buff
       end
 
       alias_method :list_operations, :read_operation_names
       alias_method :detail_operation, :read_operation_description
 
       private
+
+      def build_nested(detail, parent_name = '', result = [])
+        if detail['value-type']
+          detail['value-type'].each do |name, _detail|
+            name = "#{parent_name}#{name}"
+            _detail['name'] = name
+            result << _detail
+            build_nested(_detail, "#{name} => ", result)
+          end
+        end
+        result
+      end
 
       def interact_to_invoke(operation, resource_name, arguments)
         resource_name ||= operation

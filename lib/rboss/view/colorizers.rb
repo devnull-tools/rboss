@@ -20,7 +20,7 @@ module RBoss
           when RBoss::Cli::ResultParser::BOOLEAN then
             :purple
           else
-            :gray
+            :cyan
         end
       end
     end
