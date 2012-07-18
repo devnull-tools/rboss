@@ -91,7 +91,7 @@ module RBoss
 
     def name
       if pattern['#{resource}'] and not @resource
-        domain,name = pattern.split ':'
+        domain, name = pattern.split ':'
         name.gsub! /[^,]+\{resource\}/, ''
         name << "," if name.empty?
         name << "*"
@@ -107,7 +107,7 @@ module RBoss
       result = @twiddle.execute(:get, query, property)
 
       def result.value
-        self.split(/=/)[1..-1].join "="
+        self.split(/=/, 2)[1]
       end
 
       result
