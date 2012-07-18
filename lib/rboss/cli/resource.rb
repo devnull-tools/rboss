@@ -84,18 +84,21 @@ module RBoss
 
       def read_operation_description (resource_name, arguments)
         table = Yummi::Table::new
+        resource_name ||= 'any' if scannable?
         with resource_name do
+          operation_name = arguments['name']
           result = @invoker.result(
-            "#{@context[:path]}:read-operation-description(name=#{arguments['name']})"
+            "#{@context[:path]}:read-operation-description(name=#{operation_name})"
           )
-          table.title = result['description']
+          table.title = operation_name
+          table.description = result['description']
           table.header = %w(Parameter Type Required Default)
           table.aliases = %w(name type required default)
           table.colorize('name', :with => :white)
 
           table.using_row do
             table.colorize %w(type default) do |value|
-              RBoss::Colorizers.type(value['type']).colorize(value)
+              RBoss::Colorizers.type(value['type']).color_for(value)
             end
           end
 
