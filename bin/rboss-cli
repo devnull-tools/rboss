@@ -154,7 +154,7 @@ def execute_actions
     content = @jboss_cli.invoke(@operation, @resources, @parameters)
     system "clear" if @loop
     puts Yummi.colorize(Time.now.strftime("At %H:%M:%S%n"), :white) if @loop
-    puts content
+    puts content.chomp
   rescue RBoss::Cli::InvocationFailed => e
     puts Yummi::colorize e.message, :intense_red
   end
