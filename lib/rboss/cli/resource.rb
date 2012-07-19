@@ -83,9 +83,6 @@ module RBoss
       end
 
       def read_operation_description (resource_name, arguments)
-        # scannable resources requires a name
-        resource_name ||= 'any' if scannable? # to get operation description (even if the
-                                              # name does not belong to any resource)
         buff = ''
         with resource_name do
           operation_name = arguments['name']
@@ -108,13 +105,14 @@ module RBoss
 
           table.format 'required', :using => RBoss::Formatters.yes_or_no
           table.colorize 'required', :using => RBoss::Colorizers.boolean
-
           result["request-properties"] ||= {}
-          result["request-properties"].each do |name, detail|
-            detail['name'] = name
-            table << detail
+          unless result["request-properties"].empty?
+            result["request-properties"].each do |name, detail|
+              detail['name'] = name
+              table << detail
+            end
+            buff << table.to_s << $/
           end
-          buff << table.to_s << $/
 
           table = Yummi::Table::new
           table.title = 'Response'
@@ -131,15 +129,16 @@ module RBoss
 
           table.format 'nilable', :using => RBoss::Formatters.yes_or_no
           table.colorize 'nilable', :using => RBoss::Colorizers.boolean
-
           result["reply-properties"] ||= {}
-          result = result["reply-properties"]
-          table.description = result['description']
-          table << result
-          build_nested(result).each do |nested|
-            table << nested
+          unless result["reply-properties"].empty?
+            result = result["reply-properties"]
+            table.description = result['description']
+            table << result
+            build_nested(result).each do |nested|
+              table << nested
+            end
+            buff << table.to_s << $/
           end
-          buff << table.to_s << $/
         end
         buff
       end
