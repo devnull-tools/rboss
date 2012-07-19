@@ -19,6 +19,15 @@ print:
   - System Load
   format:
     system_load: percentage
+  color:
+      name:
+        with: white
+      system_load:
+        threshold:
+          0.8: intense_red
+          0.7: red
+          0.5: brown
+          0: green
 
 - id: env
   title: Server Environment Information

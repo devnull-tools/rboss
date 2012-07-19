@@ -9,6 +9,15 @@ module RBoss
       end
     end
 
+    def self.threshold params
+      colorize = lambda do |value|
+        params.sort.reverse_each do |limit, color|
+          return color if value > limit
+        end
+      end
+      Yummi::to_colorize &colorize
+    end
+
     def self.type type
       Yummi::to_colorize do |value|
         case type

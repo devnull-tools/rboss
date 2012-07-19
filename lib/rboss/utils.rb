@@ -55,7 +55,8 @@ class Hash
           end
         end
       end
-      h[k.to_sym] = v
+      k = k.to_sym if k.respond_to? :to_sym
+      h[k] = v
       h
     end)
   end
