@@ -16,7 +16,7 @@ module RBoss
             :green
           when RBoss::Cli::ResultParser::INT,
             RBoss::Cli::ResultParser::LONG then
-            :brown
+            :blue
           when RBoss::Cli::ResultParser::BOOLEAN then
             :purple
           else
