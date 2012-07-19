@@ -161,7 +161,6 @@ module RBoss
       end
 
       def interact_to_invoke(operation, resource_name, arguments)
-        resource_name ||= operation
         with resource_name do
           @invoker.gets_and_invoke(@context[:path], operation, arguments)
         end
