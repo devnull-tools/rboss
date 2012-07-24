@@ -46,10 +46,6 @@ def load_yaml
   YAML::load_file(@servers_file)
 end
 
-unless $stdout.isatty
-  require 'yummi/no_colors'
-end
-
 opts = OptionParser::new
 opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') do |home|
   params[:jboss_home] = home

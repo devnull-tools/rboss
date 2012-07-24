@@ -10,6 +10,71 @@ Installation
 
     gem install rboss
 
+### Dependencies
+
+    * yummi
+
+Using rboss-cli
+-----------
+
+rboss-cli is a helper tool for jboss-cli, it maps resource paths and helps the operation
+invoke.
+
+### Basics
+
+Invoke the command for a list of mapped resources:
+
+    rboss-cli --help
+
+You can scan resources, detail information and execute operations.
+
+    rboss-cli --datasource
+    rboss-cli --server-memory
+    rboss-cli --server --operation shutdown
+
+### Invoking Operations
+
+To see the operations for a resource, use the option "--list-operations"
+
+    rboss-cli --server --list-operations
+
+To detail an operation, use the option "--detail-operation"
+
+    rboss-cli --server --detail-operation shutdown
+
+This will print a table showing both request and response parameters. To invoke the
+operation, use the "--operation" (or "-o") option
+
+    rboss-cli --server --operation shutdown
+    rboss-cli --server -o shutdown
+
+Since this operation requires a parameter, rboss-cli will ask you to input them. If you
+want to pass the required parameters, use the "--arguments" (or "-a") option
+
+    rboss-cli --server --operation shutdown --arguments restart=true
+    rboss-cli --server -o shutdown -a restart=true
+
+If you want to skip optional arguments, use the "--skip-optional". rboss-cli will not ask
+you to input the arguments, leaving "--arguments" as the only way to set them.
+
+### Known Issues
+
+The datasource mapping (--datasource) retrieves incorrect information if you call either
+detail operation or invoke operation for the operation add. This is caused because the
+command '/subsystem=datasources/data-source=:read-operation-description(name=add)' needs
+to be executed as
+'/subsystem=datasources/data-source=ANY_VALUE:read-operation-description(name=add)',
+leaving the '--datasource any' as a workaround.
+
+    rboss-cli --datasource --detail-operation add
+    rboss-cli --datasource a --detail-operation add
+
+### Extending mappings
+
+### Using colors
+
+### Using health checkers
+
 Using twiddle
 -----------
 

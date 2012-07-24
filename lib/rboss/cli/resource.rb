@@ -143,9 +143,6 @@ module RBoss
         buff
       end
 
-      alias_method :list_operations, :read_operation_names
-      alias_method :detail_operation, :read_operation_description
-
       private
 
       def build_nested(detail, parent_name = '', result = [])

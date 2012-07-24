@@ -93,13 +93,22 @@ opts.on('-o', '--operation NAME',
   @operation = name
 end
 
+opts.on('--list-operations', 'Lists the available operations for a resource') do
+  @operation = 'read-operation-names'
+end
+
+opts.on('--detail-operation NAME', 'Shows the operation details') do |operation_name|
+  @operation = 'read-operation-description'
+  @parameters = {'name' => operation_name}
+end
+
 opts.on('--skip-optional', 'Skips optional parameters while invoking a command ') do
   params[:skip_optional] = true
 end
 
 opts.on('-a', '--args PARAMETERS', Array,
         'Specifies parameters in form of (name=value) for use with operation') do |parameters|
-  @parameters = Hash[(parameters.collect {|p| p.split(/=/,2)})]
+  @parameters = Hash[(parameters.collect { |p| p.split(/=/, 2) })]
 end
 
 RBoss::Cli::Mappings.resource_mappings.each do |name, config|
@@ -126,10 +135,6 @@ end
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
 
 @jboss_cli = RBoss::Cli::Invoker::new params
-
-unless $stdout.isatty
-  require 'yummi/no_colors'
-end
 
 if save
   config = load_yaml

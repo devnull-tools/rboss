@@ -89,28 +89,38 @@ module RBoss
 
       def gets_and_invoke(path, operation, parameters)
         result = result("#{path}:read-operation-description(name=#{operation})")
-        result["request-properties"] ||= {}
-        puts Yummi::colorize("Please input the requested parameters", :yellow)
+        props = result["request-properties"]
+        props ||= {}
         builder = CommandBuilder::new operation
-        result["request-properties"].each do |name, detail|
+        help_printed = false
+        info = Yummi::colorize("Please input the requested parameters", :yellow)
+        props.each do |name, detail|
           next if (@skip_optional and not detail['required'] or detail['default'])
           input = parameters[name]
           unless input
-            puts Yummi::colorize(name, :intense_blue)
-            puts "Enter parameter value (type --help to get the parameter description): "
-            while (input = gets.chomp) == '--help'
-              puts Yummi::colorize(detail['description'], :intense_gray)
-              required = detail['required']
-              default_value = detail['default']
-              puts RBoss::Colorizers.type(detail['type']).colorize(detail['type'])
-              puts Yummi::colorize("Required", :red) if required
-              puts Yummi::colorize("Default: #{default_value}", :brown) if default_value
+            puts info unless help_printed
+            help_printed = true
+            input_message = Yummi::colorize(name, :intense_blue)
+            required = detail['required']
+            default_value = detail['default']
+            input_message << ' | ' << RBoss::Colorizers.type(detail['type']).colorize(detail['type'])
+            input_message << ' | ' << Yummi::colorize("Required", :red) if required
+            input_message << ' | ' << Yummi::colorize("Optional", :brown) unless required
+            input_message << ' | ' << Yummi::colorize("Default: #{default_value}", :brown) if default_value
+            input_message << "\n" << Yummi::colorize(detail['description'], :intense_gray)
+            puts input_message
+            input = get_input
+            while required and input.empty?
+              puts Yummi::colorize("Required parameter!", :red)
+              input = get_input
             end
           end
           next if input.empty?
           builder << {:name => name, :value => detail['type'].convert(input)}
         end
         result = result("#{path}:#{builder}")
+        puts Yummi::colorize("Result:", :yellow)
+        #TODO print a table using the returned parameters
         puts YAML::dump(result)
       end
 
@@ -122,6 +132,12 @@ module RBoss
 
       def result(*commands)
         eval_result(execute commands)
+      end
+
+      private
+
+      def get_input
+        gets.chomp.strip
       end
 
     end
