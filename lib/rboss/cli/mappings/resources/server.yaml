@@ -96,10 +96,10 @@ print:
 
   color:
     max_heap:
-      with: intense_purple
+      with: cyan
 
     max_non_heap:
-      with: intense_purple
+      with: cyan
 
     committed_heap:
       with: purple
