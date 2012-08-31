@@ -93,7 +93,7 @@ opts.on('-o', '--operation NAME',
   @operation = name
 end
 
-opts.on('l', '--list-operations', 'Lists the available operations for a resource') do
+opts.on('-l', '--list-operations', 'Lists the available operations for a resource') do
   @operation = 'read-operation-names'
 end
 
