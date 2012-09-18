@@ -1,9 +1,9 @@
 out
 rboss.iws
-rboss.ipr
-rboss.iml
 *.gem
 .bundle
 Gemfile.lock
 pkg/*
 .rakeTasks
+*.sublime-project
+*.sublime-workspace
