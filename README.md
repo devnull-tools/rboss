@@ -69,11 +69,86 @@ leaving the '--datasource any' as a workaround.
     rboss-cli --datasource --detail-operation add
     rboss-cli --datasource a --detail-operation add
 
-### Extending mappings
+### Configuring mappings
 
-### Using colors
+To create and override mappings, just put a yaml file in "~/.rboss/rboss-cli/resources". The filename will
+be used to identify the operation. Example: placing a file named datasource.yaml will override the
+--datasource option and a file named logger.yaml will create a new option (--logger).
 
-### Using health checkers
+The yaml must contain the given definitions:
+
+* description: an explaining text to appear in command usage (--help)
+* path: the path to invoke the operations, may take a ${NAME} if the path contains a resource name
+* scan (optional): a command to scan resources (by using this, the option may take an array of resource names)
+* print (optional): an array of table definitions to print with "read-resource" operation.
+
+To configure a table to print, just use the following parameters:
+
+* id: a name that will be joined to the file name to allow print only this table
+* title: the table title
+* layout (horizontal | vertical): how the table must be printed. Use vertical for large number of properties
+* properties: an array with the properties (returned by "read-resource") to print in this table
+* header: an array that maps a header text to the properties
+* format: a hash that maps formatters to the table columns
+* color: a hash that maps colors to the table columns
+* health: a hash that maps health checkers to the table columns
+
+All mappings (formatter, colorizer and health checker) should be mapped using the following conventions:
+
+* the key should be the property name (replace '-' with '_')
+* the value should be the message to send to RBoss::Formatters, RBoss::HealthCheckers or RBoss::Colorizers
+* if the message takes parameters, they must be specified in a form of a hash after the message
+
+Examples:
+
+    health:
+        active:
+          percentage:
+            max: available
+            using: active
+    color:
+      jndi_name:
+        with: purple
+      enabled: boolean
+      connection_url:
+        with: brown
+
+    format:
+      system_load: percentage
+    color:
+        name:
+          with: white
+        system_load:
+          threshold:
+            0.8: intense_red
+            0.7: red
+            0.5: brown
+            0: green
+
+### Adding new components
+
+To add new Colorizers, Formatters or HealthCheckers, just put the code in the "~/.rboss/rboss.rb".
+
+Example:
+
+    module RBoss::Colorizers
+      def self.my_colorizer
+        lambda do |value|
+          value ? :red : :green
+        end
+      end
+    end
+
+From now you can use this colorizer
+
+    color:
+      name: my_colorizer
+
+The components included are defined in the following files:
+
+* /lib/rboss/view/colorizers.rb
+* /lib/rboss/view/formatters.rb
+* /lib/rboss/view/health_checkers.rb
 
 Using twiddle
 -----------
@@ -139,7 +214,7 @@ And used with -c or --config
 
 ### Customizing MBeans
 
-Every time you run the twiddle command, this gem will load the ~/.rboss/twiddle.rb file,
+Every time you run the twiddle command, this gem will load the ~/.rboss/rboss.rb file,
 which can be used to customize the mbeans.
 
     defaults = RBoss::Twiddle::Monitor.defaults

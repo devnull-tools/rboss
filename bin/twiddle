@@ -86,7 +86,7 @@ end
 
 (defaults.sort_by { |k, v| k }).each do |mbean_id, mbean|
   next if mbean[:properties] and not mbean[:scan] and mbean[:pattern]['#{resource}']
-  command = mbean_id.to_s.gsub /_/, '-'
+  command = mbean_id.to_s.gsub(/_/, '-')
   if mbean[:scan]
     opts.on("--#{command} [name_a,name_b,...]", Array,
             "Detail \"#{mbean[:description]}\" based on the given names (no names for scan)") do |names|
@@ -172,7 +172,7 @@ end
 
 def extract resource
   mbean, name = resource.split(/:/)
-  mbean.gsub! /-/, '_'
+  mbean.gsub!(/-/, '_')
   [mbean, name]
 end
 

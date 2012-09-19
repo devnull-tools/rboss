@@ -30,3 +30,7 @@ require_relative "rboss/jboss_profile"
 require_relative "rboss/twiddle"
 require_relative "rboss/cli/invoker"
 require_relative "rboss/bin/command_actions"
+
+file = File.expand_path("~/.rboss/rboss.rb")
+
+eval File.read(file), binding, file if File.exist? file

@@ -108,7 +108,7 @@ end
 
 opts.on('-a', '--args PARAMETERS', Array,
         'Specifies parameters in form of (name=value) for use with operation') do |parameters|
-  @parameters = Hash[(parameters.collect { |p| p.split(/=/, 2) })]
+  @parameters = Hash[(parameters.collect { |p| p.split( /=/, 2) })]
 end
 
 RBoss::Cli::Mappings.resource_mappings.each do |name, config|

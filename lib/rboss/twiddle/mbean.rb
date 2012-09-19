@@ -107,7 +107,7 @@ module RBoss
       result = @twiddle.execute(:get, query, property)
 
       def result.value
-        self.split(/=/, 2)[1]
+        self.split( /=/, 2)[1]
       end
 
       result
