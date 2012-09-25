@@ -48,18 +48,6 @@ print:
     server_name:
       with: white
 
-    node_name:
-      with: blue
-
-    host_name:
-      with: brown
-
-    initial_running_mode:
-      with: purple
-
-    launch_type:
-      with: cyan
-
 - id: memory
   title: Server Memory Usage
   layout: vertical
