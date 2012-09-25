@@ -27,12 +27,11 @@ module RBoss
     #   - MINIMUN_VALUE: COLOR_TO_USE
     #
     def self.threshold params
-      colorize = lambda do |value|
+      Yummi::to_colorize do |value|
         params.sort.reverse_each do |limit, color|
           return color if value > limit
         end
       end
-      Yummi::to_colorize(&colorize)
     end
     
     #
