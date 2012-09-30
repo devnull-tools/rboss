@@ -297,8 +297,9 @@ limits by using a :health key:
       end
     }
 
-You can use the indexes of the values (in that case, 2 for :max and 0 for :using) or the
-header values in downcase and underscores.
+Customizing health, formatters and colors are the same as customizing in rboss-cli. You can
+use the indexes of the values (in that case, 2 for :max and 0 for :using) or the header values
+in downcase and underscores.
 
 Using jboss-profile
 -----------
