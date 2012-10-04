@@ -103,8 +103,8 @@ module RBoss
             end
           end
 
-          table.format 'required', :using => RBoss::Formatters.yes_or_no
-          table.colorize 'required', :using => RBoss::Colorizers.boolean
+          table.format 'required', :using => Yummi::Formatters.boolean
+          table.colorize 'required', :using => Yummi::Colorizers.boolean
           result["request-properties"] ||= {}
           unless result["request-properties"].empty?
             result["request-properties"].each do |name, detail|
@@ -127,8 +127,8 @@ module RBoss
             end
           end
 
-          table.format 'nilable', :using => RBoss::Formatters.yes_or_no
-          table.colorize 'nilable', :using => RBoss::Colorizers.boolean
+          table.format 'nilable', :using => Yummi::Formatters.boolean
+          table.colorize 'nilable', :using => Yummi::Colorizers.boolean
           result["reply-properties"] ||= {}
           unless result["reply-properties"].empty?
             result = result["reply-properties"]
@@ -182,7 +182,7 @@ module RBoss
 
       def parse(value)
         return nil unless value
-        result = value.scan /\$\{\w+\}/
+        result = value.scan(/\$\{\w+\}/)
         result.each do |matched|
           key = matched[2...-1].downcase.to_sym
           value = value.gsub(matched, @context[key].to_s)

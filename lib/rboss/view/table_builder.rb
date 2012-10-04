@@ -37,31 +37,27 @@ module RBoss
     end
 
     def build_table
-      table = Yummi::Table::new
-      table.title = (@config[:title] or @config[:description])
-      header = @config[:header]
-      header = [@name_column] + header if @name_column
+      if @name_column
+        @config[:header] = [] if @only_name
+        @config[:header] = [@name_column] + @config[:header]
+      end
+
       if @config[:aliases]
         aliases = @config[:aliases]
         aliases = [:name] + aliases if @name_column
-        table.aliases = aliases
-      end
-      table.header = header if header
-      table.layout = @config[:layout].to_sym if @config[:layout]
-
-      parse_component @config[:format], RBoss::Formatters do |column, params|
-        table.format column, params
-      end
-      parse_component @config[:color], RBoss::Colorizers do |column, params|
-        table.colorize column, params
-      end
-      parse_component @config[:health], RBoss::HealthCheckers do |column, params|
-        table.using_row do
-          table.colorize column, params
-        end
+        @config[:aliases] = aliases
       end
 
-      table.header = [@name_column] if @only_name
+      builder = Yummi::TableBuilder::new(@config).defaults
+      builder.component :health,  :repository => :using_row_colorizers,
+                                  :invoke     => :colorize,
+                                  :using_row  => true
+
+      builder.repositories[:using_row_colorizers] << RBoss::HealthCheckers
+      builder.repositories[:colorizers] << RBoss::Colorizers
+      builder.repositories[:formatters] << RBoss::Formatters
+
+      table = builder.build_table
 
       table.format_null :with => 'undefined'
       table.colorize_null :with => :red
@@ -70,24 +66,7 @@ module RBoss
 
       table
     end
-
-    def parse_component(config, repository)
-      if config
-        config.each do |column, component_config|
-          component = nil
-          if component_config.is_a? Hash
-            component = Yummi::GroupedComponent::new
-            component_config.each do |component_name, params|
-              component << repository.send(component_name, params)
-            end
-          else
-            component = repository.send(component_config)
-          end
-          yield(column, :using => component)
-        end
-      end
-    end
-
+    
   end
 
 end

@@ -40,8 +40,8 @@ print:
       bytes_sent: byte
       max_post_size: byte
       max_save_post_size: byte
-      enabled: yes_or_no
-      secure: yes_or_no
+      enabled: boolean
+      secure: boolean
 
     color:
       scheme:

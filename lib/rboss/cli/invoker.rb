@@ -105,8 +105,8 @@ module RBoss
             default_value = detail['default']
             input_message << ' | ' << RBoss::Colorizers.type(detail['type']).colorize(detail['type'])
             input_message << ' | ' << Yummi::colorize("Required", :red) if required
-            input_message << ' | ' << Yummi::colorize("Optional", :brown) unless required
-            input_message << ' | ' << Yummi::colorize("Default: #{default_value}", :brown) if default_value
+            input_message << ' | ' << Yummi::colorize("Optional", :cyan) unless required
+            input_message << ' | ' << Yummi::colorize("Default: #{default_value}", :blue) if default_value
             input_message << "\n" << Yummi::colorize(detail['description'], :intense_gray)
             puts input_message
             input = get_input

@@ -7,66 +7,67 @@ print:
   title: Datasource Details
   layout: vertical
   properties:
-  - jndi-name
-  - connection-url
-  - driver-name
-  - user-name
-  - password
-  - jta
-  - min-pool-size
-  - max-pool-size
-  - enabled
+    - jndi-name
+    - connection-url
+    - driver-name
+    - user-name
+    - password
+    - jta
+    - min-pool-size
+    - max-pool-size
+    - enabled
   header:
-  - JNDI Name
-  - Connection URL
-  - Driver Name
-  - User Name
-  - Password
-  - Using JTA
-  - Min Pool Size
-  - Max Pool Size
-  - Enabled
+    - JNDI Name
+    - Connection URL
+    - Driver Name
+    - User Name
+    - Password
+    - Using JTA
+    - Min Pool Size
+    - Max Pool Size
+    - Enabled
   format:
-    enabled: yes_or_no
-    using_jta: yes_or_no
+    enabled: boolean
+    using_jta: boolean
 
   color:
     jndi_name:
       with: purple
     enabled: boolean
+    using_jta: boolean
     connection_url:
-      with: brown
+      with: yellow
 
 - id: pool
   title: Datasource Pool Statistics
   path: ${PATH}/statistics=pool
   layout: vertical
   properties:
-  - ActiveCount
-  - AvailableCount
-  - AverageBlockingTime
-  - AverageCreationTime
-  - CreatedCount
-  - DestroyedCount
-  - MaxCreationTime
-  - MaxUsedCount
-  - MaxWaitTime
-  - TimedOut
-  - TotalBlockingTime
-  - TotalCreationTime
+    - ActiveCount
+    - AvailableCount
+    - AverageBlockingTime
+    - AverageCreationTime
+    - CreatedCount
+    - DestroyedCount
+    - MaxCreationTime
+    - MaxUsedCount
+    - MaxWaitTime
+    - TimedOut
+    - TotalBlockingTime
+    - TotalCreationTime
 
   header:
-  - Active
-  - Available
-  - Average Blocking
-  - Average Creation
-  - Created
-  - Destroyed
-  - Max Creation
-  - Max Wait
-  - Timed Out
-  - Total Blocking
-  - Total Creation
+    - Active
+    - Available
+    - Average Blocking
+    - Average Creation
+    - Created
+    - Destroyed
+    - Max Creation
+    - Max Wait
+    - Timed Out
+    - Total Blocking
+    - Total Creation
 
   health:
     active:
@@ -78,29 +79,16 @@ print:
   title: Datasource JDBC Statistics
   path: ${PATH}/statistics=jdbc
   properties:
-  - PreparedStatementCacheCurrentSize
-  - PreparedStatementCacheAccessCount
-  - PreparedStatementCacheAddCount
-  - PreparedStatementCacheDeleteCount
-  - PreparedStatementCacheHitCount
-  - PreparedStatementCacheMissCount
+    - PreparedStatementCacheCurrentSize
+    - PreparedStatementCacheAccessCount
+    - PreparedStatementCacheAddCount
+    - PreparedStatementCacheDeleteCount
+    - PreparedStatementCacheHitCount
+    - PreparedStatementCacheMissCount
   header:
-  - Current
-
-    Size
-  - Access
-
-    Count
-
-  - Add
-
-    Count
-  - Delete
-
-    Count
-  - Hit
-
-    Count
-  - Miss
-
-    Count
+    - "Current\nSize"
+    - "Access\nCount"
+    - "Add\nCount"
+    - "Delete\nCount"
+    - "Hit\nCount"
+    - "Miss\nCount"

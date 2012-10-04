@@ -111,7 +111,7 @@ Examples:
         with: purple
       enabled: boolean
       connection_url:
-        with: brown
+        with: yellow
 
     format:
       system_load: percentage
@@ -122,7 +122,7 @@ Examples:
           threshold:
             0.8: intense_red
             0.7: red
-            0.5: brown
+            0.5: yellow
             0: green
 
 ### Adding new components

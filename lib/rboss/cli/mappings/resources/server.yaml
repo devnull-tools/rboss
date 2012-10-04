@@ -26,7 +26,7 @@ print:
         threshold:
           0.8: intense_red
           0.7: red
-          0.5: brown
+          0.5: yellow
           0: green
 
 - id: env
@@ -84,16 +84,10 @@ print:
 
   color:
     max_heap:
-      with: cyan
+      with: yellow
 
     max_non_heap:
-      with: cyan
-
-    committed_heap:
-      with: purple
-
-    committed_non_heap:
-      with: purple
+      with: yellow
 
   health:
     used_heap:
@@ -140,13 +134,13 @@ print:
   - CUrrent Thread User Time
 
   format:
-    thread_contention_monitoring_supported: yes_or_no
-    thread_cpu_time_supported: yes_or_no
-    current_thread_cpu_time_supported: yes_or_no
-    object_monitor_usage_supported: yes_or_no
-    synchronizer_usage_supported: yes_or_no
-    thread_contention_monitoring_enabled: yes_or_no
-    thread_cpu_time_enabled: yes_or_no
+    thread_contention_monitoring_supported: boolean
+    thread_cpu_time_supported: boolean
+    current_thread_cpu_time_supported: boolean
+    object_monitor_usage_supported: boolean
+    synchronizer_usage_supported: boolean
+    thread_contention_monitoring_enabled: boolean
+    thread_cpu_time_enabled: boolean
 
   color:
     thread_contention_monitoring_supported: boolean

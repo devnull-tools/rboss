@@ -165,9 +165,15 @@ def execute_actions
   end
 end
 
-while @loop
-  execute_actions
-  sleep @interval
-end
+begin
 
-execute_actions
+  while @loop
+    execute_actions
+    sleep @interval
+  end
+
+  execute_actions
+
+rescue Interrupt
+  #Do nothing
+end
