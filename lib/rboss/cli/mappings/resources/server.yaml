@@ -32,6 +32,7 @@ print:
 - id: env
   title: Server Environment Information
   path: ${PATH}server-environment
+  layout: vertical
   properties:
   - server-name
   - node-name
@@ -61,17 +62,24 @@ print:
   - non-heap-memory-usage -> used
   - non-heap-memory-usage -> committed
   - non-heap-memory-usage -> max
-  - object-pending-finalization-count
   header:
-  - Initial Heap
-  - Used Heap
-  - Committed Heap
-  - Max Heap
-  - Initial Non Heap
-  - Used Non Heap
-  - Committed Non Heap
-  - Max Non Heap
-  - Objects Pending Finalization
+  - "(Heap)\nInitial"
+  - "\nUsed"
+  - "\nCommitted"
+  - "\nMax"
+  - "(Non Heap)\nInitial"
+  - "\nUsed"
+  - "\nCommitted"
+  - "\nMax"
+  aliases:
+  - initial_heap
+  - used_heap
+  - committed_heap
+  - max_heap
+  - initial_non_heap
+  - used_non_heap
+  - committed_non_heap
+  - max_non_heap
   format:
     initial_heap: byte
     used_heap: byte
@@ -84,10 +92,10 @@ print:
 
   color:
     max_heap:
-      with: yellow
+      with: white
 
     max_non_heap:
-      with: yellow
+      with: white
 
   health:
     used_heap:

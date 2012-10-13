@@ -49,10 +49,7 @@ module RBoss
       end
 
       builder = Yummi::TableBuilder::new(@config).defaults
-      builder.component :health,  :repository => :using_row_colorizers,
-                                  :invoke     => :colorize,
-                                  :using_row  => true
-
+      
       builder.repositories[:using_row_colorizers] << RBoss::HealthCheckers
       builder.repositories[:colorizers] << RBoss::Colorizers
       builder.repositories[:formatters] << RBoss::Formatters
