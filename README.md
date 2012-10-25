@@ -14,6 +14,12 @@ Installation
 
     * yummi
 
+### Configuration
+
+Set a RBOSS_CLI_JBOSS_HOME variable pointing to your JBoss AS home location that has jboss-cli
+for using rboss-cli, for using twiddle, set a TWIDDLE_HOME variable pointing to you JBoss AS 
+that has twiddle.
+
 Using rboss-cli
 -----------
 
