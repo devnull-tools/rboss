@@ -96,6 +96,7 @@ module RBoss
         info = Yummi::colorize("Please input the requested parameters", :yellow)
         props.each do |name, detail|
           next if (@skip_optional and not detail['required'] or detail['default'])
+          parameter_type = detail['type']
           input = parameters[name]
           unless input
             puts info unless help_printed
@@ -103,7 +104,7 @@ module RBoss
             input_message = Yummi::colorize(name, :intense_blue)
             required = detail['required']
             default_value = detail['default']
-            input_message << ' | ' << RBoss::Colorizers.type(detail['type']).colorize(detail['type'])
+            input_message << ' | ' << RBoss::Colorizers.type(parameter_type).colorize(parameter_type)
             input_message << ' | ' << Yummi::colorize("Required", :red) if required
             input_message << ' | ' << Yummi::colorize("Optional", :cyan) unless required
             input_message << ' | ' << Yummi::colorize("Default: #{default_value}", :blue) if default_value
@@ -115,8 +116,19 @@ module RBoss
               input = get_input
             end
           end
-          next if input.empty?
-          builder << {:name => name, :value => detail['type'].convert(input)}
+          if input.empty?
+            puts Yummi::colorize("Parameter skipped!", :yellow)
+            next
+          end
+          begin
+            builder << {:name => name, :value => parameter_type.convert(input)}
+          rescue Exception => e
+            puts Yummi::colorize("Your input could not be converted:", :yellow)
+            puts Yummi::colorize(e.message, :red)
+            puts Yummi::colorize("This will not affect other inputs, you can continue to input other values.", :yellow)
+            puts "Press ENTER to continue"
+            gets
+          end
         end
         result = result("#{path}:#{builder}")
         puts Yummi::colorize("Result:", :yellow)

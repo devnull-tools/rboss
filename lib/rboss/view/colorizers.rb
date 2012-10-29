@@ -14,7 +14,7 @@ module RBoss
     #   The type to use the color
     #
     def self.type type
-      Yummi::to_colorize do |value|
+      Yummi::to_colorize do |ctx|
         case type
           when RBoss::Cli::ResultParser::STRING then
             :green

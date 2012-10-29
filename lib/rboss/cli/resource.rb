@@ -176,7 +176,7 @@ module RBoss
         data = get_data(params)
         return unless data
         data = [@context[:name]] + data if scannable?
-        @tables[@count % @tables.size].data << data
+        @tables[@count % @tables.size].add data
         @count += 1
       end
 
