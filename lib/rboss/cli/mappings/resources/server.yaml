@@ -21,7 +21,7 @@ print:
     system_load: percentage
   color:
       name:
-        with: white
+        with: bold_white
       system_load:
         threshold:
           0.8: intense_red
@@ -47,7 +47,7 @@ print:
   - Launch Type
   color:
     server_name:
-      with: white
+      with: bold_white
 
 - id: memory
   title: Server Memory Usage
@@ -92,10 +92,10 @@ print:
 
   color:
     max_heap:
-      with: white
+      with: bold_white
 
     max_non_heap:
-      with: white
+      with: bold_white
 
   health:
     used_heap:
@@ -187,4 +187,4 @@ print:
   - Temp Directory
   color:
     server_name:
-      with: white
+      with: bold_white
