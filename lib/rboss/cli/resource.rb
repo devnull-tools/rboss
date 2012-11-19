@@ -97,10 +97,8 @@ module RBoss
           table.aliases = %w(name type required default)
           table.colorize('name', :with => :white)
 
-          table.using_row do
-            table.colorize %w(type default) do |value|
-              RBoss::Colorizers.type(value['type']).color_for(value)
-            end
+          table.colorize %w(type default) do |value|
+            RBoss::Colorizers.type(value['type']).color_for(value)
           end
 
           table.format 'required', :using => Yummi::Formatters.boolean
@@ -121,10 +119,8 @@ module RBoss
 
           table.colorize 'name', :with => :white
 
-          table.using_row do
-            table.colorize 'type' do |value|
-              RBoss::Colorizers.type(value['type']).color_for(value)
-            end
+          table.colorize 'type' do |value|
+            RBoss::Colorizers.type(value['type']).color_for(value)
           end
 
           table.format 'nilable', :using => Yummi::Formatters.boolean
