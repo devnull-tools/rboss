@@ -116,7 +116,7 @@ opts.on('--info mbean_id[:resource_name],[arguments]', Array,
   @commands[:info] = info
 end
 opts.on('--invoke mbean_id[:resource_name],method,[,args...]', Array,
-        'Invokes a resoruce method') do |invoke|
+        'Invokes a mbean method') do |invoke|
   @commands[:invoke] = invoke
 end
 opts.on("-l", "--list", "List the mbeans mappings") do
