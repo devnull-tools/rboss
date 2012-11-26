@@ -37,7 +37,7 @@ servers_file = "#@conf_dir/jboss-cli-servers.yaml"
 @servers_file = File.expand_path(servers_file)
 @operation = :read_resource
 save = false
-params[:jboss_home] = (ENV["JBOSS_HOME"] or ENV["RBOSS_CLI_JBOSS_HOME"] or Dir.pwd)
+params[:jboss_home] = (ENV["RBOSS_CLI_JBOSS_HOME"] or Dir.pwd)
 params[:host] = '127.0.0.1'
 params[:port] = '9999'
 
