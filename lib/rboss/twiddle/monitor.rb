@@ -30,26 +30,29 @@ module RBoss
       def defaults
         @@defaults ||= {
           :webapp => {
-            :description => 'Deployed webapps',
+            :title => 'Deployed webapps',
             :pattern => 'jboss.web:type=Manager,host=localhost,path=/#{resource}',
             :properties => %W(activeSessions maxActive distributable maxActiveSessions
                                     expiredSessions rejectedSessions),
             :header => ["Active\nSessions", "Max\nSessions", "Distributable",
                         "Max Active\nSession", "Expired\nSessions", "Rejected\nSessions"],
+            :format => {
+              :distributable => :boolean
+            },
             :scan => proc do
               query "jboss.web:type=Manager,*" do |path|
-                path.gsub! "jboss.web:type=Manager,path=/", ""
-                path.gsub! /,host=.+/, ''
+                path.gsub!("jboss.web:type=Manager,path=/", "")
+                path.gsub!(/,host=.+/, '')
                 path
               end
             end
           },
           :web_deployment => {
-            :description => 'Deployed webapp control',
+            :title => 'Deployed webapp control',
             :pattern => 'jboss.web.deployment:war=/#{resource}'
           },
           :connector => {
-            :description => 'JBossWeb connector',
+            :title => 'JBossWeb connector',
             :pattern => 'jboss.web:type=ThreadPool,name=#{resource}',
             :properties => %W(maxThreads currentThreadCount currentThreadsBusy),
             :header => ['Max Threads', 'Current Threads', 'Busy Threads'],
@@ -68,36 +71,36 @@ module RBoss
             end
           },
           :cached_connection_manager => {
-            :description => 'JBoss JCA cached connections',
+            :title => 'JBoss JCA cached connections',
             :pattern => 'jboss.jca:service=CachedConnectionManager',
             :properties => %W(InUseConnections),
             :header => ['In Use Connections'],
           },
           :main_deployer => {
-            :description => 'Main Deployer',
+            :title => 'Main Deployer',
             :pattern => 'jboss.system:service=MainDeployer'
           },
           :engine => {
-            :description => 'JBossWeb engine',
+            :title => 'JBossWeb engine',
             :pattern => 'jboss.web:type=Engine',
             :properties => %W(jvmRoute name defaultHost),
             :header => ['JVM Route', 'Name', 'Default Host'],
           },
           :log4j => {
-            :description => 'JBoss Log4J Service',
+            :title => 'JBoss Log4J Service',
             :pattern => 'jboss.system:service=Logging,type=Log4jService',
             :properties => %W(DefaultJBossServerLogThreshold),
             :header => ['Default Server Log Threshold'],
           },
           :server => {
-            :description => 'JBoss Server specifications',
+            :title => 'JBoss Server specifications',
             :pattern => 'jboss.system:type=Server',
-            :properties => %W(VersionName VersionNumber Version),
+            :properties => %W(StartDate VersionName VersionNumber Version),
             :layout => :vertical,
-            :header => ['Version Name', 'Version Number', 'Version'],
+            :header => ['Start Date', 'Version Name', 'Version Number', 'Version'],
           },
           :server_info => {
-            :description => 'JBoss Server runtime info',
+            :title => 'JBoss Server runtime info',
             :pattern => 'jboss.system:type=ServerInfo',
             :properties => %W(ActiveThreadCount MaxMemory FreeMemory AvailableProcessors
                                     JavaVendor JavaVersion OSName OSArch),
@@ -118,18 +121,18 @@ module RBoss
             }
           },
           :server_config => {
-            :description => 'JBoss Server configuration',
+            :title => 'JBoss Server configuration',
             :pattern => 'jboss.system:type=ServerConfig',
             :properties => %W(ServerName HomeDir ServerLogDir ServerHomeURL),
             :layout => :vertical,
             :header => ['Server Name', 'Home Dir', 'Log Dir', 'Home URL'],
           },
           :system_properties => {
-            :description => 'System properties',
+            :title => 'System properties',
             :pattern => 'jboss:name=SystemProperties,type=Service'
           },
           :request => {
-            :description => 'JBossWeb connector requests',
+            :title => 'JBossWeb connector requests',
             :pattern => 'jboss.web:type=GlobalRequestProcessor,name=#{resource}',
             :properties => %W(requestCount errorCount maxTime),
             :header => ['Requests', 'Errors', 'Max Time'],
@@ -148,7 +151,7 @@ module RBoss
             end
           },
           :datasource => {
-            :description => 'Datasource',
+            :title => 'Datasource',
             :pattern => 'jboss.jca:service=ManagedConnectionPool,name=#{resource}',
             :properties => %W(MinSize MaxSize AvailableConnectionCount
                                       InUseConnectionCount ConnectionCount),
@@ -169,7 +172,7 @@ module RBoss
             end
           },
           :queue => {
-            :description => 'JMS Queue',
+            :title => 'JMS Queue',
             :pattern => 'jboss.messaging.destination:service=Queue,name=#{resource}',
             :properties => %W(JNDIName MessageCount DeliveringCount
                     ScheduledMessageCount MaxSize FullSize Clustered ConsumerCount),
@@ -182,7 +185,7 @@ module RBoss
             end
           },
           :jndi => {
-            :description => 'JNDI View',
+            :title => 'JNDI View',
             :pattern => 'jboss:service=JNDIView'
           }
         }
