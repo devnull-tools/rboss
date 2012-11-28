@@ -200,5 +200,5 @@ begin
 
   execute_actions
 rescue Interrupt
-  #Do nothing
+  puts Yummi::colorize("Aborted!", :red)
 end
