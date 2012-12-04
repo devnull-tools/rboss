@@ -30,7 +30,7 @@ module RBoss
         @invoker = invoker
         @context = {
           :name => '',
-          :read_resource => 'read-resource(include-runtime=true)'
+          :read_resource => 'read-resource(include-runtime=true,recursive=true)'
         }
         @context[:path] = parse(@config[:path])
         @tables = []
@@ -49,6 +49,7 @@ module RBoss
       def read_resource(resources, arguments)
         resources ||= scan
         params = @config[:print]
+        return unless params
         params.each do |p|
           table_builder = RBoss::TableBuilder::new p
           table_builder.add_name_column if scannable?
@@ -70,7 +71,7 @@ module RBoss
       end
 
       def read_operation_names(resource_name, arguments)
-        operations = Yummi::colorize('Operations:', :yellow)
+        operations = Yummi::colorize('Operations:', :intense_yellow)
         operations << $/
         with resource_name do
           result = @invoker.result("#{@context[:path]}:read-operation-names")
@@ -197,7 +198,7 @@ module RBoss
       end
 
       def get_data(config)
-        command = parse((config[:command] or '${PATH}:read-resource(include-runtime=true)'))
+        command = parse((config[:command] or "${PATH}:#{@context[:read_resource]}"))
         begin
           result = @invoker.result(command)
           data = []

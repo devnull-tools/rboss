@@ -131,7 +131,7 @@ module RBoss
           end
         end
         result = result("#{path}:#{builder}")
-        puts Yummi::colorize("Result:", :yellow)
+        puts Yummi::colorize("Result:", :intense_yellow)
         #TODO print a table using the returned parameters
         puts YAML::dump(result)
       end

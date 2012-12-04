@@ -35,7 +35,6 @@ servers_file = "#@conf_dir/jboss-cli-servers.yaml"
 @resources = {}
 @parameters = {}
 @servers_file = File.expand_path(servers_file)
-@operation = :read_resource
 save = false
 params[:jboss_home] = (ENV["RBOSS_CLI_JBOSS_HOME"] or Dir.pwd)
 params[:host] = '127.0.0.1'
@@ -112,13 +111,15 @@ opts.on('-a', '--args PARAMETERS', Array,
 end
 
 RBoss::Cli::Mappings.resource_mappings.each do |name, config|
-  if config[:scan]
-    opts.on("--#{name} [NAMES]", Array, config[:description]) do |resources|
-      @resources[name] = resources
-    end
-  else
-    opts.on("--#{name}", config[:description]) do
-      @resources[name] = true
+  if config[:description]
+    if config[:scan]
+      opts.on("--#{name} [NAMES]", Array, config[:description]) do |resources|
+        @resources[name] = resources
+      end
+    else
+      opts.on("--#{name}", config[:description]) do
+        @resources[name] = true
+      end
     end
   end
 end
@@ -152,7 +153,13 @@ if save
   puts "Configuration saved!"
 end
 
-puts opts if @resources.empty?
+if @resources.empty? and not @operation
+  puts opts
+elsif @resources.empty?
+  @resources[''] = true
+elsif not @operation
+  @operation = :read_resource
+end
 
 def execute_actions
   begin
