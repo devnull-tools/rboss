@@ -307,14 +307,14 @@ Customizing health, formatters and colors are the same as customizing in rboss-c
 use the indexes of the values (in that case, 2 for :max and 0 for :using) or the header values
 in downcase and underscores.
 
-Using jboss-profile
+Using rboss-profile
 -----------
 
 ### Basics
 
 Simply do a "cd" to your JBoss Home and use it
 
-    jboss-profile --help
+    rboss-profile --help
 
 All configuration can be stored in a single yaml file containing an array of components
 and its configuration:
@@ -491,18 +491,18 @@ Tools
 You can do a slimming using only the command line, just put your terminal in the profile dir
 and do the following:
 
-    jboss-profile --this --slimming services-here
+    rboss-profile --this --slimming services-here
 
 This will slim the defined services. Use --verbose to see the changed files.
 
 To restore slimmed services, use --restore.
 
-    jboss-profile --this --restore services-here
+    rboss-profile --this --restore services-here
 
 ### Password Encryption
 
 You can use the SecureIdentityLoginModule to encrypt a password for use with a login module
 to secure a datasource password.
 
-    jboss-profile --encrypt your-password-here
+    rboss-profile --encrypt your-password-here
 
