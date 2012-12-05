@@ -156,41 +156,41 @@ The components included are defined in the following files:
 * /lib/rboss/view/formatters.rb
 * /lib/rboss/view/health_checkers.rb
 
-Using twiddle
+Using rboss-twiddle
 -----------
 
 ### Basics
 
 Simply do a "cd" to your JBoss Home and use it
 
-    twiddle --help
+    rboss-twiddle --help
 
 You can scan resources like: datasources, queues, connectors, webapps, ...
 
-    twiddle --datasource --webapp
-    twiddle --all
+    rboss-twiddle --datasource --webapp
+    rboss-twiddle --all
 
 If you don't need to scan for resources, you can specify them for monitoring:
 
-    twiddle --webapp jmx-console,admin-console
+    rboss-twiddle --webapp jmx-console,admin-console
 
 Combine with "watch" to get a simple and instantly monitoring:
 
-    watch --interval=1 twiddle --webapp jmx-console,admin-console
+    watch --interval=1 rboss-twiddle --webapp jmx-console,admin-console
 
 Retrieve property values with --get:
 
-    twiddle --get webapp:jmx-console,maxSessions
-    twiddle --get server-info,FreeMemory
+    rboss-twiddle --get webapp:jmx-console,maxSessions
+    rboss-twiddle --get server-info,FreeMemory
 
 Set values with --set:
 
-    twiddle --set connector:http-127.0.0.1-8080,maxThreads,350
+    rboss-twiddle --set connector:http-127.0.0.1-8080,maxThreads,350
 
 Execute commands with --invoke:
 
-    twiddle --invoke server,shutdown
-    twiddle --invoke web-deployment:jmx-console,stop
+    rboss-twiddle --invoke server,shutdown
+    rboss-twiddle --invoke web-deployment:jmx-console,stop
 
 Extending mbeans
 
@@ -204,23 +204,23 @@ You can use a file in ~/.rboss/twiddle.rb for mapping new mbeans or overriding t
 
 And use it normally
 
-    twiddle --http-request
+rboss-    twiddle --http-request
 
 You can do every action using custom mbeans
 
-    twiddle --invoke http-request,resetCounters
+    rboss-twiddle --invoke http-request,resetCounters
 
 Configurations can be saved using --save
 
-    twiddle --save jon --port 2099
+    rboss-twiddle --save jon --port 2099
 
 And used with -c or --config
 
-    twiddle -c jon --server-config
+    rboss-twiddle -c jon --server-config
 
 ### Customizing MBeans
 
-Every time you run the twiddle command, this gem will load the ~/.rboss/rboss.rb file,
+Every time you run the rboss-twiddle command, this gem will load the ~/.rboss/rboss.rb file,
 which can be used to customize the mbeans.
 
     defaults = RBoss::Twiddle::Monitor.defaults
@@ -229,10 +229,10 @@ which can be used to customize the mbeans.
       :pattern => 'jboss.system:service=Logging,type=Logger'
     }
 
-This will add a custom mbean whose identifier is 'logger'. From that, you can use the
+This will add a custom mbean whose identifier is 'logger'. From that, you can use therboss-
 twiddle command on it.
 
-    twiddle --invoke logger debug,message
+    rboss-twiddle --invoke logger debug,message
 
 If your mbean name depends on a resource name (like the connector mbean), you can use
 a '#{resource}' string to pass the resource in the command line.
@@ -242,9 +242,9 @@ a '#{resource}' string to pass the resource in the command line.
       :pattern => 'jboss.custom:type=CustomMBean,name=#{resource}'
     }
 
-Don't forget to use single quotes on that. The twiddle command will be:
+Don't forget to use single quotes on that. The rboss-twiddle command will be:
 
-    twiddle --get mymbean:Name,MBeanProperty
+    rboss-twiddle --get mymbean:Name,MBeanProperty
 
 If this mbean is scannable, you can use a :scan key:
 
@@ -261,7 +261,7 @@ If this mbean is scannable, you can use a :scan key:
 
 Now you can scan for resources of your custom MBean by using:
 
-    twiddle --mymbean
+    rboss-twiddle --mymbean
 
 If your MBean has some properties that should appear in a table for instant monitoring,
 just add a :properties key:
