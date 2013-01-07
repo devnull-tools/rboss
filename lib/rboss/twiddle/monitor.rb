@@ -92,6 +92,10 @@ module RBoss
             :properties => %W(DefaultJBossServerLogThreshold),
             :header => ['Default Server Log Threshold'],
           },
+          :logger => {
+            :description => 'Logger Service',
+            :pattern => 'jboss.system:service=Logging,type=Logger'
+          },
           :server => {
             :title => 'JBoss Server specifications',
             :pattern => 'jboss.system:type=Server',
