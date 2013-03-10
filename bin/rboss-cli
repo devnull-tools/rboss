@@ -96,7 +96,7 @@ opts.on('-l', '--list-operations', 'Lists the available operations for a resourc
   @operation = 'read-operation-names'
 end
 
-opts.on('--detail-operation NAME', 'Shows the operation details') do |operation_name|
+opts.on('-d', '--detail-operation NAME', 'Shows the operation details') do |operation_name|
   @operation = 'read-operation-description'
   @parameters = {'name' => operation_name}
 end
