@@ -151,6 +151,7 @@ if save
   YAML::dump(config, f)
   f.close
   puts "Configuration saved!"
+  exit 0
 end
 
 if @resources.empty? and not @operation
