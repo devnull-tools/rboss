@@ -68,7 +68,7 @@ opts.on('-c', '--connect SERVER_NAME',
     params[key.to_sym] = value
   end
 end
-opts.on('--start', 'Starts the Management CLI') do 
+opts.on('--jboss-cli', 'Starts the JBoss Management CLI') do 
   @start = true
 end
 opts.on('--save SERVER_NAME', "Saves the server configuration in #{servers_file}") do |server|
