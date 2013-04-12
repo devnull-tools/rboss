@@ -40,6 +40,10 @@ module RBoss
       def run_conf
         "#{@jboss.profile}/run.conf.bat"
       end
+
+      def clear
+        "cls"
+      end
     end
   else
     module Platform
@@ -57,6 +61,10 @@ module RBoss
 
       def run_conf
         "#{@jboss.profile}/run.conf"
+      end
+
+      def clear
+        "clear"
       end
     end
   end

@@ -66,7 +66,7 @@ end
 opts.on('-p', '--password PASSWORD', 'Defines the Admin Password'.colorize(:green)) do |password|
   params[:password] = password
 end
-opts.on('--jboss-cli', 'Starts the JBoss Management CLI') do 
+opts.on('--start-cli', 'Starts the JBoss Management CLI connected to the configured server') do 
   @start = true
 end
 opts.on('--save SERVER_NAME', "Saves the server configuration in #{servers_file}".colorize(:blue)) do |server|
@@ -157,7 +157,9 @@ if save
 end
 
 if @start
-  system jboss_cli
+  puts "Starting JBoss Management CLI connecting to ".colorize(:bold_white) << "#{@jboss_cli.server}".colorize(:bold_green)
+  system "#{@jboss_cli.command} --connect"
+  puts "Disconnected!".colorize(:bold_yellow)
   exit 0
 end
 
