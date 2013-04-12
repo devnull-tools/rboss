@@ -143,7 +143,7 @@ module RBoss
       private
 
       def build_nested(detail, parent_name = '', result = [])
-        if detail['value-type']
+        if detail['value-type'].respond_to? :each
           detail['value-type'].each do |name, _detail|
             name = "#{parent_name}#{name}"
             _detail['name'] = name
