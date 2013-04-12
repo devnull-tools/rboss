@@ -51,28 +51,34 @@ opts = OptionParser::new
 opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') do |home|
   params[:jboss_home] = home
 end
-opts.on('-s URL', 'Defines the JBoss server') do |server|
+opts.on('-s URL', 'Defines the JBoss server'.colorize(:green)) do |server|
   params[:server] = server
 end
-opts.on('--host HOST', 'Defines the JBoss host') do |host|
+opts.on('--host HOST', 'Defines the JBoss host'.colorize(:green)) do |host|
   params[:host] = host
 end
-opts.on('--port PORT', 'Defines the JBoss admin port') do |port|
+opts.on('--port PORT', 'Defines the JBoss admin port'.colorize(:green)) do |port|
   params[:port] = port
 end
+opts.on('-u', '--user USER', 'Defines the Admin User'.colorize(:green)) do |user|
+  params[:user] = user
+end
+opts.on('-p', '--password PASSWORD', 'Defines the Admin Password'.colorize(:green)) do |password|
+  params[:password] = password
+end
+opts.on('--jboss-cli', 'Starts the JBoss Management CLI') do 
+  @start = true
+end
+opts.on('--save SERVER_NAME', "Saves the server configuration in #{servers_file}".colorize(:blue)) do |server|
+  save = server
+end
 opts.on('-c', '--connect SERVER_NAME',
-        "Uses a configured server in #{servers_file}") do |server|
+        "Uses a configured server in #{servers_file}".colorize(:blue)) do |server|
   config = load_yaml[server]
   abort "No configuration for #{server}" unless config
   config.each do |key, value|
     params[key.to_sym] = value
   end
-end
-opts.on('--jboss-cli', 'Starts the JBoss Management CLI') do 
-  @start = true
-end
-opts.on('--save SERVER_NAME', "Saves the server configuration in #{servers_file}") do |server|
-  save = server
 end
 opts.on('--loop INTERVAL', Float, 'Run inside a loop') do |interval|
   @loop = true
@@ -82,54 +88,44 @@ end
 opts.on('--no-color', 'Do not colorize output') do
   require 'yummi/no_colors'
 end
-opts.on('-u', '--user USER', 'Defines the Admin User') do |user|
-  params[:user] = user
-end
-opts.on('-p', '--password PASSWORD', 'Defines the Admin Password') do |password|
-  params[:password] = password
-end
 opts.on('-v', '--verbose', 'Displays jboss-cli commands before execution') do
   params[:log_level] = Logger::DEBUG
 end
 
 opts.on('-o', '--operation NAME',
-        'Sets the operation to invoke (Defaults to "read-resource")') do |name|
+        'Sets the operation to invoke (Defaults to "read-resource")'.colorize(:red)) do |name|
   @operation = name
 end
-
-opts.on('-l', '--list-operations', 'Lists the available operations for a resource') do
+opts.on('--skip-optional', 'Skips optional parameters while invoking a command '.colorize(:red)) do
+  params[:skip_optional] = true
+end
+opts.on('-l', '--list-operations', 'Lists the available operations for a resource'.colorize(:red)) do
   @operation = 'read-operation-names'
 end
-
-opts.on('-d', '--detail-operation NAME', 'Shows the operation details') do |operation_name|
+opts.on('-d', '--detail-operation NAME', 'Shows the operation details'.colorize(:red)) do |operation_name|
   @operation = 'read-operation-description'
   @parameters = {'name' => operation_name}
 end
-
-opts.on('--skip-optional', 'Skips optional parameters while invoking a command ') do
-  params[:skip_optional] = true
-end
-
 opts.on('-a', '--args PARAMETERS', Array,
-        'Specifies parameters in form of (name=value) for use with operation') do |parameters|
+        'Specifies parameters in form of (name=value) for use with operation'.colorize(:red)) do |parameters|
   @parameters = Hash[(parameters.collect { |p| p.split( /=/, 2) })]
 end
 
 RBoss::Cli::Mappings.resource_mappings.each do |name, config|
   if config[:description]
     if config[:scan]
-      opts.on("--#{name} [NAMES]", Array, config[:description]) do |resources|
+      opts.on("--#{name} [NAMES]", Array, config[:description].colorize(:yellow)) do |resources|
         @resources[name] = resources
       end
     else
-      opts.on("--#{name}", config[:description]) do
+      opts.on("--#{name}", config[:description].colorize(:yellow)) do
         @resources[name] = true
       end
     end
   end
 end
 
-opts.on('--all', 'Display all available info') do
+opts.on('--all', 'Display all available info'.colorize(:bold_white)) do
   RBoss::Cli::Mappings.resource_mappings.each do |name, config|
     @resources[name] = nil unless config[:derived]
   end
