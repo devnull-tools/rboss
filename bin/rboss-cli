@@ -29,6 +29,8 @@ require 'yaml'
 require 'fileutils'
 require 'yummi'
 
+include RBoss::Platform
+
 params = {}
 @conf_dir = File.expand_path "~/.rboss"
 servers_file = "#@conf_dir/jboss-cli-servers.yaml"
@@ -65,6 +67,9 @@ opts.on('-c', '--connect SERVER_NAME',
   config.each do |key, value|
     params[key.to_sym] = value
   end
+end
+opts.on('--start', 'Starts the Management CLI') do 
+  @start = true
 end
 opts.on('--save SERVER_NAME', "Saves the server configuration in #{servers_file}") do |server|
   save = server
@@ -135,6 +140,7 @@ opts.on("-h", "--help", "Shows this help message") do
 end
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'
 
+@jboss_home = params[:jboss_home]
 @jboss_cli = RBoss::Cli::Invoker::new params
 
 if save
@@ -154,6 +160,11 @@ if save
   exit 0
 end
 
+if @start
+  system jboss_cli
+  exit 0
+end
+
 if @resources.empty? and not @operation
   puts opts
 elsif @resources.empty?
@@ -165,7 +176,7 @@ end
 def execute_actions
   begin
     content = @jboss_cli.invoke(@operation, @resources, @parameters)
-    system "clear" if @loop
+    system clear if @loop
     puts Yummi.colorize(Time.now.strftime("At %H:%M:%S%n"), :white) if @loop
     puts content.chomp
   rescue RBoss::Cli::InvocationFailed => e
@@ -183,5 +194,5 @@ begin
   execute_actions
 
 rescue Interrupt
-  puts Yummi::colorize("Aborted!", :red)
+  puts "Aborted!".colorize(:red)
 end
