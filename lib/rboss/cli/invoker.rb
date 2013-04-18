@@ -136,13 +136,14 @@ module RBoss
         puts YAML::dump(result)
       end
 
-      def execute(*commands)
+      def execute(commands)
+        commands = [commands] if commands.is_a? String
         exec = "#{command} --command#{commands.size > 1 ? 's' : ''}=\"#{commands.join ','}\""
         @logger.debug exec
         `#{exec}`.chomp
       end
 
-      def result(*commands)
+      def result(commands)
         eval_result(execute commands)
       end
 

@@ -66,7 +66,7 @@ end
 opts.on('-p', '--password PASSWORD', 'Defines the Admin Password'.colorize(:green)) do |password|
   params[:password] = password
 end
-opts.on('--start-cli', 'Starts the JBoss Management CLI connected to the configured server') do 
+opts.on('--start-cli', 'Starts the JBoss Management CLI connected to the configured server in interactive mode'.colorize(:gray)) do 
   @start = true
 end
 opts.on('--save SERVER_NAME', "Saves the server configuration in #{servers_file}".colorize(:blue)) do |server|
@@ -131,6 +131,14 @@ opts.on('--all', 'Display all available info'.colorize(:bold_white)) do
   end
 end
 
+opts.on('--native COMMANDS', Array, 'Executes the given commands using cli interface'.colorize(:bold_white)) do |commands|
+  @native = commands
+end
+
+opts.on('--script FILE', 'Executes the script in the cli interface'.colorize(:bold_white)) do |file|
+  @script = file
+end
+
 opts.on("-h", "--help", "Shows this help message") do
   puts opts; exit
 end
@@ -160,6 +168,26 @@ if @start
   puts "Starting JBoss Management CLI connecting to ".colorize(:bold_white) << "#{@jboss_cli.server}".colorize(:bold_green)
   system "#{@jboss_cli.command} --connect"
   puts "Disconnected!".colorize(:bold_yellow)
+  exit 0
+end
+
+if @native
+  puts "Starting JBoss Management CLI connecting to ".colorize(:bold_white) << "#{@jboss_cli.server}".colorize(:bold_green)
+  result = @jboss_cli.execute(@native)
+  
+  box = Yummi::TextBox::new
+  box.style.border[:color] = :intense_gray
+  
+  box << result
+  
+  puts box
+  
+  exit 0
+end
+
+if @script
+  puts "Starting JBoss Management CLI connecting to ".colorize(:bold_white) << "#{@jboss_cli.server}".colorize(:bold_green)
+  system "#{@jboss_cli.command} --connect --file #{@script}"
   exit 0
 end
 
