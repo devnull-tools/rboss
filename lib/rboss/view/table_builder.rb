@@ -38,6 +38,7 @@ module RBoss
 
     def build_table
       if @name_column
+        @config[:header] ||= []
         @config[:header] = [] if @only_name
         @config[:header] = [@name_column] + @config[:header]
       end
