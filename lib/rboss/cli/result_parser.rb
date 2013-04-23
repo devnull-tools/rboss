@@ -70,6 +70,7 @@ module RBoss
       def eval_result(result)
         undefined = nil #prevents error because undefined means nil in result object
         result = result.gsub(/(\d+)L/, '\1') #removes the long type mark
+        result = result.gsub(/expression\s/, '') #removes the expression indicator
         result = eval(result)
         raise InvocationFailed::new(result["failure-description"]) if result["outcome"] == "failed"
         result["result"]
