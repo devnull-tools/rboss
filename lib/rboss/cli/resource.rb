@@ -30,7 +30,7 @@ module RBoss
         @invoker = invoker
         @context = {
           :name => '',
-          :read_resource => 'read-resource(include-runtime=true,recursive=true)'
+          :read_resource => 'read-resource(include-runtime=true,recursive=true,include-defaults=true,proxies=true)'
         }
         @context[:path] = parse(@config[:path])
         @tables = []
