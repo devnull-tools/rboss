@@ -95,7 +95,7 @@ module RBoss
         help_printed = false
         info = Yummi::colorize("Please input the requested parameters", :yellow)
         props.each do |name, detail|
-          next if (@skip_optional and not detail['required'] or detail['default'])
+          next if (@skip_optional and (not detail['required'] or detail['default']))
           parameter_type = detail['type']
           input = parameters[name]
           unless input
@@ -107,7 +107,7 @@ module RBoss
             input_message << ' | ' << RBoss::Colorizers.type(parameter_type).colorize(parameter_type)
             input_message << ' | ' << Yummi::colorize("Required", :red) if required
             input_message << ' | ' << Yummi::colorize("Optional", :cyan) unless required
-            input_message << ' | ' << Yummi::colorize("Default: #{default_value}", :blue) if default_value
+            input_message << ' | ' << Yummi::colorize("[#{default_value}]", :blue) if default_value
             input_message << "\n" << Yummi::colorize(detail['description'], :intense_gray)
             puts input_message
             input = get_input
