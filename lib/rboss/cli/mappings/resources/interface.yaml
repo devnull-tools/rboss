@@ -1,0 +1,47 @@
+---
+description: Details Interfaces
+path: /interface=${NAME}
+scan: ls /interface
+print:
+  - title: Interfaces
+    layout: vertical
+    properties:
+    - any
+    - any-address
+    - any-ipv4-address
+    - any-ipv6-address
+    - inet-address
+    - link-local-address
+    - loopback
+    - loopback-address
+    - multicast
+    - nic
+    - nic-match
+    - not
+    - point-to-point
+    - public-address
+    - resolved-address
+    - site-local-address
+    - subnet-match
+    - up
+    - virtual
+    header:
+    - Any
+    - Any address
+    - Any IPv4 address
+    - Any IPv6 Address
+    - Inet Address
+    - Link Local Address
+    - Loopback
+    - Loopback Address
+    - Multicast
+    - NIC
+    - NIC Match
+    - Not
+    - Point-to-point
+    - Public Address
+    - Resolved Address
+    - Site Local Address
+    - Subnet Match
+    - Up
+    - Virtual
