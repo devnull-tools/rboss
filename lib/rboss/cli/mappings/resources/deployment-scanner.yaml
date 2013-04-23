@@ -1,0 +1,35 @@
+---
+description: Details Deployment Scanner
+path: /subsystem=deployment-scanner/scanner=${NAME}
+scan: ls /subsystem=deployment-scanner/scanner
+print:
+  - title: Scanner
+    layout: vertical
+    properties:
+    - auto-deploy-exploded
+    - auto-deploy-xml
+    - auto-deploy-zipped
+    - deployment-timeout
+    - path
+    - relative-to
+    - scan-enabled
+    - scan-interv
+    header:
+    - Auto Deploy Exploded
+    - Auto Deploy XML
+    - Auto Deploy Zipped
+    - Deployment Timeout
+    - Path
+    - Relative To
+    - Scan Enabled
+    - Scan Interval
+    format:
+      auto_deploy_exploded: boolean
+      auto_deploy_xml: boolean
+      auto_deploy_zipped: boolean
+      scan_enabled: boolean
+    color:
+      auto_deploy_exploded: boolean
+      auto_deploy_xml: boolean
+      auto_deploy_zipped: boolean
+      scan_enabled: boolean
