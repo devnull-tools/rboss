@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "rboss"
 
-  s.add_dependency 'yummi', '>=0.7.1'
+  s.add_dependency 'yummi', '>=0.8.0'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
