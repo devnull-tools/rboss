@@ -32,7 +32,7 @@ print:
 
   color:
     jndi_name:
-      with: purple
+      with: magenta
     enabled: boolean
     using_jta: boolean
     connection_url:

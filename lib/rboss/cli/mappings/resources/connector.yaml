@@ -45,6 +45,6 @@ print:
 
     color:
       scheme:
-        with: purple
+        with: magenta
       enabled: boolean
       secure: boolean

@@ -22,7 +22,7 @@ module RBoss
             RBoss::Cli::ResultParser::LONG then
             :blue
           when RBoss::Cli::ResultParser::BOOLEAN then
-            :purple
+            :magenta
           else
             :cyan
         end

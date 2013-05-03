@@ -66,7 +66,7 @@ end
 opts.on('-p', '--password PASSWORD', 'Defines the Admin Password'.colorize(:green)) do |password|
   params[:password] = password
 end
-opts.on('--start-cli', 'Starts the JBoss Management CLI connected to the configured server in interactive mode'.colorize(:gray)) do 
+opts.on('--start-cli', 'Starts the JBoss Management CLI connected to the configured server in interactive mode'.colorize(:white)) do 
   @start = true
 end
 opts.on('--save SERVER_NAME', "Saves the server configuration in #{servers_file}".colorize(:blue)) do |server|
@@ -125,17 +125,17 @@ RBoss::Cli::Mappings.resource_mappings.each do |name, config|
   end
 end
 
-opts.on('--all', 'Display all available info'.colorize(:bold_white)) do
+opts.on('--all', 'Display all available info'.bold.white) do
   RBoss::Cli::Mappings.resource_mappings.each do |name, config|
     @resources[name] = nil unless config[:derived]
   end
 end
 
-opts.on('--native COMMANDS', Array, 'Executes the given commands using cli interface'.colorize(:bold_white)) do |commands|
+opts.on('--native COMMANDS', Array, 'Executes the given commands using cli interface'.bold.white) do |commands|
   @native = commands
 end
 
-opts.on('--script FILE', 'Executes the script in the cli interface'.colorize(:bold_white)) do |file|
+opts.on('--script FILE', 'Executes the script in the cli interface'.bold.white) do |file|
   @script = file
 end
 
@@ -165,18 +165,18 @@ if save
 end
 
 if @start
-  puts "Starting JBoss Management CLI connecting to ".colorize(:bold_white) << "#{@jboss_cli.server}".colorize(:bold_green)
+  puts "Starting JBoss Management CLI connecting to ".bold.white << "#{@jboss_cli.server}".bold.green
   system "#{@jboss_cli.command} --connect"
-  puts "Disconnected!".colorize(:bold_yellow)
+  puts "Disconnected!".bold.yellow
   exit 0
 end
 
 if @native
-  puts "Starting JBoss Management CLI connecting to ".colorize(:bold_white) << "#{@jboss_cli.server}".colorize(:bold_green)
+  puts "Starting JBoss Management CLI connecting to ".bold.white << "#{@jboss_cli.server}".bold.green
   result = @jboss_cli.execute(@native)
   
   box = Yummi::TextBox::new
-  box.style.border[:color] = :intense_gray
+  box.style.border[:color] = "bold.black"
   
   box << result
   
@@ -186,7 +186,7 @@ if @native
 end
 
 if @script
-  puts "Starting JBoss Management CLI connecting to ".colorize(:bold_white) << "#{@jboss_cli.server}".colorize(:bold_green)
+  puts "Starting JBoss Management CLI connecting to ".bold.white << "#{@jboss_cli.server}".bold.green
   system "#{@jboss_cli.command} --connect --file #{@script}"
   exit 0
 end
