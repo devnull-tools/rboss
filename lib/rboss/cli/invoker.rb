@@ -108,7 +108,7 @@ module RBoss
             input_message << ' | ' << Yummi::colorize("Required", :red) if required
             input_message << ' | ' << Yummi::colorize("Optional", :cyan) unless required
             input_message << ' | ' << Yummi::colorize("[#{default_value}]", :blue) if default_value
-            input_message << "\n" << Yummi::colorize(detail['description'], :intense_gray)
+            input_message << "\n" << Yummi::colorize(detail['description'], "bold.black")
             puts input_message
             input = get_input
             while required and input.empty?

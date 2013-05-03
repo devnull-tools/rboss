@@ -89,11 +89,11 @@ end
   command = mbean_id.to_s.gsub(/_/, '-')
   if mbean[:scan]
     opts.on("--#{command} [name_a,name_b,...]", Array,
-            "Detail \"#{mbean[:description]}\" based on the given names (no names for scan)") do |names|
+            "Detail \"#{mbean[:title]}\" based on the given names (no names for scan)") do |names|
       @mbeans[mbean_id] = names || :all
     end
   elsif mbean[:properties]
-    opts.on("--#{command}", "Detail \"#{mbean[:description]}\"") do
+    opts.on("--#{command}", "Detail \"#{mbean[:title]}\"") do
       @mbeans[mbean_id] = true
     end
   end

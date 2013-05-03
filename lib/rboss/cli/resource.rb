@@ -92,7 +92,7 @@ module RBoss
           result = @invoker.result(
             "#{@context[:path]}:read-operation-description(name=#{operation_name})"
           )
-          buff << Yummi::colorize(result['description'], :intense_gray) << $/ * 2
+          buff << Yummi::colorize(result['description'], "bold.black") << $/ * 2
           table.title = 'Request'
           table.header = %w(Parameter Type Required Default)
           table.aliases = %w(name type required default)
