@@ -10,13 +10,13 @@ Installation
 
     gem install rboss
 
-### Dependencies
+### Direct Dependencies
 
     * yummi
 
 ### Configuration
 
-Set a RBOSS_CLI_JBOSS_HOME variable pointing to your JBoss AS home location that has jboss-cli
+Set a RBOSS_CLI_HOME variable pointing to your JBoss AS home location that has jboss-cli
 for using rboss-cli, for using twiddle, set a RBOSS_TWIDDLE_HOME variable pointing to you JBoss AS 
 that has twiddle.
 
@@ -40,28 +40,34 @@ You can scan resources, detail information and execute operations.
 
 ### Invoking Operations
 
-To see the operations for a resource, use the option "--list-operations"
+To see the operations for a resource, use the "--list-operations" or "-l" option:
 
     rboss-cli --server --list-operations
 
-To detail an operation, use the option "--detail-operation"
+To detail an operation, use the "--detail-operation" or "-d" option:
 
     rboss-cli --server --detail-operation shutdown
 
 This will print a table showing both request and response parameters. To invoke the
-operation, use the "--operation" (or "-o") option
+operation, use the "--operation" or "-o" option:
 
     rboss-cli --server --operation shutdown
     rboss-cli --server -o shutdown
 
 Since this operation requires a parameter, rboss-cli will ask you to input them. If you
-want to pass the required parameters, use the "--arguments" (or "-a") option
+want to pass the required parameters, use the "--arguments" or "-a" option:
 
     rboss-cli --server --operation shutdown --arguments restart=true
     rboss-cli --server -o shutdown -a restart=true
+    
+Multiple arguments are supported using commas:
+
+    rboss-cli --some-resource -o operation -a arg1=value1,arg2=value
 
 If you want to skip optional arguments, use the "--skip-optional". rboss-cli will not ask
 you to input the arguments, leaving "--arguments" as the only way to set them.
+
+See rboss-cli --help for a complete list of commands.
 
 ### Known Issues
 
@@ -75,7 +81,7 @@ leaving the '--datasource any' as a workaround.
     rboss-cli --datasource --detail-operation add
     rboss-cli --datasource a --detail-operation add
 
-### Configuring mappings
+### Configuring CLI mappings
 
 To create and override mappings, just put a yaml file in "~/.rboss/rboss-cli/resources". The filename will
 be used to identify the operation. Example: placing a file named datasource.yaml will override the
@@ -88,12 +94,112 @@ The yaml must contain the given definitions:
 * scan (optional): a command to scan resources (by using this, the option may take an array of resource names)
 * print (optional): an array of table definitions to print with "read-resource" operation.
 
+Examples:
+
+    ---
+    description: Datasource Information
+    path: /subsystem=datasources/data-source=${NAME}
+    scan: ls /subsystem=datasources/data-source    
+    print:
+      - id: config
+        title: Datasource Details
+        layout: vertical
+        properties:
+          - jndi-name
+          - connection-url
+          - driver-name
+          - user-name
+          - enabled
+        header:
+          - JNDI Name
+          - Connection URL
+          - Driver Name
+          - User Name
+          - Enabled
+        format:
+          enabled: boolean
+
+        color:
+          jndi_name:
+            with: magenta
+          enabled: boolean
+          connection_url:
+            with: yellow
+
+      - id: pool
+        title: Datasource Pool Statistics
+        path: ${PATH}/statistics=pool
+        layout: vertical
+        properties:
+          - ActiveCount
+          - AvailableCount
+          - AverageBlockingTime
+          - AverageCreationTime
+          - CreatedCount
+          - DestroyedCount
+          - MaxCreationTime
+          - MaxUsedCount
+          - MaxWaitTime
+          - TimedOut
+          - TotalBlockingTime
+          - TotalCreationTime
+
+        header:
+          - Active
+          - Available
+          - Average Blocking
+          - Average Creation
+          - Created
+          - Destroyed
+          - Max Creation
+          - Max Wait
+          - Timed Out
+          - Total Blocking
+          - Total Creation
+
+        health:
+          active:
+            percentage:
+              max: available
+              using: active
+
+    ---
+    description: Detail Server Information
+    path: /core-service=
+    print:
+    - id: platform
+      title: Operating System Information
+      path: ${PATH}platform-mbean/type=operating-system
+      properties:
+      - name
+      - arch
+      - version
+      - available-processors
+      - system-load-average
+      header:
+      - Name
+      - Arch
+      - Version
+      - Processors
+      - System Load
+      format:
+        system_load: percentage
+      color:
+          name:
+            with: bold.white
+          system_load:
+            threshold:
+              0.8: bold.red
+              0.7: red
+              0.5: yellow
+              0: green
+
 To configure a table to print, just use the following parameters:
 
-* id: a name that will be joined to the file name to allow print only this table
+* id (required for multiple tables): a name that will be joined to the file name to allow print only this table
 * title: the table title
 * layout (horizontal | vertical): how the table must be printed. Use vertical for large number of properties
-* properties: an array with the properties (returned by "read-resource") to print in this table
+* properties: an array with the properties (returned by "read-resource") to print in this table, you can use a " -> " to navigate into nested properties (example: heap-memory-usage -> init)
 * header: an array that maps a header text to the properties
 * format: a hash that maps formatters to the table columns
 * color: a hash that maps colors to the table columns
@@ -133,7 +239,7 @@ Examples:
 
 ### Adding new components
 
-To add new Colorizers, Formatters or HealthCheckers, just put the code in the "~/.rboss/rboss.rb".
+To add new Colorizers, Formatters or HealthCheckers, just put the code in the "~/.rboss/rboss.rb" file.
 
 Example:
 
@@ -204,7 +310,7 @@ You can use a file in ~/.rboss/twiddle.rb for mapping new mbeans or overriding t
 
 And use it normally
 
-rboss-    twiddle --http-request
+    rboss-twiddle --http-request
 
 You can do every action using custom mbeans
 

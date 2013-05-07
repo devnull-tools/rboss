@@ -38,7 +38,7 @@ servers_file = "#@conf_dir/jboss-cli-servers.yaml"
 @parameters = {}
 @servers_file = File.expand_path(servers_file)
 save = false
-params[:jboss_home] = (ENV["RBOSS_CLI_JBOSS_HOME"] or Dir.pwd)
+params[:jboss_home] = (ENV["RBOSS_CLI_HOME"] or Dir.pwd)
 params[:host] = '127.0.0.1'
 params[:port] = '9999'
 
@@ -51,29 +51,29 @@ opts = OptionParser::new
 opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') do |home|
   params[:jboss_home] = home
 end
-opts.on('-s URL', 'Defines the JBoss server'.colorize(:green)) do |server|
+opts.on('-s URL', 'Defines the JBoss server'.green) do |server|
   params[:server] = server
 end
-opts.on('--host HOST', 'Defines the JBoss host'.colorize(:green)) do |host|
+opts.on('--host HOST', 'Defines the JBoss host'.green) do |host|
   params[:host] = host
 end
-opts.on('--port PORT', 'Defines the JBoss admin port'.colorize(:green)) do |port|
+opts.on('--port PORT', 'Defines the JBoss admin port'.green) do |port|
   params[:port] = port
 end
-opts.on('-u', '--user USER', 'Defines the Admin User'.colorize(:green)) do |user|
+opts.on('-u', '--user USER', 'Defines the Admin User'.green) do |user|
   params[:user] = user
 end
-opts.on('-p', '--password PASSWORD', 'Defines the Admin Password'.colorize(:green)) do |password|
+opts.on('-p', '--password PASSWORD', 'Defines the Admin Password'.green) do |password|
   params[:password] = password
 end
-opts.on('--start-cli', 'Starts the JBoss Management CLI connected to the configured server in interactive mode'.colorize(:white)) do 
+opts.on('--start-cli', 'Starts the JBoss Management CLI connected to the configured server in interactive mode'.white) do 
   @start = true
 end
-opts.on('--save SERVER_NAME', "Saves the server configuration in #{servers_file}".colorize(:blue)) do |server|
+opts.on('--save SERVER_NAME', "Saves the server configuration in #{servers_file}".blue) do |server|
   save = server
 end
 opts.on('-c', '--connect SERVER_NAME',
-        "Uses a configured server in #{servers_file}".colorize(:blue)) do |server|
+        "Uses a configured server in #{servers_file}".blue) do |server|
   config = load_yaml[server]
   abort "No configuration for #{server}" unless config
   config.each do |key, value|
@@ -93,32 +93,32 @@ opts.on('-v', '--verbose', 'Displays jboss-cli commands before execution') do
 end
 
 opts.on('-o', '--operation NAME',
-        'Sets the operation to invoke (Defaults to "read-resource")'.colorize(:red)) do |name|
+        'Sets the operation to invoke (Defaults to "read-resource")'.red) do |name|
   @operation = name
 end
-opts.on('--skip-optional', 'Skips optional parameters while invoking a command '.colorize(:red)) do
+opts.on('--skip-optional', 'Skips optional parameters while invoking a command '.red) do
   params[:skip_optional] = true
 end
-opts.on('-l', '--list-operations', 'Lists the available operations for a resource'.colorize(:red)) do
+opts.on('-l', '--list-operations', 'Lists the available operations for a resource'.red) do
   @operation = 'read-operation-names'
 end
-opts.on('-d', '--detail-operation NAME', 'Shows the operation details'.colorize(:red)) do |operation_name|
+opts.on('-d', '--detail-operation NAME', 'Shows the operation details'.red) do |operation_name|
   @operation = 'read-operation-description'
   @parameters = {'name' => operation_name}
 end
 opts.on('-a', '--args PARAMETERS', Array,
-        'Specifies parameters in form of (name=value) for use with operation'.colorize(:red)) do |parameters|
+        'Specifies parameters in form of (name=value) for use with operation'.red) do |parameters|
   @parameters = Hash[(parameters.collect { |p| p.split( /=/, 2) })]
 end
 
 RBoss::Cli::Mappings.resource_mappings.each do |name, config|
   if config[:description]
     if config[:scan]
-      opts.on("--#{name} [NAMES]", Array, config[:description].colorize(:yellow)) do |resources|
+      opts.on("--#{name} [NAMES]", Array, config[:description].yellow) do |resources|
         @resources[name] = resources
       end
     else
-      opts.on("--#{name}", config[:description].colorize(:yellow)) do
+      opts.on("--#{name}", config[:description].yellow) do
         @resources[name] = true
       end
     end
