@@ -48,11 +48,14 @@ def load_yaml
 end
 
 opts = OptionParser::new
+
+opts.separator "Environment Options".bold.white
+
 opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') do |home|
   params[:jboss_home] = home
 end
 
-opts.separator "Server Options".bold.blue
+opts.separator "\nServer Options".bold.white
 
 opts.on('-s URL', 'Defines the JBoss server') do |server|
   params[:server] = server
@@ -73,7 +76,7 @@ opts.on('--save SERVER_NAME', "Saves the server configuration in #{servers_file}
   save = server
 end
 
-opts.separator "CLI Options".bold.blue
+opts.separator "\nCLI Options".bold.white
 
 opts.on('--start-cli', 'Starts the JBoss Management CLI connected to the configured server in interactive mode') do 
   @start = true
@@ -93,7 +96,7 @@ opts.on('--script FILE', 'Executes the script in the cli interface') do |file|
   @script = file
 end
 
-opts.separator "Mapped Resources".bold.blue
+opts.separator "\nMapped Resources".bold.white
 
 RBoss::Cli::Mappings.resource_mappings.each do |name, config|
   if config[:description]
@@ -117,7 +120,7 @@ opts.on('--all', 'Display all available info') do
   end
 end
 
-opts.separator "Resource Options".bold.blue
+opts.separator "\nResource Options".bold.white
 
 opts.on('-l', '--list-operations', 'Lists the available operations for a resource') do
   @operation = 'read-operation-names'
@@ -138,7 +141,7 @@ opts.on('--skip-optional', 'Skips optional parameters while invoking a command '
   params[:skip_optional] = true
 end
 
-opts.separator "Common Options".bold.blue
+opts.separator "\nCommon Options".bold.white
 
 opts.on('--loop INTERVAL', Float, 'Run inside a loop') do |interval|
   @loop = true
