@@ -42,7 +42,6 @@ module RBoss
           send operation.to_key, resource_names, arguments
         else
           interact_to_invoke operation, resource_names, arguments
-          Yummi.colorize('Operation Executed!', :green)
         end
       end
 
@@ -62,25 +61,29 @@ module RBoss
             add_row(p)
           end
         end
-        result = ""
+        box = Yummi::TextBox::new
+        box.style.border[:color] = "bold.black"
+        width = 0
         @tables.each do |table|
-          result << table.to_s
-          result << $/
+          width = [width, table.width].max
         end
-        result
+        @tables.each do |table|
+          box << table.to_s
+          box.add("-" * width, :color => "bold.black") unless table == @tables.last
+        end
+        box.to_s
       end
 
       def read_operation_names(resource_name, arguments)
-        operations = Yummi::colorize('Operations:', :intense_yellow)
-        operations << $/
+        operations = ""
         with resource_name do
           result = @invoker.result("#{@context[:path]}:read-operation-names")
           result.each do |operation|
-            operations << Yummi::colorize('- ', :intense_purple)
-            operations << Yummi::colorize(operation, :intense_blue) << $/
+            operations << '- '.bold.magenta
+            operations << operation.bold.blue << $/
           end
         end
-        operations
+        operations.on_box
       end
 
       def read_operation_description (resource_name, arguments)
@@ -88,11 +91,11 @@ module RBoss
         with resource_name do
           operation_name = arguments['name']
           table = Yummi::Table::new
-          buff << Yummi::colorize(operation_name, :intense_green) << $/
+          buff << operation_name.bold.green << $/
           result = @invoker.result(
             "#{@context[:path]}:read-operation-description(name=#{operation_name})"
           )
-          buff << Yummi::colorize(result['description'], "bold.black") << $/ * 2
+          buff << result['description'].bold.black << $/ * 2
           table.title = 'Request'
           table.header = %w(Parameter Type Required Default)
           table.aliases = %w(name type required default)
@@ -137,7 +140,7 @@ module RBoss
             buff << table.to_s << $/
           end
         end
-        buff
+        buff.chomp.on_box
       end
 
       private
@@ -156,7 +159,7 @@ module RBoss
 
       def interact_to_invoke(operation, resource_name, arguments)
         with resource_name do
-          @invoker.gets_and_invoke(@context[:path], operation, arguments)
+          return @invoker.gets_and_invoke(@context[:path], operation, arguments)
         end
       end
 
