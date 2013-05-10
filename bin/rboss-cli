@@ -181,26 +181,16 @@ end
 if @start
   puts "Starting JBoss Management CLI connecting to ".bold.white << "#{@jboss_cli.server}".bold.green
   system "#{@jboss_cli.command} --connect"
-  puts "Disconnected!".bold.yellow
   exit 0
 end
 
 if @native
-  puts "Starting JBoss Management CLI connecting to ".bold.white << "#{@jboss_cli.server}".bold.green
   result = @jboss_cli.execute(@native)
-  
-  box = Yummi::TextBox::new
-  box.style.border[:color] = "bold.black"
-  
-  box << result
-  
-  puts box
-  
+  puts result.on_box
   exit 0
 end
 
 if @script
-  puts "Starting JBoss Management CLI connecting to ".bold.white << "#{@jboss_cli.server}".bold.green
   system "#{@jboss_cli.command} --connect --file #{@script}"
   exit 0
 end
