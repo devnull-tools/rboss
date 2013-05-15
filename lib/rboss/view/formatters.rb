@@ -2,7 +2,7 @@ require 'yummi'
 
 module RBoss
   #
-  # A module that holds the builtin formatters
+  # A module that holds the formatters
   #
   module Formatters
 

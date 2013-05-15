@@ -3,7 +3,7 @@ require 'yummi'
 module RBoss
 
   #
-  # A module that holds the builtin colorizers
+  # A module that holds the colorizers
   #
   module Colorizers
     
