@@ -224,5 +224,5 @@ begin
   execute_actions
 
 rescue Interrupt
-  puts "Aborted!".colorize(:red)
+  puts "\nAborted!".colorize(:red)
 end
