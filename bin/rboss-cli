@@ -92,6 +92,12 @@ end
 opts.on('--native COMMANDS', Array, 'Executes the given commands using cli interface (each command must be comma separated)') do |commands|
   @native = commands
 end
+opts.on('--domain-host DOMAIN_HOST', 'Sets the domain host (for using in domain mode)') do |host|
+  @domain_host = host
+end
+opts.on('--domain-server DOMAIN_HOST', 'Sets the domain server (for using in domain mode)') do |server|
+  @domain_server = server
+end
 opts.on('--script FILE', 'Executes the script in the cli interface') do |file|
   @script = file
 end
@@ -160,6 +166,9 @@ opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.
 
 @jboss_home = params[:jboss_home]
 @jboss_cli = RBoss::Cli::Invoker::new params
+
+@jboss_cli.domain_host = @domain_host if @domain_host
+@jboss_cli.domain_server = @domain_server if @domain_server
 
 if save
   config = load_yaml

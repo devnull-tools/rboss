@@ -1,7 +1,7 @@
 ---
 description: Details Interfaces
-path: /interface=${NAME}
-scan: ls /interface
+path: ${DOMAIN_HOST}${DOMAIN_SERVER}/interface=${NAME}
+scan: ls ${DOMAIN_HOST}${DOMAIN_SERVER}/interface
 print:
   - title: Interfaces
     layout: vertical

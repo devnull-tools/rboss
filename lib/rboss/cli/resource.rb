@@ -25,6 +25,8 @@ module RBoss
   module Cli
     class Resource
 
+      attr_accessor :context
+
       def initialize(invoker, config)
         @config = config
         @invoker = invoker

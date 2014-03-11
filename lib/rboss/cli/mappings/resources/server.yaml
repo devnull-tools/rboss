@@ -1,6 +1,6 @@
 ---
 description: Detail Server Information
-path: /core-service=
+path: ${DOMAIN_HOST}${DOMAIN_SERVER}/core-service=
 print:
 - id: platform
   title: Operating System Information

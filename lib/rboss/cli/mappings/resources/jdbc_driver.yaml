@@ -1,7 +1,7 @@
 ---
 description: Detail JDBC Drivers
-path: /subsystem=datasources/jdbc-driver=${NAME}
-scan: ls /subsystem=datasources/jdbc-driver
+path: ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=datasources/jdbc-driver=${NAME}
+scan: ls ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=datasources/jdbc-driver
 print:
 - title: JDBC Drivers
   properties:

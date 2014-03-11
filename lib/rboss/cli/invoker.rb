@@ -37,10 +37,11 @@ module RBoss
       include RBoss::Cli::Mappings, RBoss::Platform, RBoss::Cli::ResultParser
 
       attr_reader :server, :host, :port, :user, :password
+      attr_accessor :domain_host, :domain_server
 
       def initialize(params = {})
         params = {
-          :jboss_home => ENV["JBOSS_HOME"],
+          :jboss_home => ENV['JBOSS_HOME'],
         }.merge! params
 
         @jboss_home = params[:jboss_home]
@@ -66,6 +67,14 @@ module RBoss
         @skip_optional = params[:skip_optional]
       end
 
+      def domain_host=(host)
+        @domain_host = "/host=#{host}"
+      end
+
+      def domain_server=(host)
+        @domain_server = "/server=#{host}"
+      end
+
       def command
         command = "#{jboss_cli} --connect"
         command << " --controller=#@server" if @server
@@ -75,11 +84,13 @@ module RBoss
       end
 
       def invoke(operation, resources, parameters)
-        buff = ""
+        buff = ''
         resources.each do |key, resource_names|
           if resource_mappings.has_key? key
             mapping = resource_mappings[key]
             resource = RBoss::Cli::Resource::new(self, mapping)
+            resource.context[:domain_host] = @domain_host
+            resource.context[:domain_server] = @domain_server
             result = resource.invoke(operation, resource_names, parameters)
             buff << result.to_s if result
           end
@@ -89,11 +100,11 @@ module RBoss
 
       def gets_and_invoke(path, operation, parameters)
         result = result("#{path}:read-operation-description(name=#{operation})")
-        props = result["request-properties"]
+        props = result['request-properties']
         props ||= {}
         builder = CommandBuilder::new operation
         help_printed = false
-        info = Yummi::colorize("Please input the requested parameters", :yellow)
+        info = Yummi::colorize('Please input the requested parameters', :yellow)
         props.each do |name, detail|
           next if (@skip_optional and (not detail['required'] or detail['default']))
           parameter_type = detail['type']
@@ -105,28 +116,28 @@ module RBoss
             required = detail['required']
             default_value = detail['default']
             input_message << ' | ' << RBoss::Colorizers.type(parameter_type).colorize(parameter_type)
-            input_message << ' | ' << Yummi::colorize("Required", :red) if required
-            input_message << ' | ' << Yummi::colorize("Optional", :cyan) unless required
+            input_message << ' | ' << Yummi::colorize('Required', :red) if required
+            input_message << ' | ' << Yummi::colorize('Optional', :cyan) unless required
             input_message << ' | ' << Yummi::colorize("[#{default_value}]", :blue) if default_value
-            input_message << "\n" << Yummi::colorize(detail['description'], "bold.black")
+            input_message << "\n" << Yummi::colorize(detail['description'], 'bold.black')
             puts input_message
             input = get_input
             while required and input.empty?
-              puts Yummi::colorize("Required parameter!", :red)
+              puts Yummi::colorize('Required parameter!', :red)
               input = get_input
             end
           end
           if input.empty?
-            puts Yummi::colorize("Parameter skipped!", :yellow)
+            puts Yummi::colorize('Parameter skipped!', :yellow)
             next
           end
           begin
             builder << {:name => name, :value => parameter_type.convert(input)}
           rescue Exception => e
-            puts Yummi::colorize("Your input could not be converted:", :yellow)
+            puts Yummi::colorize('Your input could not be converted:', :yellow)
             puts Yummi::colorize(e.message, :red)
-            puts Yummi::colorize("This will not affect other inputs, you can continue to input other values.", :yellow)
-            puts "Press ENTER to continue"
+            puts Yummi::colorize('This will not affect other inputs, you can continue to input other values.', :yellow)
+            puts 'Press ENTER to continue'
             gets
           end
         end
