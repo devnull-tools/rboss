@@ -60,7 +60,7 @@ module RBoss
       table.format_null :with => 'undefined'
       table.colorize_null :with => :red
 
-      table.colorize :name, :with => "bold.white" if @name_column
+      table.colorize :name, :with => 'bold.white' if @name_column
 
       table
     end

@@ -63,7 +63,7 @@ module RBoss
 
       def load_default_resources
         load_resources File.join(File.dirname(__FILE__), 'mappings/resources')
-        file = File.expand_path("~/.rboss/rboss-cli/resources")
+        file = File.expand_path('~/.rboss/rboss-cli/resources')
         if File.exist? file
           load_resources file
         end

@@ -64,20 +64,20 @@ module RBoss
           end
         end
         box = Yummi::TextBox::new
-        box.style.border[:color] = "bold.black"
+        box.style.border[:color] = 'bold.black'
         width = 0
         @tables.each do |table|
           width = [width, table.width].max
         end
         @tables.each do |table|
           box << table.to_s
-          box.add("-" * width, :color => "bold.black") unless table == @tables.last
+          box.add('-' * width, :color => 'bold.black') unless table == @tables.last
         end
         box.to_s
       end
 
       def read_operation_names(resource_name, arguments)
-        operations = ""
+        operations = ''
         with resource_name do
           result = @invoker.result("#{@context[:path]}:read-operation-names")
           result.each do |operation|
