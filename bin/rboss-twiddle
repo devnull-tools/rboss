@@ -33,11 +33,11 @@ params = {}
 @mbeans = {}
 @commands = {}
 no_details = false
-@conf_dir = File.expand_path "~/.rboss"
+@conf_dir = File.expand_path '~/.rboss'
 servers_file = "#{@conf_dir}/twiddle.yaml"
 @servers_file = File.expand_path(servers_file)
 save = false
-params[:jboss_home] = (ENV["RBOSS_TWIDDLE_HOME"] or Dir.pwd)
+params[:jboss_home] = (ENV['RBOSS_TWIDDLE_HOME'] or Dir.pwd)
 
 defaults = RBoss::Twiddle::Monitor::defaults
 
@@ -74,7 +74,7 @@ opts.on('--loop INTERVAL', Float, 'Runs the mbean inside a loop') do |interval|
   @loop = true
   @interval = interval
 end
-opts.on('--all', "Detail all mapped mbeans") do
+opts.on('--all', 'Detail all mapped mbeans') do
   defaults.each do |mbean_id, mbean|
     if mbean[:scan]
       @mbeans[mbean_id] = :all
@@ -119,7 +119,7 @@ opts.on('--invoke mbean_id[:resource_name],method,[,args...]', Array,
         'Invokes a mbean method') do |invoke|
   @commands[:invoke] = invoke
 end
-opts.on("-l", "--list", "List the mbeans mappings") do
+opts.on('-l', '--list', 'List the mbeans mappings') do
   (defaults.sort_by { |k, v| k }).each do |mbean_id, mbean|
     puts " - #{mbean_id.to_s.gsub(/_/, '-')}"
     [:description, :pattern].each do |detail|
@@ -133,7 +133,7 @@ opts.on('--no-detail', 'Do not detail mbeans that needs a name') do
   no_details = true
 end
 opts.on('--no-color', 'Do not colorize output') do
-  require 'yummi/no_colors'
+  Yummi.no_colors
 end
 opts.on('-u', '--user USER', 'Defines the JMX User') do |user|
   params[:user] = user
@@ -147,7 +147,7 @@ end
 opts.on('-v', '--verbose', 'Shows the twiddle commands before execution') do
   params[:log_level] = Logger::DEBUG
 end
-opts.on("-h", "--help", "Shows this help message") do
+opts.on('-h', '--help', 'Shows this help message') do
   puts opts; exit
 end
 opts.parse!(ARGV) #rescue abort 'Invalid Option! Use --help or -h for usage help.'
@@ -167,10 +167,10 @@ if save
   f = File.open(@servers_file, 'w')
   YAML::dump(config, f)
   f.close
-  puts "Configuration saved!"
+  puts 'Configuration saved!'
 end
 
-def extract resource
+def extract(resource)
   mbean, name = resource.split(/:/)
   mbean.gsub!(/-/, '_')
   [mbean, name]
@@ -183,11 +183,11 @@ puts opts if @mbeans.empty? and @commands.empty?
                                                :mbeans => defaults
 
 def execute_actions
-  buff = ""
-  buff << Yummi.colorize(Time.now.strftime("At %H:%M:%S%n"), :white) if @loop
+  buff = ''
+  buff << Yummi.colorize(Time.now.strftime('At %H:%M:%S%n'), :white) if @loop
   buff << @actions.parse_and_execute(@commands)
   buff << @actions.detail(@mbeans)
-  system "clear" if @loop
+  system 'clear' if @loop
   puts buff
 end
 
@@ -200,5 +200,5 @@ begin
 
   execute_actions
 rescue Interrupt
-  puts Yummi::colorize("Aborted!", :red)
+  puts Yummi::colorize('Aborted!', :red)
 end
