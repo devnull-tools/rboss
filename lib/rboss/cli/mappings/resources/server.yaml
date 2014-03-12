@@ -139,7 +139,7 @@ print:
   - Total Started Thread Count
   - Daemon Thread Count
   - Current Thread CPU Time
-  - CUrrent Thread User Time
+  - Current Thread User Time
 
   format:
     thread_contention_monitoring_supported: boolean

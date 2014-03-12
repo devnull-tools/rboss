@@ -150,7 +150,9 @@ module RBoss
         commands = [commands] if commands.is_a? String
         exec = "#{command} --command#{commands.size > 1 ? 's' : ''}=\"#{commands.join ','}\""
         @logger.debug exec
-        `#{exec}`.chomp
+        result = `#{exec}`.chomp
+        @logger.debug result
+        result
       end
 
       def result(commands)

@@ -32,13 +32,13 @@ require 'yummi'
 include RBoss::Platform
 
 params = {}
-@conf_dir = File.expand_path "~/.rboss"
+@conf_dir = File.expand_path '~/.rboss'
 servers_file = "#@conf_dir/jboss-cli-servers.yaml"
 @resources = {}
 @parameters = {}
 @servers_file = File.expand_path(servers_file)
 save = false
-params[:jboss_home] = (ENV["RBOSS_CLI_HOME"] or Dir.pwd)
+params[:jboss_home] = (ENV['RBOSS_CLI_HOME'] or Dir.pwd)
 params[:host] = '127.0.0.1'
 params[:port] = '9999'
 
@@ -49,7 +49,7 @@ end
 
 opts = OptionParser::new
 
-opts.separator "Environment Options".bold.white
+opts.separator 'Environment Options'.bold.white
 
 opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') do |home|
   params[:jboss_home] = home
@@ -118,7 +118,7 @@ RBoss::Cli::Mappings.resource_mappings.each do |name, config|
   end
 end
 
-opts.separator ""
+opts.separator ''
 
 opts.on('--all', 'Display all available info') do
   RBoss::Cli::Mappings.resource_mappings.each do |name, config|
@@ -159,7 +159,7 @@ end
 opts.on('-v', '--verbose', 'Displays jboss-cli commands before execution') do
   params[:log_level] = Logger::DEBUG
 end
-opts.on("-h", "--help", "Shows this help message") do
+opts.on('-h', '--help', 'Shows this help message') do
   puts opts; exit
 end
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'.red
@@ -183,12 +183,12 @@ if save
   f = File.open(@servers_file, 'w')
   YAML::dump(config, f)
   f.close
-  puts "Configuration saved!".green
+  puts 'Configuration saved!'.green
   exit 0
 end
 
 if @start
-  puts "Starting JBoss Management CLI connecting to ".bold.white << "#{@jboss_cli.server}".bold.green
+  puts 'Starting JBoss Management CLI connecting to '.bold.white << "#{@jboss_cli.server}".bold.green
   system "#{@jboss_cli.command} --connect"
   exit 0
 end
@@ -216,7 +216,7 @@ def execute_actions
   begin
     content = @jboss_cli.invoke(@operation, @resources, @parameters)
     system clear if @loop
-    puts Yummi.colorize(Time.now.strftime("At %H:%M:%S%n"), :white) if @loop
+    puts Yummi.colorize(Time.now.strftime('At %H:%M:%S%n'), :white) if @loop
     puts content.chomp
   rescue RBoss::Cli::InvocationFailed => e
     puts e.message.red
