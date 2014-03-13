@@ -13,7 +13,7 @@ print:
     - path
     - relative-to
     - scan-enabled
-    - scan-interv
+    - scan-interval
     header:
     - Auto Deploy Exploded
     - Auto Deploy XML
