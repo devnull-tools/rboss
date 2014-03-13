@@ -143,11 +143,18 @@ module RBoss
         end
         result = result("#{path}:#{builder}")
         str = ''
-        colorizer = RBoss::Colorizers.yaml
+        colorizer = Yummi::Colorizers.pattern(
+            :mode => :grep,
+            :patterns => {
+              /^\s*(\w|\.)+:($|\s)/ => 'bold.blue',
+              /^\s*-\s/ => 'bold.blue'
+            }
+          )
         YAML::dump(result).each_line do |line|
+          next if line.chomp == '---'
           str << colorizer.colorize(line)
         end
-        str
+        str.chomp
       end
 
       def execute(commands)

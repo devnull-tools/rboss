@@ -29,14 +29,5 @@ module RBoss
       end
     end
 
-    def self.yaml
-      Yummi::Colorizers::pattern(
-        :mode => :grep,
-        :patterns => {
-          /^\s*(\w|\.)+:($|\s)/ => 'bold.blue'
-        }
-      )
-    end
-
   end
 end
