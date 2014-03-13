@@ -31,8 +31,8 @@ module RBoss
         @config = config
         @invoker = invoker
         @context = {
-          :name => '',
-          :read_resource => 'read-resource(include-runtime=true,recursive=true,include-defaults=true,proxies=true)'
+            :name => '',
+            :read_resource => 'read-resource(include-runtime=true,recursive=true,include-defaults=true,proxies=true)'
         }
         @context[:path] = parse(@config[:path])
         @tables = []
@@ -95,7 +95,7 @@ module RBoss
           table = Yummi::Table::new
           buff << operation_name.bold.green << $/
           result = @invoker.result(
-            "#{@context[:path]}:read-operation-description(name=#{operation_name})"
+              "#{@context[:path]}:read-operation-description(name=#{operation_name})"
           )
           buff << result['description'].bold.black << $/ * 2
           table.title = 'Request'
@@ -109,9 +109,9 @@ module RBoss
 
           table.format 'required', :using => Yummi::Formatters.boolean
           table.colorize 'required', :using => Yummi::Colorizers.boolean
-          result["request-properties"] ||= {}
-          unless result["request-properties"].empty?
-            result["request-properties"].each do |name, detail|
+          result['request-properties'] ||= {}
+          unless result['request-properties'].empty?
+            result['request-properties'].each do |name, detail|
               detail['name'] = name
               table << detail
             end
@@ -131,9 +131,9 @@ module RBoss
 
           table.format 'nilable', :using => Yummi::Formatters.boolean
           table.colorize 'nilable', :using => Yummi::Colorizers.boolean
-          result["reply-properties"] ||= {}
-          unless result["reply-properties"].empty?
-            result = result["reply-properties"]
+          result['reply-properties'] ||= {}
+          unless result['reply-properties'].empty?
+            result = result['reply-properties']
             table.description = result['description']
             table << result
             build_nested(result).each do |nested|
@@ -178,7 +178,12 @@ module RBoss
         data = get_data(params)
         return unless data
         data = [@context[:name]] + data if scannable?
-        @tables[@count % @tables.size].add data
+        table = @tables[@count % @tables.size]
+        if data.first.is_a? Array
+          table.data = data
+        else
+          table.add data
+        end
         @count += 1
       end
 
@@ -207,8 +212,14 @@ module RBoss
         begin
           result = @invoker.result(command)
           data = []
-          config[:properties].each do |prop|
-            data << get_property(prop, result)
+          if config[:properties]
+            config[:properties].each do |prop|
+              data << get_property(prop, result)
+            end
+          else
+            result.each do |name, value|
+              data << [name , value]
+            end
           end
           data
         rescue

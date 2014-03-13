@@ -89,13 +89,16 @@ opts.on('-c', '--connect SERVER_NAME',
     params[key.to_sym] = value
   end
 end
-opts.on('--native COMMANDS', Array, 'Executes the given commands using cli interface (each command must be comma separated)') do |commands|
+opts.on('--native COMMANDS', Array,
+        'Executes the given commands (comma separated) using cli interface') do |commands|
   @native = commands
 end
-opts.on('--domain-host DOMAIN_HOST', 'Sets the domain host (for using in domain mode)') do |host|
+opts.on('--domain-host DOMAIN_HOST',
+        'Sets the domain host (for using in domain mode)') do |host|
   @domain_host = host
 end
-opts.on('--domain-server DOMAIN_HOST', 'Sets the domain server (for using in domain mode)') do |server|
+opts.on('--domain-server DOMAIN_HOST',
+        'Sets the domain server (for using in domain mode)') do |server|
   @domain_server = server
 end
 opts.on('--script FILE', 'Executes the script in the cli interface') do |file|
@@ -195,7 +198,7 @@ end
 
 if @native
   result = @jboss_cli.execute(@native)
-  puts result.on_box
+  puts result
   exit 0
 end
 
@@ -216,8 +219,8 @@ def execute_actions
   begin
     content = @jboss_cli.invoke(@operation, @resources, @parameters)
     system clear if @loop
-    puts Yummi.colorize(Time.now.strftime('At %H:%M:%S%n'), :white) if @loop
     puts content.chomp
+    puts Time.now.strftime('%nAt %d-%m-%Y %H:%M:%S').bold.white if @loop
   rescue RBoss::Cli::InvocationFailed => e
     puts e.message.red
   end

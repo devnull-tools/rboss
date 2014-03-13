@@ -142,8 +142,7 @@ module RBoss
           end
         end
         result = result("#{path}:#{builder}")
-        #TODO print a table using the returned parameters
-        YAML::dump(result).on_box
+        YAML::dump(result)
       end
 
       def execute(commands)
