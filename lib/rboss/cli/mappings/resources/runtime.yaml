@@ -1,0 +1,34 @@
+---
+description: Detail Runtime Information
+path: ${DOMAIN_HOST}${DOMAIN_SERVER}/core-service=platform-mbean/type=runtime
+print:
+  - title: Runtime Information
+    layout: vertical
+    properties:
+      - name
+      - vm-name
+      - vm-vendor
+      - vm-version
+      - spec-vendor
+      - spec-version
+      - start-time
+      - uptime
+    header:
+      - Name
+      - VM Name
+      - VM Vendor
+      - VM Version
+      - Spec Vendor
+      - Spec Version
+      - Start Time
+      - Uptime
+    format:
+      start_time: date
+      uptime: time
+    color:
+      name:
+        with: bold.white
+      start_time:
+        with: green
+      uptime:
+        with: yellow
