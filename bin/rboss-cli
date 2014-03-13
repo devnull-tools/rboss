@@ -131,12 +131,19 @@ end
 
 opts.separator "\nResource Options".bold.white
 
-opts.on('-l', '--list-operations', 'Lists the available operations for a resource') do
+opts.on('-l', '--list', 'Lists the available operations for a resource') do
   @operation = 'read-operation-names'
 end
-opts.on('-d', '--detail-operation NAME', 'Shows the operation details') do |operation_name|
+opts.on('-d', '--detail NAME', 'Shows the operation details') do |operation_name|
   @operation = 'read-operation-description'
   @parameters = {'name' => operation_name}
+end
+opts.on('-r', '--attribute NAME', 'Reads the attribute') do |name|
+  @operation = 'read-attribute'
+  @parameters = {
+      'name' => name,
+      'include-defaults' => 'true' # parameters are string based
+  }
 end
 opts.on('-a', '--args PARAMETERS', Array,
         'Specifies parameters in form of (name=value) for use with operation') do |parameters|

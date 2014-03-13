@@ -6,7 +6,7 @@ module RBoss
   # A module that holds the colorizers
   #
   module Colorizers
-    
+
     #
     # A colorizer for the types returned by invocations in jboss-cli.
     #
@@ -27,6 +27,15 @@ module RBoss
             :cyan
         end
       end
+    end
+
+    def self.yaml
+      Yummi::Colorizers::pattern(
+        :mode => :grep,
+        :patterns => {
+          /^\s*(\w|\.)+:($|\s)/ => 'bold.blue'
+        }
+      )
     end
 
   end

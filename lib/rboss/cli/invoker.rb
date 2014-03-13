@@ -104,7 +104,7 @@ module RBoss
         props ||= {}
         builder = CommandBuilder::new operation
         help_printed = false
-        info = Yummi::colorize('Please input the requested parameters', :yellow)
+        info = 'Please input the requested parameters'.yellow
         props.each do |name, detail|
           next if (@skip_optional and (not detail['required'] or detail['default']))
           parameter_type = detail['type']
@@ -112,37 +112,42 @@ module RBoss
           unless input
             puts info unless help_printed
             help_printed = true
-            input_message = Yummi::colorize(name, :intense_blue)
+            input_message = name.bold.blue
             required = detail['required']
             default_value = detail['default']
             input_message << ' | ' << RBoss::Colorizers.type(parameter_type).colorize(parameter_type)
-            input_message << ' | ' << Yummi::colorize('Required', :red) if required
-            input_message << ' | ' << Yummi::colorize('Optional', :cyan) unless required
-            input_message << ' | ' << Yummi::colorize("[#{default_value}]", :blue) if default_value
-            input_message << "\n" << Yummi::colorize(detail['description'], 'bold.black')
+            input_message << ' | ' << 'Required'.red if required
+            input_message << ' | ' << 'Optional'.cyan unless required
+            input_message << ' | ' << "[#{default_value}]".blue if default_value
+            input_message << "\n" << detail['description'].bold.black
             puts input_message
             input = get_input
             while required and input.empty?
-              puts Yummi::colorize('Required parameter!', :red)
+              puts 'Required parameter!'.red
               input = get_input
             end
           end
           if input.empty?
-            puts Yummi::colorize('Parameter skipped!', :yellow)
+            puts 'Parameter skipped!'.yellow
             next
           end
           begin
             builder << {:name => name, :value => parameter_type.convert(input)}
           rescue Exception => e
-            puts Yummi::colorize('Your input could not be converted:', :yellow)
-            puts Yummi::colorize(e.message, :red)
-            puts Yummi::colorize('This will not affect other inputs, you can continue to input other values.', :yellow)
+            puts 'Your input could not be converted:'.yellow
+            puts e.message.red
+            puts 'This will not affect other inputs, you can continue to input other values.'.yellow
             puts 'Press ENTER to continue'
             gets
           end
         end
         result = result("#{path}:#{builder}")
-        YAML::dump(result)
+        str = ''
+        colorizer = RBoss::Colorizers.yaml
+        YAML::dump(result).each_line do |line|
+          str << colorizer.colorize(line)
+        end
+        str
       end
 
       def execute(commands)

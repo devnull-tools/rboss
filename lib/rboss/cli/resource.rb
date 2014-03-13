@@ -63,17 +63,11 @@ module RBoss
             add_row(p)
           end
         end
-        box = Yummi::TextBox::new
-        box.style.border[:color] = 'bold.black'
-        width = 0
+        result = ''
         @tables.each do |table|
-          width = [width, table.width].max
+          result << table.to_s << "\n"
         end
-        @tables.each do |table|
-          box << table.to_s
-          box.add('-' * width, :color => 'bold.black') unless table == @tables.last
-        end
-        box.to_s
+        result
       end
 
       def read_operation_names(resource_name, arguments)
@@ -180,7 +174,7 @@ module RBoss
         data = [@context[:name]] + data if scannable?
         table = @tables[@count % @tables.size]
         if data.first.is_a? Array
-          table.data = data
+          data.each {|d| table.add d}
         else
           table.add data
         end
@@ -208,7 +202,7 @@ module RBoss
       end
 
       def get_data(config)
-        command = parse((config[:command] or "${PATH}:#{@context[:read_resource]}"))
+        command = parse(config[:command])
         begin
           result = @invoker.result(command)
           data = []
@@ -218,7 +212,12 @@ module RBoss
             end
           else
             result.each do |name, value|
-              data << [name , value]
+              if config[:header].size == 1
+                data << [name]
+                data << [value]
+              else
+                data << [name, value]
+              end
             end
           end
           data

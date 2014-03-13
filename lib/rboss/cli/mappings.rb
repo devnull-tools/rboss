@@ -37,17 +37,18 @@ module RBoss
         mapping = YAML::load_file(file).symbolize_keys
         @resource_mappings[name] = mapping
         if mapping[:print]
-          mapping[:print].each do |table|
-            if table[:id]
+          mapping[:print].each do |print|
+            print[:command] ||= '${PATH}:${READ_RESOURCE}'
+            if print[:id]
               new_mapping = mapping.dup
-              new_mapping[:print] = [table]
-              new_mapping[:description] = table[:title]
+              new_mapping[:print] = [print]
+              new_mapping[:description] = print[:title]
               new_mapping[:derived] = true
-              if table[:path]
-                new_mapping[:path] = table[:path].gsub '${PATH}', mapping[:path]
-                table[:path] = new_mapping[:path]
+              if print[:path]
+                new_mapping[:path] = print[:path].gsub '${PATH}', mapping[:path]
+                print[:path] = new_mapping[:path]
               end
-              new_key = "#{name}-#{table[:id]}"
+              new_key = "#{name}-#{print[:id]}"
               @resource_mappings[new_key] = new_mapping
             end
           end
@@ -68,7 +69,7 @@ module RBoss
           load_resources file
         end
         @resource_mappings[''] = {
-          :path => ''
+            :path => ''
         }
       end
 
