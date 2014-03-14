@@ -1,5 +1,5 @@
-source "http://rubygems.org"
+source 'http://rubygems.org'
 
 gemspec
 
-gem 'yummi'
+gem 'yummi', '~> 0.9.3'

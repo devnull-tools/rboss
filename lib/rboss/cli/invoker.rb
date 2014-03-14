@@ -142,19 +142,7 @@ module RBoss
           end
         end
         result = result("#{path}:#{builder}")
-        str = ''
-        colorizer = Yummi::Colorizers.pattern(
-            :mode => :grep,
-            :patterns => {
-              /^\s*(\w|\.)+:($|\s)/ => 'bold.blue',
-              /^\s*-\s/ => 'bold.blue'
-            }
-          )
-        YAML::dump(result).each_line do |line|
-          next if line.chomp == '---'
-          str << colorizer.colorize(line)
-        end
-        str.chomp
+        format result
       end
 
       def execute(commands)
@@ -174,6 +162,24 @@ module RBoss
 
       def get_input
         gets.chomp.strip
+      end
+
+      def format(result)
+        if result.is_a? Hash
+          str = ''
+          result.each do |key, value|
+            str << "#{key.to_s.bold.blue} : #{value}\n"
+          end
+          str.chomp!
+        elsif result.is_a? Array
+          str = ''
+          result.each do |row|
+            str << "#{row}\n"
+          end
+          str.chomp!
+        else
+          result.to_s
+        end
       end
 
     end
