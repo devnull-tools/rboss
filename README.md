@@ -98,8 +98,8 @@ Examples:
 
     ---
     description: Datasource Information
-    path: /subsystem=datasources/data-source=${NAME}
-    scan: ls /subsystem=datasources/data-source    
+    path: ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=datasources/data-source=${NAME}
+    scan: ls ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=datasources/data-source
     print:
       - id: config
         title: Datasource Details
@@ -165,7 +165,7 @@ Examples:
 
     ---
     description: Detail Server Information
-    path: /core-service=
+    path: ${DOMAIN_HOST}${DOMAIN_SERVER}/core-service=
     print:
     - id: platform
       title: Operating System Information
