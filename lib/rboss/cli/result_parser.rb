@@ -76,6 +76,23 @@ module RBoss
         result['result']
       end
 
+      def format(result, offset = 0)
+        str = ''
+        mod = (' ' * offset)
+        if result.is_a? Hash
+          result.each do |key, value|
+            str << mod << "#{key.to_s.bold.blue} : #{format value, offset + 2}" << $/
+          end
+        elsif result.is_a? Array
+          result.each do |row|
+            str << $/ << mod << "#{format row, offset + 2}"
+          end
+        else
+          str << result.to_s
+        end
+        str.strip.chomp
+      end
+
     end
   end
 end

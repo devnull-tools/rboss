@@ -164,24 +164,6 @@ module RBoss
         gets.chomp.strip
       end
 
-      def format(result)
-        if result.is_a? Hash
-          str = ''
-          result.each do |key, value|
-            str << "#{key.to_s.bold.blue} : #{value}\n"
-          end
-          str.chomp!
-        elsif result.is_a? Array
-          str = ''
-          result.each do |row|
-            str << "#{row}\n"
-          end
-          str.chomp!
-        else
-          result.to_s
-        end
-      end
-
     end
 
     class CommandBuilder

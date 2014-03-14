@@ -65,7 +65,7 @@ module RBoss
         end
         result = ''
         @tables.each do |table|
-          result << table.to_s << "\n"
+          result << table.to_s << $/
         end
         result
       end
@@ -79,7 +79,7 @@ module RBoss
             operations << operation.bold.blue << $/
           end
         end
-        operations.on_box
+        operations
       end
 
       def read_operation_description (resource_name, arguments)
@@ -93,19 +93,22 @@ module RBoss
           )
           buff << result['description'].bold.black << $/ * 2
           table.title = 'Request'
-          table.header = %w(Parameter Type Required Default)
-          table.aliases = %w(name type required default)
-          table.colorize('name', :with => :white)
+          table.header = %w(Parameter Type Required Expression Default)
+          table.aliases = %w(name type required expressions-allowed default)
+          table.colorize('name', :with => 'bold.white')
 
           table.colorize %w(type default) do |value|
             RBoss::Colorizers.type(value['type']).color_for(value)
           end
-
-          table.format 'required', :using => Yummi::Formatters.boolean
-          table.colorize 'required', :using => Yummi::Colorizers.boolean
+          table.format %w(required expressions-allowed), :using => Yummi::Formatters.boolean
+          table.colorize 'required', :using => Yummi::Colorizers.boolean(
+            :if_true => 'bold.red',
+            :if_false => 'white'
+          )
+          table.colorize 'expressions-allowed', :using => Yummi::Colorizers.boolean
           result['request-properties'] ||= {}
           unless result['request-properties'].empty?
-            result['request-properties'].each do |name, detail|
+            result['request-properties'].sort.each do |name, detail|
               detail['name'] = name
               table << detail
             end
@@ -117,7 +120,7 @@ module RBoss
           table.header = %w(Parameter Type Nilable Unit)
           table.aliases = %w(name type nilable unit)
 
-          table.colorize 'name', :with => :white
+          table.colorize 'name', :with => 'bold.white'
 
           table.colorize 'type' do |value|
             RBoss::Colorizers.type(value['type']).color_for(value)
@@ -136,7 +139,7 @@ module RBoss
             buff << table.to_s << $/
           end
         end
-        buff.chomp.on_box
+        buff.chomp
       end
 
       private
