@@ -42,7 +42,7 @@ module RBoss
       end
 
       def clear
-        "cls"
+        'cls'
       end
     end
   else
@@ -64,7 +64,7 @@ module RBoss
       end
 
       def clear
-        "clear"
+        'clear'
       end
     end
   end
