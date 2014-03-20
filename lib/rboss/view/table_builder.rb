@@ -24,7 +24,7 @@ module RBoss
   class TableBuilder
 
     def initialize(config)
-      @config = config
+      @config = config.dup
       add_name_column if config[:scan]
     end
 
