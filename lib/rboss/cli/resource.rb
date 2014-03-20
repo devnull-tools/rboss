@@ -196,8 +196,11 @@ module RBoss
 
       def scan
         return '' unless scannable?
-        result = @invoker.execute(parse @config[:scan])
-        result.split "\n"
+        unless @resources
+          result = @invoker.execute(parse @config[:scan])
+          @resources = result.split "\n"
+        end
+        @resources
       end
 
       def scannable?
