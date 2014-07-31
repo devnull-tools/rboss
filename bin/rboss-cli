@@ -76,9 +76,6 @@ end
 opts.on('--save SERVER_NAME', "Saves the server configuration in #{servers_file}") do |server|
   save = server
 end
-
-opts.separator "\nHelper Options".bold.white
-
 opts.on('--list-servers', 'List configured servers') do
   load_yaml.each_key { |name| puts name }
   exit
