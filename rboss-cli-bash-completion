@@ -27,6 +27,7 @@ _rboss_cli () {
   local cur="${COMP_WORDS[COMP_CWORD]}"
   local prev="${COMP_WORDS[COMP_CWORD-1]}"
   local args="${COMP_WORDS[@]:1}"
+  local prev_args="${COMP_WORDS[@]:1:COMP_CWORD-1}"
 
   case "$cur" in
     - | --*)
@@ -37,8 +38,38 @@ _rboss_cli () {
       -c | --connect)
         COMPREPLY=( $( compgen -W '$(rboss-cli --list-servers)' -- $cur ) )
       ;;
+      -o | --operation | \
+      -d | --detail)
+        
+        COMPREPLY=( $( compgen -W '$(rboss-cli $prev_args --list-operations)' -- $cur ) )
+      ;;
+      -j | --jboss-home | --script)
+        _longopt
+      ;;
+      -v | -s | -u | -p | -l | -r | \
+      --list-operations | \
+      --list-resource-names | \
+      --verbose | \
+      --host | \
+      --port | \
+      --save | \
+      --list-servers | \
+      --start-cli | \
+      --native | \
+      --no-colors | \
+      --domain-host | \
+      --domain-server | \
+      --attribute | \
+      --all | \
+      --scan)
+      ;;
       --*)
-        COMPREPLY=( $( compgen -W '$(rboss-cli $args --list-resource-names' -- $cur ) )
+        if [[ "$cur" =~ .*,.* ]]; then
+          COMPREPLY=( $( compgen -W '$(rboss-cli $args --list-resource-names)' \
+            -P "${cur%,*}," -- ${cur##*,} ) )
+        else
+          COMPREPLY=( $( compgen -W '$(rboss-cli $args --list-resource-names)' -- $cur ) )
+        fi
       ;;
     esac
     ;;

@@ -144,7 +144,7 @@ opts.on('-l', '--list-operations', 'Lists the available operations for a resourc
   @operation = 'read-operation-names'
 end
 opts.on('--list-resource-names', 'Lists the available names for a resource') do
-  @operation = 'suggest-resource-names'
+  @operation = 'list-resource-names'
   @resources = {}
   @resources[@last_resource] = nil
 end
@@ -180,7 +180,7 @@ opts.on('--loop INTERVAL', Float, 'Run inside a loop') do |interval|
   @loop = true
   @interval = interval
 end
-opts.on('--no-color', 'Do not colorize output') do
+opts.on('--no-colors', 'Do not colorize output') do
   Yummi.no_colors
 end
 opts.on('-v', '--verbose', 'Displays jboss-cli commands and results') do

@@ -47,7 +47,7 @@ module RBoss
         end
       end
 
-      def suggest_resource_names(resources, arguments)
+      def list_resource_names(resources, arguments)
         result = ''
         scan.each do |resource|
           result << resource << $/
@@ -83,8 +83,7 @@ module RBoss
         with resource_name do
           result = @invoker.result("#{@context[:path]}:read-operation-names")
           result.each do |operation|
-            operations << '- '.bold.magenta
-            operations << operation.bold.blue << $/
+            operations << operation << $/
           end
         end
         operations
