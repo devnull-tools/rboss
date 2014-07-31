@@ -47,6 +47,14 @@ module RBoss
         end
       end
 
+      def suggest_resource_names(resources, arguments)
+        result = ''
+        scan.each do |resource|
+          result << resource << $/
+        end
+        result
+      end
+
       def read_resource(resources, arguments)
         resources ||= scan
         params = @config[:print]

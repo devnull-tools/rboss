@@ -35,6 +35,7 @@ params = {}
 @conf_dir = File.expand_path '~/.rboss'
 servers_file = "#@conf_dir/jboss-cli-servers.yaml"
 @resources = {}
+@last_resource = nil
 @parameters = {}
 @servers_file = File.expand_path(servers_file)
 save = false
@@ -76,9 +77,16 @@ opts.on('--save SERVER_NAME', "Saves the server configuration in #{servers_file}
   save = server
 end
 
+opts.separator "\nHelper Options".bold.white
+
+opts.on('--list-servers', 'List configured servers') do
+  load_yaml.each_key { |name| puts name }
+  exit
+end
+
 opts.separator "\nCLI Options".bold.white
 
-opts.on('--start-cli', 'Starts the JBoss Management CLI connected to the configured server in interactive mode') do 
+opts.on('--start-cli', 'Starts the JBoss Management CLI connected to the configured server in interactive mode') do
   @start = true
 end
 opts.on('-c', '--connect SERVER_NAME',
@@ -111,6 +119,7 @@ RBoss::Cli::Mappings.resource_mappings.each do |name, config|
   if config[:description]
     if config[:scan]
       opts.on("--#{name} [NAMES]", Array, config[:description]) do |resources|
+        @last_resource = name
         @resources[name] = resources
       end
     else
@@ -131,8 +140,13 @@ end
 
 opts.separator "\nResource Options".bold.white
 
-opts.on('-l', '--list', 'Lists the available operations for a resource') do
+opts.on('-l', '--list-operations', 'Lists the available operations for a resource') do
   @operation = 'read-operation-names'
+end
+opts.on('--list-resource-names', 'Lists the available names for a resource') do
+  @operation = 'suggest-resource-names'
+  @resources = {}
+  @resources[@last_resource] = nil
 end
 opts.on('-d', '--detail NAME', 'Shows the operation details') do |operation_name|
   @operation = 'read-operation-description'
@@ -141,13 +155,16 @@ end
 opts.on('-r', '--attribute NAME', 'Reads the attribute') do |name|
   @operation = 'read-attribute'
   @parameters = {
-      'name' => name,
-      'include-defaults' => 'true' # parameters are string based
+    'name' => name,
+    'include-defaults' => 'true' # parameters are string based
   }
+end
+opts.on('--scan', 'Reads the children names') do
+  @operation = 'read-children-names'
 end
 opts.on('-a', '--args PARAMETERS', Array,
         'Specifies parameters in form of (name=value) for use with operation') do |parameters|
-  @parameters = Hash[(parameters.collect { |p| p.split( /=/, 2) })]
+  @parameters = Hash[(parameters.collect { |p| p.split(/=/, 2) })]
 end
 opts.on('-o', '--operation NAME',
         'Sets the operation to invoke (Defaults to "read-resource")') do |name|
@@ -172,6 +189,19 @@ end
 opts.on('-h', '--help', 'Shows this help message') do
   puts opts; exit
 end
+
+# Autocomplete options
+case ARGV[0]
+  when 'options'
+    opts.top.short.each do |o|
+      puts "-#{o[0]}"
+    end
+    opts.top.long.each do |o|
+      puts "--#{o[0]}"
+    end
+    exit
+end
+
 opts.parse!(ARGV) rescue abort 'Invalid Option! Use --help or -h for usage help.'.red
 
 @jboss_home = params[:jboss_home]
