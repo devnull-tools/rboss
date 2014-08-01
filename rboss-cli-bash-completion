@@ -40,8 +40,7 @@ _rboss_cli () {
       ;;
       -o | --operation | \
       -d | --detail)
-        
-        COMPREPLY=( $( compgen -W '$(rboss-cli $prev_args --list-operations)' -- $cur ) )
+        COMPREPLY=( $( compgen -W '$(rboss-cli $prev_args read-operation-names)' -- $cur ) )
       ;;
       -j | --jboss-home | --script)
         _longopt
