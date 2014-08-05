@@ -1,0 +1,43 @@
+---
+description: Details Message Information
+path: ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=messaging/hornetq-server=default
+print:
+  - id: queue
+    path: ${PATH}/jms-queue=${NAME}
+    scan: ls ${PATH}/jms-queue
+    title: Queues
+    layout: vertical
+    properties:
+    - messages-added
+    - message-count
+    - delivering-count
+    - scheduled-count
+    - consumer-count
+    - selector
+    - durable
+    - paused
+    - temporary
+    - queue-address
+    - dead-letter-address
+    - expirity-address
+    header:
+    - Total
+    - Currently
+    - Delivering
+    - Scheduled
+    - Consumers
+    - Selector
+    - Durable
+    - Paused
+    - Temporary
+    - Queue Address
+    - Dead Letter Address
+    - Expirity Address
+    format:
+      durable: boolean
+      paused: boolean
+      temporary: boolean
+    color:
+      durable: boolean
+      paused: boolean
+      temporary: boolean
