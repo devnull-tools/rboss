@@ -75,19 +75,19 @@ Keep in mind that if you need completion for a different server than `local` (th
 
 ### Known Issues
 
-The datasource mapping (--datasource) retrieves incorrect information if you call either detail operation or invoke operation for the operation add. This is caused because the command `/subsystem=datasources/data-source=:read-operation-description(name=add)` needs to be executed as `/subsystem=datasources/data-source=ANY_VALUE:read-operation-description(name=add)`, leaving the '--datasource any' as a workaround.
+The datasource mapping (`--datasource`) retrieves incorrect information if you call either detail operation or invoke operation for the operation add. This is caused because the command `/subsystem=datasources/data-source=:read-operation-description(name=add)` needs to be executed as `/subsystem=datasources/data-source=ANY_VALUE:read-operation-description(name=add)`, leaving the `--datasource any` as a workaround.
 
     rboss-cli --datasource --detail-operation add
     rboss-cli --datasource any --detail-operation add
 
 ### Configuring CLI mappings
 
-To create and override mappings, just put a yaml file in "~/.rboss/rboss-cli/resources". The filename will be used to identify the operation. Example: placing a file named datasource.yaml will override the --datasource option and a file named logger.yaml will create a new option (--logger). The yaml must contain the given definitions:
+To create and override mappings, just put a yaml file in `~/.rboss/rboss-cli/resources`. The filename will be used to identify the operation. Example: placing a file named datasource.yaml will override the `--datasource` option and a file named `logger.yaml` will create a new option (`--logger`). The yaml must contain the given definitions:
 
-* description: an explaining text to appear in command usage (--help)
-* path: the path to invoke the operations, may take a ${NAME} if the path contains a resource name
+* description: an explaining text to appear in command usage (`--help`)
+* path: the path to invoke the operations, may take a `${NAME}` if the path contains a resource name
 * scan (optional): a command to scan resources (by using this, the option may take an array of resource names)
-* print (optional): an array of table definitions to print with "read-resource" operation.
+* print (optional): an array of table definitions to print with `read-resource` operation.
 
 Examples:
 
