@@ -1,30 +1,21 @@
 rboss
 =============
 
-Use this tool to create profiles for JBoss Application Server and use twiddle to scan
-a running JBoss AS or execute scripts.
-
+This tool helps you manage a JBoss application server (EAP or Wildfly).
 
 Installation
 -----------
 
     gem install rboss
 
-### Direct Dependencies
-
-    * yummi
-
 ### Configuration
 
-Set a RBOSS_CLI_HOME variable pointing to your JBoss AS home location that has jboss-cli
-for using rboss-cli, for using twiddle, set a RBOSS_TWIDDLE_HOME variable pointing to you JBoss AS 
-that has twiddle.
+Set a `RBOSS_CLI_HOME` variable pointing to your JBoss AS home location that has `jboss-cli` for using `rboss-cli`, for using twiddle, set a `RBOSS_TWIDDLE_HOME` variable pointing to you JBoss AS that has twiddle.
 
 Using rboss-cli
 -----------
 
-rboss-cli is a helper tool for jboss-cli, it maps resource paths and helps the operation
-invoke.
+`rboss-cli` is a helper tool for `jboss-cli`, it maps resource paths and helps the operation invoke.
 
 ### Basics
 
@@ -40,22 +31,20 @@ You can scan resources, detail information and execute operations.
 
 ### Invoking Operations
 
-To see the operations for a resource, use the "--list-operations" or "-l" option:
+To see the operations for a resource, use the `--list-operations` or `-l` option:
 
     rboss-cli --server --list-operations
 
-To detail an operation, use the "--detail-operation" or "-d" option:
+To detail an operation, use the `--detail-operation` or `-d` option:
 
     rboss-cli --server --detail-operation shutdown
 
-This will print a table showing both request and response parameters. To invoke the
-operation, use the "--operation" or "-o" option:
+This will print a table showing both request and response parameters. To invoke the operation, use the `--operation` or `-o` option:
 
     rboss-cli --server --operation shutdown
     rboss-cli --server -o shutdown
 
-Since this operation requires a parameter, rboss-cli will ask you to input them. If you
-want to pass the required parameters, use the "--arguments" or "-a" option:
+Since this operation requires a parameter, rboss-cli will ask you to input them. If you want to pass the required parameters, use the `--arguments` or `-a` option:
 
     rboss-cli --server --operation shutdown --arguments restart=true
     rboss-cli --server -o shutdown -a restart=true
@@ -64,30 +53,36 @@ Multiple arguments are supported using commas:
 
     rboss-cli --some-resource -o operation -a arg1=value1,arg2=value
 
-If you want to skip optional arguments, use the "--skip-optional". rboss-cli will not ask
-you to input the arguments, leaving "--arguments" as the only way to set them.
+If you want to skip optional arguments, use the `--skip-optional`. `rboss-cli` will not ask you to input optional arguments, leaving `--arguments` as the only way to set them.
 
-See rboss-cli --help for a complete list of commands.
+See `rboss-cli --help` for a complete list of commands.
+
+### Bash Completion
+
+You can also source the `rboss-cli-bash-completion` file to make use of the completion for the `rboss-cli`. The completion works for parameters, resource arguments and operations.
+
+    $ rboss-cli --dat[TAB]
+    $ rboss-cli --datasource Exa[TAB]
+    $ rboss-cli --datasource ExampleDS
+
+Keep in mind that if you need completion for a different server than `local` (the default server), you should start the command with `--connect` or `-c`:
+
+    $ rboss-cli --connect my[TAB]
+    $ rboss-cli --connect myserver
+    $ rboss-cli --connect myserver --dat[TAB]
+    $ rboss-cli --connect myserver --datasource Exa[TAB]
+    $ rboss-cli --connect myserver --datasource ExampleDS
 
 ### Known Issues
 
-The datasource mapping (--datasource) retrieves incorrect information if you call either
-detail operation or invoke operation for the operation add. This is caused because the
-command '/subsystem=datasources/data-source=:read-operation-description(name=add)' needs
-to be executed as
-'/subsystem=datasources/data-source=ANY_VALUE:read-operation-description(name=add)',
-leaving the '--datasource any' as a workaround.
+The datasource mapping (--datasource) retrieves incorrect information if you call either detail operation or invoke operation for the operation add. This is caused because the command `/subsystem=datasources/data-source=:read-operation-description(name=add)` needs to be executed as `/subsystem=datasources/data-source=ANY_VALUE:read-operation-description(name=add)`, leaving the '--datasource any' as a workaround.
 
     rboss-cli --datasource --detail-operation add
-    rboss-cli --datasource a --detail-operation add
+    rboss-cli --datasource any --detail-operation add
 
 ### Configuring CLI mappings
 
-To create and override mappings, just put a yaml file in "~/.rboss/rboss-cli/resources". The filename will
-be used to identify the operation. Example: placing a file named datasource.yaml will override the
---datasource option and a file named logger.yaml will create a new option (--logger).
-
-The yaml must contain the given definitions:
+To create and override mappings, just put a yaml file in "~/.rboss/rboss-cli/resources". The filename will be used to identify the operation. Example: placing a file named datasource.yaml will override the --datasource option and a file named logger.yaml will create a new option (--logger). The yaml must contain the given definitions:
 
 * description: an explaining text to appear in command usage (--help)
 * path: the path to invoke the operations, may take a ${NAME} if the path contains a resource name
@@ -208,7 +203,7 @@ To configure a table to print, just use the following parameters:
 All mappings (formatter, colorizer and health checker) should be mapped using the following conventions:
 
 * the key should be the property name (replace '-' with '_')
-* the value should be the message to send to RBoss::Formatters, RBoss::HealthCheckers or RBoss::Colorizers
+* the value should be the message to send to `RBoss::Formatters`, `RBoss::HealthCheckers` or `RBoss::Colorizers`
 * if the message takes parameters, they must be specified in a form of a hash after the message
 
 Examples:
@@ -239,7 +234,7 @@ Examples:
 
 ### Adding new components
 
-To add new Colorizers, Formatters or HealthCheckers, just put the code in the "~/.rboss/rboss.rb" file.
+To add new `Colorizers`, `Formatters` or `HealthCheckers`, just put the code in the `~/.rboss/rboss.rb` file.
 
 Example:
 
@@ -258,16 +253,16 @@ From now you can use this colorizer
 
 The components included are defined in the following files:
 
-* /lib/rboss/view/colorizers.rb
-* /lib/rboss/view/formatters.rb
-* /lib/rboss/view/health_checkers.rb
+* `/lib/rboss/view/colorizers.rb`
+* `/lib/rboss/view/formatters.rb`
+* `/lib/rboss/view/health_checkers.rb`
 
 Using rboss-twiddle
 -----------
 
 ### Basics
 
-Simply do a "cd" to your JBoss Home and use it
+Simply do a `cd` to your JBoss Home and use it
 
     rboss-twiddle --help
 
@@ -276,31 +271,31 @@ You can scan resources like: datasources, queues, connectors, webapps, ...
     rboss-twiddle --datasource --webapp
     rboss-twiddle --all
 
-If you don't need to scan for resources, you can specify them for monitoring:
+If you don't need to scan for resources, you can specify them for print status:
 
     rboss-twiddle --webapp jmx-console,admin-console
 
-Combine with "watch" to get a simple and instantly monitoring:
+Use `--loop` to get a simple monitoring:
 
-    watch --interval=1 rboss-twiddle --webapp jmx-console,admin-console
+    rboss-twiddle --webapp jmx-console,admin-console --loop 1
 
-Retrieve property values with --get:
+Retrieve property values with `--get`:
 
     rboss-twiddle --get webapp:jmx-console,maxSessions
     rboss-twiddle --get server-info,FreeMemory
 
-Set values with --set:
+Set values with `--set`:
 
     rboss-twiddle --set connector:http-127.0.0.1-8080,maxThreads,350
 
-Execute commands with --invoke:
+Execute commands with `--invoke`:
 
     rboss-twiddle --invoke server,shutdown
     rboss-twiddle --invoke web-deployment:jmx-console,stop
 
 Extending mbeans
 
-You can use a file in ~/.rboss/twiddle.rb for mapping new mbeans or overriding the defaults
+You can use a file in `~/.rboss/twiddle.rb` for mapping new mbeans or overriding the defaults:
 
     RBoss::Twiddle::Monitor.defaults[:http_request] = {
       :description => 'Request for http protocol',
@@ -316,18 +311,17 @@ You can do every action using custom mbeans
 
     rboss-twiddle --invoke http-request,resetCounters
 
-Configurations can be saved using --save
+Configurations can be saved using `--save`
 
     rboss-twiddle --save jon --port 2099
 
-And used with -c or --config
+And used with `-c` or `--config`
 
     rboss-twiddle -c jon --server-config
 
 ### Customizing MBeans
 
-Every time you run the rboss-twiddle command, this gem will load the ~/.rboss/rboss.rb file,
-which can be used to customize the mbeans.
+Every time you run the `rboss-twiddle` command, this gem will load the `~/.rboss/rboss.rb` file, which can be used to customize the mbeans.
 
     defaults = RBoss::Twiddle::Monitor.defaults
     defaults[:logger] = {
@@ -335,24 +329,22 @@ which can be used to customize the mbeans.
       :pattern => 'jboss.system:service=Logging,type=Logger'
     }
 
-This will add a custom mbean whose identifier is 'logger'. From that, you can use therboss-
-twiddle command on it.
+This will add a custom mbean whose identifier is 'logger'. From that, you can use the `rboss-twiddle` command on it.
 
     rboss-twiddle --invoke logger debug,message
 
-If your mbean name depends on a resource name (like the connector mbean), you can use
-a '#{resource}' string to pass the resource in the command line.
+If your mbean name depends on a resource name (like the connector mbean), you can use a `#{resource}` string to pass the resource in the command line.
 
     defaults[:mymbean] => {
       :description => 'My Custom MBean',
       :pattern => 'jboss.custom:type=CustomMBean,name=#{resource}'
     }
 
-Don't forget to use single quotes on that. The rboss-twiddle command will be:
+Don't forget to use single quotes on that. The `rboss-twiddle` command will be:
 
     rboss-twiddle --get mymbean:Name,MBeanProperty
 
-If this mbean is scannable, you can use a :scan key:
+If this mbean is scannable, you can use a `:scan` key:
 
     defaults[:mymbean] => {
       :description => 'My Custom MBean',
@@ -369,8 +361,7 @@ Now you can scan for resources of your custom MBean by using:
 
     rboss-twiddle --mymbean
 
-If your MBean has some properties that should appear in a table for instant monitoring,
-just add a :properties key:
+If your MBean has some properties that should appear in a table for instant monitoring, just add a `:properties` key:
 
     defaults[:mymbean] => {
       :description => 'My Custom MBean',
@@ -385,8 +376,7 @@ just add a :properties key:
       end
     }
 
-If this MBean maps a component that can be monitored for health state, you can map the
-limits by using a :health key:
+If this MBean maps a component that can be monitored for health state, you can map the limits by using a `:health` key:
 
     defaults[:mymbean] => {
       :description => 'My Custom MBean',
@@ -409,21 +399,18 @@ limits by using a :health key:
       end
     }
 
-Customizing health, formatters and colors are the same as customizing in rboss-cli. You can
-use the indexes of the values (in that case, 2 for :max and 0 for :using) or the header values
-in downcase and underscores.
+Customizing health, formatters and colors are the same as customizing in `rboss-cli`. You can use the indexes of the values (in that case, `2` for `:max` and `0` for `:using`) or the header values in downcase and underscores.
 
 Using rboss-profile
 -----------
 
 ### Basics
 
-Simply do a "cd" to your JBoss Home and use it
+Simply do a `cd` to your JBoss Home and use it
 
     rboss-profile --help
 
-All configuration can be stored in a single yaml file containing an array of components
-and its configuration:
+All configuration can be stored in a single yaml file containing an array of components and its configuration:
 
     - deploy_folder: deploy/datasources
     - deploy_folder: deploy/apps
@@ -444,8 +431,8 @@ You can specify any command-line arguments directly in yaml file:
 
 ### Configuring deploy folders
 
-Use "deploy_folder" component and the desired folder. If the folder starts with a "/" or
-doesn't start with "deploy", the entries in VFS will be added.
+Use `deploy_folder` component and the desired folder. If the folder starts with a `/` or
+doesn't start with `deploy`, the entries in VFS will be added.
 
     # Will be in $JBOSS_HOME/server/$PROFILE/deploy/application
     - deploy_folder: deploy/applications
@@ -455,7 +442,7 @@ doesn't start with "deploy", the entries in VFS will be added.
 
 ### Configuring jmx
 
-Use "jmx" component:
+Use `jmx` component:
 
     # user and password are "admin" by default
     - jmx
@@ -463,40 +450,35 @@ Use "jmx" component:
         :user: admin
         :password: admin
 
-Basically, this will add an entry in the jmx-console-users.properties (depends on JBoss type).
-For JBoss org, this will enable security in jmx-console since the enterprise versions have
-jmx-console security by default.
+Basically, this will add an entry in the `jmx-console-users.properties` (depends on JBoss type). For JBoss org, this will enable security in `jmx-console` since the enterprise versions have `jmx-console` security enabled by default.
 
 ### Configuring datasources
 
-Use a "datasource" component
+Use a `datasource` component
 
 Configuration:
 
-:folder => a folder where this datasource will be saved (default: $JBOSS_HOME/server/$CONFIG/deploy)
-if a relative path is given, it will be appended to default value
-:encrypt => a flag to indicate if the password should be encrypted (default: false)
-:type => the type of the datasource
-:name => a name for saving the file (default: :type)
-:attributes => a Hash with the attributes that will be changed in template (the only required is :jndi_name)
+- `:folder` - a folder where this datasource will be saved (default: `$JBOSS_HOME/server/$CONFIG/deploy`) if a relative path is given, it will be appended to default value
+- `:encrypt` - a flag to indicate if the password should be encrypted (default: `false`)
+- `:type` - the type of the datasource
+- `:name` - a name for saving the file (default: `:type`)
+- `:attributes` - a Hash with the attributes that will be changed in template (the only required is `:jndi_name`)
 
-Any attribute that is not present in datasource xml will be created using this template: <key>value</key>.
+Any attribute that is not present in datasource xml will be created using this template: `<key>value</key>`.
 
 For converting the symbol attributes, the above rules are used taking by example a
-value ":database_url":
+value `:database_url`:
 
-1. The value "database_url"
-2. The value "database-url"
-3. The value "DatabaseUrl"
-4. The value "DATABASE_URL"
+1. The value `database_url`
+2. The value `database-url`
+3. The value `DatabaseUrl`
+4. The value `DATABASE_URL`
 
-The key for finding the correct datasource is the configuration attribute :type, which is
-used to search in $JBOSS_HOME/docs/examples/jca for the file.
+The key for finding the correct datasource is the configuration attribute `:type`, which is used to search in `$JBOSS_HOME/docs/examples/jca` for the file.
 
-Any key that is not found in the datasource template will be added. If it is a Symbol,
-the underlines will be converted to hyphens.
+Any key that is not found in the datasource template will be added. If it is a Symbol, the underlines will be converted to hyphens.
 
-For saving the file, the configuration :name will be used in the form "${name}-ds.xml".
+For saving the file, the configuration `:name` will be used in the form `${name}-ds.xml`.
 
 Example:
 
@@ -511,7 +493,7 @@ Example:
 
 ### Replacing hypersonic
 
-The same as Datasouce, but use the "default_ds" component instead.
+The same as Datasouce, but use the `default_ds` component instead.
 
     - default_ds:
         :type: postgres
@@ -522,9 +504,7 @@ The same as Datasouce, but use the "default_ds" component instead.
             :min_pool_size: 5
             :max_pool_size: 15
 
-This will change the DefaultDS mapping to the desired datasource. Since JBoss SOA-Platform
-already have a tool to do the work, it will be called with the correct mapped options
-(see the file $SOAP_HOME/tools/schema/build.properties for the supported options)
+This will change the `DefaultDS` mapping to the desired datasource. Since JBoss SOA-Platform already have a tool to do the work, it will be called with the correct mapped options (see the file `$SOAP_HOME/tools/schema/build.properties` for the supported options)
 
     - default_ds:
         source.dir: postgresql84
@@ -538,77 +518,75 @@ already have a tool to do the work, it will be called with the correct mapped op
 
 ### Installing mod_cluster
 
-Use a "mod_cluster" component
+Use a `mod_cluster` component
 
 Configuration:
 
-:path => where the mod_cluster.sar is located
-:folder => where the mod_cluster.sar should be installed (default: $JBOSS_HOME/server/$CONFIG/deploy)
+- `:path` - where the `mod_cluster.sar` is located
+- `:folder` - where the `mod_cluster.sar` should be installed (default: `$JBOSS_HOME/server/$CONFIG/deploy`)
 
-The additional configurations are the entries in the bean ModClusterConfig (mod_cluster-jboss-beans.xml)
-and can be in a String form (using the entry name) or in a Symbol form (using ruby nomenclature - :sticky_session)
+The additional configurations are the entries in the bean ModClusterConfig (`mod_cluster-jboss-beans.xml`)
+and can be in a String form (using the entry name) or in a Symbol form (using ruby nomenclature - `:sticky_session`)
 
 ### Configuring run.conf
 
 ### Slimming
 
-Use a "slimming" component.
+Use a `slimming` component.
 
 Configuration:
 
 Use an array with the services to remove, the current supported are:
 
-* Admin Console       => :admin_console
-* Web Console         => :web_console
-* Mail Service        => :mail
-* BeanShell           => :bean_shell
-* Hot Deploy          => :hot_deploy
-* UDDI                => :uddi
-* UUID Key Generator  => :key_generator
-* Scheduling          => :scheduling
-* JMX Console         => :jmx_console
-* JBoss WS            => :jboss_ws
-* JMX Remoting        => :jmx_remoting
-* ROOT Page           => :root_page
-* Management          => :management
-* IIOP                => :iiop
-* JBoss Web           => :jboss_web
-* SNMP                => :snmp
-* Profile Service     => :profile
-* EJB3                => :ejb3
-* EJB2                => :ejb2
-* JMX Invoker         => :jmx_invoker
-* HA HTTP Invoker     => :ha_http_invoker
-* Legacy Invoker      => :legacy_invoker
-* Transaction         => :transaction
-* Remoting            => :remoting
-* Properties Service  => :properties
-* Database/Datasource => :database
-* JSR-88              => :jsr88
-* XNIO                => :xnio
+* Admin Console       - `admin_console`
+* Web Console         - `web_console`
+* Mail Service        - `mail`
+* BeanShell           - `bean_shell`
+* Hot Deploy          - `hot_deploy`
+* UDDI                - `uddi`
+* UUID Key Generator  - `key_generator`
+* Scheduling          - `scheduling`
+* JMX Console         - `jmx_console`
+* JBoss WS            - `jboss_ws`
+* JMX Remoting        - `jmx_remoting`
+* ROOT Page           - `root_page`
+* Management          - `management`
+* IIOP                - `iiop`
+* JBoss Web           - `jboss_web`
+* SNMP                - `snmp`
+* Profile Service     - `profile`
+* EJB3                - `ejb3`
+* EJB2                - `ejb2`
+* JMX Invoker         - `jmx_invoker`
+* HA HTTP Invoker     - `ha_http_invoker`
+* Legacy Invoker      - `legacy_invoker`
+* Transaction         - `transaction`
+* Remoting            - `remoting`
+* Properties Service  - `properties`
+* Database/Datasource - `database`
+* JSR-88              - `jsr88`
+* XNIO                - `xnio`
 
-Any slimmed service will be removed logically by using a ".rej" suffix in the files/directories.
+Any slimmed service will be removed logically by using a `.rej` suffix in the files/directories.
 
 Tools
 -----------
 
 ### Command Line Slimming
 
-You can do a slimming using only the command line, just put your terminal in the profile dir
-and do the following:
+You can do a slimming using only the command line, just put your terminal in the profile dir and do the following:
 
-    rboss-profile --this --slimming services-here
+    rboss-profile --this --slimming admin_console,root_page
 
 This will slim the defined services. Use --verbose to see the changed files.
 
-To restore slimmed services, use --restore.
+To restore slimmed services, use `--restore`.
 
-    rboss-profile --this --restore services-here
+    rboss-profile --this --restore admin_console,root_page
 
 ### Password Encryption
 
-You can use the SecureIdentityLoginModule to encrypt a password for use with a login module
-to secure a datasource password.
+You can use the SecureIdentityLoginModule to encrypt a password for use with a login module to secure a datasource password.
 
     rboss-profile --encrypt your-password-here
 
