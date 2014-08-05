@@ -1,5 +1,5 @@
 ---
-description: Detail Server Information
+description: Details Server Information
 path: ${DOMAIN_HOST}${DOMAIN_SERVER}/core-service=
 print:
 - id: platform

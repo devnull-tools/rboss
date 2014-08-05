@@ -1,5 +1,5 @@
 ---
-description: Detail Runtime Information
+description: Details Runtime Information
 path: ${DOMAIN_HOST}${DOMAIN_SERVER}/core-service=platform-mbean/type=runtime
 print:
   - title: Runtime Information

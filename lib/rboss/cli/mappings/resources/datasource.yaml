@@ -1,5 +1,5 @@
 ---
-description: Datasource Information
+description: Details Datasource Information
 path: ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=datasources/data-source=${NAME}
 scan: ls ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=datasources/data-source
 print:
