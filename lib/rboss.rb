@@ -26,10 +26,7 @@ require_relative 'rboss/view/colorizers'
 require_relative 'rboss/view/formatters'
 require_relative 'rboss/view/health_checkers'
 require_relative 'rboss/view/table_builder'
-require_relative 'rboss/jboss_profile'
-require_relative 'rboss/twiddle'
 require_relative 'rboss/cli/invoker'
-require_relative 'rboss/bin/command_actions'
 
 file = File.expand_path('~/.rboss/rboss.rb')
 

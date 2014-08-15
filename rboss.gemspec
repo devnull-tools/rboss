@@ -8,9 +8,9 @@ Gem::Specification.new do |gem|
   gem.authors     = %w(Ataxexe)
   gem.email       = %w(ataxexe@gmail.com)
   gem.homepage    = 'https://github.com/ataxexe/rboss'
-  gem.summary     = %q{Manage your JBoss from your command line.}
-  gem.description = %q{Rboss gives you a set of command line tools to configure a JBoss instance
-  and use jboss-cli and twiddle wrapped by an elegant interface}
+  gem.summary     = %q{Manage your JBoss from your command line}
+  gem.description = %q{Rboss gives you a set of command line tools to use
+jboss-cli wrapped by an elegant interface}
 
   gem.rubyforge_project = 'rboss'
 
