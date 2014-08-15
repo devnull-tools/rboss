@@ -272,4 +272,5 @@ begin
 
 rescue Interrupt
   puts "\nAborted!".colorize(:red)
+  exit 1
 end
