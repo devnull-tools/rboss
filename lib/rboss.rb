@@ -21,6 +21,7 @@
 # THE SOFTWARE.
 
 require_relative 'rboss/version'
+require_relative 'rboss/utils'
 require_relative 'rboss/plaftorm'
 require_relative 'rboss/view/colorizers'
 require_relative 'rboss/view/formatters'
