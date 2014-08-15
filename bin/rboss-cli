@@ -153,7 +153,7 @@ opts.on('-r', '--attribute NAME', 'Reads the attribute') do |name|
   @operation = 'read-attribute'
   @parameters = {
     'name' => name,
-    'include-defaults' => 'true' # parameters are string based
+    'include-defaults' => true
   }
 end
 opts.on('--scan', 'Reads the children names') do
