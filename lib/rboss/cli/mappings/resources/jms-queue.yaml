@@ -1,13 +1,12 @@
 ---
-description: Details Message Information
-path: ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=messaging/hornetq-server=default
+description: Details JMS Queue Information
+path: ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=messaging/hornetq-server=default/jms-queue=${NAME}
+scan: ls ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=messaging/hornetq-server=default/jms-queue
 print:
-  - id: queue
-    path: ${PATH}/jms-queue=${NAME}
-    scan: ls ${PATH}/jms-queue
-    title: Queues
+  - title: Queues
     layout: vertical
     properties:
+    - entries
     - messages-added
     - message-count
     - delivering-count
@@ -21,6 +20,7 @@ print:
     - dead-letter-address
     - expirity-address
     header:
+    - JNDI Names
     - Total
     - Currently
     - Delivering
@@ -34,6 +34,7 @@ print:
     - Dead Letter Address
     - Expirity Address
     format:
+      jndi_names: array
       durable: boolean
       paused: boolean
       temporary: boolean
