@@ -1,7 +1,7 @@
 rboss
 =============
 
-This tool helps you manage a JBoss application server (EAP or Wildfly).
+This tool helps you manage a JBoss application server (EAP or Wildfly) by encapsulating `jboss-cli` in a usefull and customizable command line tool.
 
 Installation
 -----------
@@ -10,7 +10,7 @@ Installation
 
 ### Configuration
 
-Set a `RBOSS_CLI_HOME` variable pointing to your JBoss AS home location that has `jboss-cli` for using `rboss-cli`, for using twiddle, set a `RBOSS_TWIDDLE_HOME` variable pointing to you JBoss AS that has twiddle.
+Set a `RBOSS_CLI_HOME` variable pointing to your JBoss AS home location that has `jboss-cli` for using `rboss-cli`.
 
 Using rboss-cli
 -----------
