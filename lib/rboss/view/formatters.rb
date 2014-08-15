@@ -6,10 +6,9 @@ module RBoss
   #
   module Formatters
 
-    def self.date(format = nil)
+    def self.date(format = '%d-%m-%Y %H:%M:%S %z')
       Yummi::to_format do |ctx|
         value = ctx.value
-        format ||= '%d-%m-%Y %H:%M:%S %z'
         Time.at(value / 1000).strftime(format)
       end
     end
@@ -33,6 +32,12 @@ module RBoss
         else
           value
         end
+      end
+    end
+
+    def self.array(separator = ', ')
+      Yummi::to_format do |ctx|
+        ctx.value.join separator
       end
     end
 
