@@ -51,7 +51,7 @@ _rboss_cli () {
       --domain-server)
         COMPREPLY=( $( compgen -W '$(rboss-cli ${prev_args/--domain-server//} --servers)' -- $cur ) )
       ;;
-      -v | -s | -u | -p | -l | -r | \
+      -v | -s | -u | -p | -l | -n | -r | \
       --list-operations | \
       --list-resource-names | \
       --verbose | \
@@ -63,8 +63,7 @@ _rboss_cli () {
       --native | \
       --no-colors | \
       --attribute | \
-      --all | \
-      --scan)
+      --all)
       ;;
       --*)
         if [[ "$cur" =~ .*,.* ]]; then

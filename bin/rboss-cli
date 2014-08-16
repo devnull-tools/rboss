@@ -148,10 +148,11 @@ opts.on('-l', '--list-operations', 'Lists the available operations
  for a resource') do
   @operation = 'read-operation-names'
 end
-opts.on('--list-resource-names', 'Lists the available names for a resource') do
+opts.on('-n', '--list-resource-names', 'Lists the available names for a resource') do
   @operation = 'list-resource-names'
-  @resources = {}
-  @resources[@last_resource] = nil
+  @resources = {
+    @last_resource => nil
+  }
 end
 opts.on('-d', '--detail NAME', 'Shows the operation details') do |operation_name|
   @operation = 'read-operation-description'
@@ -163,9 +164,6 @@ opts.on('-r', '--attribute NAME', 'Reads the attribute') do |name|
     'name' => name,
     'include-defaults' => true
   }
-end
-opts.on('--scan', 'Reads the children names') do
-  @operation = 'read-children-names'
 end
 opts.on('-a', '--args PARAMETERS', Array, 'Specifies parameters in form of
  (name=value) for use with operation') do |parameters|
