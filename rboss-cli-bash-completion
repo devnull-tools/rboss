@@ -35,7 +35,7 @@ _rboss_cli () {
     ;;
     *)
     case "$prev" in
-      -c | --connect)
+      --connect)
         COMPREPLY=( $( compgen -W '$(rboss-cli --list-servers)' -- $cur ) )
       ;;
       -o | --operation | \
@@ -44,6 +44,12 @@ _rboss_cli () {
       ;;
       -j | --jboss-home | --script)
         _longopt
+      ;;
+      --domain-host)
+        COMPREPLY=( $( compgen -W '$(rboss-cli ${prev_args/--domain-host//} --hosts)' -- $cur ) )
+      ;;
+      --domain-server)
+        COMPREPLY=( $( compgen -W '$(rboss-cli ${prev_args/--domain-server//} --servers)' -- $cur ) )
       ;;
       -v | -s | -u | -p | -l | -r | \
       --list-operations | \
@@ -56,8 +62,6 @@ _rboss_cli () {
       --start-cli | \
       --native | \
       --no-colors | \
-      --domain-host | \
-      --domain-server | \
       --attribute | \
       --all | \
       --scan)
