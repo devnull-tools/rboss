@@ -7,13 +7,15 @@ module RBoss
   #
   module Colorizers
 
+    module_function
+
     #
     # A colorizer for the types returned by invocations in jboss-cli.
     #
     # Parameter:
     #   The type to use the color
     #
-    def self.type type
+    def type type
       Yummi::to_colorize do |ctx|
         case type
           when RBoss::Cli::ResultParser::STRING then

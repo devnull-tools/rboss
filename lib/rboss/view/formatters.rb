@@ -6,14 +6,16 @@ module RBoss
   #
   module Formatters
 
-    def self.date(format = '%d-%m-%Y %H:%M:%S %z')
+    module_function
+
+    def date(format = '%d-%m-%Y %H:%M:%S %z')
       Yummi::to_format do |ctx|
         value = ctx.value
         Time.at(value / 1000).strftime(format)
       end
     end
 
-    def self.time
+    def time
       Yummi::to_format do |ctx|
         value = ctx.value / 1000
         seconds = value % 60
@@ -24,7 +26,7 @@ module RBoss
       end
     end
 
-    def self.trim(max)
+    def trim(max)
       Yummi::to_format do |ctx|
         value = ctx.value.to_s
         if value.size > max
@@ -35,7 +37,7 @@ module RBoss
       end
     end
 
-    def self.array(separator = ', ')
+    def array(separator = ', ')
       Yummi::to_format do |ctx|
         ctx.value.join separator
       end
