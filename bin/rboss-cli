@@ -180,8 +180,11 @@ end
 opts.on('--no-colors', 'Do not colorize output') do
   Yummi.no_colors
 end
-opts.on('-v', '--verbose', 'Displays jboss-cli commands and results') do
+opts.on('--verbose', 'Displays jboss-cli commands and results') do
   params[:log_level] = Logger::DEBUG
+end
+opts.on('-v', '--version', 'Shows rboss version') do
+  puts RBoss::VERSION ; exit
 end
 opts.on('-h', '--help', 'Shows this help message') do
   puts opts; exit
