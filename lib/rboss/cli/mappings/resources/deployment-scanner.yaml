@@ -1,7 +1,7 @@
 ---
 description: Details Deployment Scanner
-path: ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=deployment-scanner/scanner=${NAME}
-scan: ls ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=deployment-scanner/scanner
+path: ${domain_host}${domain_server}/subsystem=deployment-scanner/scanner=${name}
+scan: ls ${domain_host}${domain_server}/subsystem=deployment-scanner/scanner
 print:
   - title: Scanner
     layout: vertical

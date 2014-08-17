@@ -1,7 +1,7 @@
 ---
 description: Details JMS Queue Information
-path: ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=messaging/hornetq-server=default/jms-queue=${NAME}
-scan: ls ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=messaging/hornetq-server=default/jms-queue
+path: ${domain_host}${domain_server}/subsystem=messaging/hornetq-server=default/jms-queue=${name}
+scan: ls ${domain_host}${domain_server}/subsystem=messaging/hornetq-server=default/jms-queue
 print:
   - title: Queues
     layout: vertical

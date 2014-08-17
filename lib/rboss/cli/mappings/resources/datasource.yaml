@@ -1,7 +1,7 @@
 ---
 description: Details Datasource Information
-path: ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=datasources/data-source=${NAME}
-scan: ls ${DOMAIN_HOST}${DOMAIN_SERVER}/subsystem=datasources/data-source
+path: ${domain_host}${domain_server}/subsystem=datasources/data-source=${name}
+scan: ls ${domain_host}${domain_server}/subsystem=datasources/data-source
 print:
 - id: config
   title: Datasource Details
@@ -40,7 +40,7 @@ print:
 
 - id: pool
   title: Datasource Pool Statistics
-  path: ${PATH}/statistics=pool
+  path: ${path}/statistics=pool
   layout: vertical
   properties:
     - ActiveCount
@@ -77,7 +77,7 @@ print:
 
 - id: jdbc
   title: Datasource JDBC Statistics
-  path: ${PATH}/statistics=jdbc
+  path: ${path}/statistics=jdbc
   properties:
     - PreparedStatementCacheCurrentSize
     - PreparedStatementCacheAccessCount
