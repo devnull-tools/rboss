@@ -22,6 +22,7 @@
 
 class String
 
+  # Converter contract. Replaces '-' to '_' and converts do a Symbol.
   def to_key
     self.gsub('-', '_').to_sym
   end
@@ -30,6 +31,7 @@ end
 
 class Symbol
 
+  # Converter contract. Returns +self+.
   def to_key
     self
   end

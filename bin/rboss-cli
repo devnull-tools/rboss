@@ -52,7 +52,7 @@ opts = OptionParser::new
 
 opts.separator 'Environment Options'.bold.white
 
-opts.on('-j', '--jboss-home PATH', 'Defines the JBOSS_HOME variable') do |home|
+opts.on('-j', '--jboss-home PATH', 'Defines the JBoss to use jboss-cli') do |home|
   params[:jboss_home] = home
 end
 
