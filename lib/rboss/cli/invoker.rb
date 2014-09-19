@@ -25,6 +25,7 @@ require_relative 'resource'
 require_relative 'mappings'
 
 require 'logger'
+require 'io/console'
 
 require 'yummi'
 require 'yaml'
@@ -78,8 +79,14 @@ module RBoss
       def command
         command = "#{jboss_cli} --connect"
         command << " --controller=#@server" if @server
-        command << " --user='#@user'" if @user
-        command << " --password='#@password'" if @password
+        if @user
+          command << " --user='#@user'"
+          unless @password
+            puts 'Input server password: '.blue.bold
+            @password = STDIN.noecho(&:gets).chomp
+          end
+          command << " --password='#@password'"
+        end
         command
       end
 
