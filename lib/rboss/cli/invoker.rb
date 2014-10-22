@@ -84,6 +84,7 @@ module RBoss
           unless @password
             puts 'Input server password: '.blue.bold
             @password = STDIN.noecho(&:gets).chomp
+            puts 'Password saved for this session!'.green
           end
           command << " --password='#@password'"
         end
@@ -126,7 +127,7 @@ module RBoss
             input_message << ' | ' << 'Required'.red if required
             input_message << ' | ' << 'Optional'.cyan unless required
             input_message << ' | ' << "[#{default_value}]".blue if default_value
-            input_message << "\n" << detail['description'].bold.black
+            input_message << "\n" << detail['description'].bold
             puts input_message
             input = get_input
             while required and input.empty?
