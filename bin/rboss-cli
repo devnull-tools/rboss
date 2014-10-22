@@ -33,7 +33,7 @@ include RBoss::Platform
 
 params = {}
 @conf_dir = File.expand_path '~/.rboss'
-servers_file = "#@conf_dir/jboss-cli-servers.yaml"
+servers_file = "#{@conf_dir}/jboss-cli-servers.yaml"
 @resources = {}
 @last_resource = nil
 @parameters = {}
