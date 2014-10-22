@@ -68,9 +68,13 @@ module RBoss
       OBJECT = Type::new 'OBJECT'
 
       def eval_result(result)
-        undefined = nil #prevents error because undefined means nil in result object
-        result = result.gsub(/(\d+)L/, '\1') #removes the long type mark
-        result = result.gsub(/expression\s/, '') #removes the expression indicator
+        # prevents error because undefined means nil in result object
+        undefined = nil
+        # removes the long type mark
+        result = result.gsub(/(\d+)L/, '\1')
+        # removes the expression indicator
+        result = result.gsub(/expression\s/, '')
+        # eval the result to a hash
         result = eval(result)
         raise InvocationFailed::new(result['failure-description']) if result['outcome'] == 'failed'
         result['result']
@@ -94,5 +98,6 @@ module RBoss
       end
 
     end
+
   end
 end
