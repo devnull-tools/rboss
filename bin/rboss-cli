@@ -247,7 +247,7 @@ if @native
 end
 
 if @script
-  system "#{@jboss_cli.command} --connect --file #{@script}"
+  system "#{@jboss_cli.command} --connect --file='#{@script}'"
   exit 0
 end
 
