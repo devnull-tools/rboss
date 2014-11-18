@@ -74,6 +74,8 @@ module RBoss
         result = result.gsub(/(\d+)L/, '\1')
         # removes the expression indicator
         result = result.gsub(/expression\s/, '')
+        # Check if the operation has failed
+        return if result.to_s.start_with? 'Failed'
         # eval the result to a hash
         result = eval(result)
         raise InvocationFailed::new(result['failure-description']) if result['outcome'] == 'failed'
