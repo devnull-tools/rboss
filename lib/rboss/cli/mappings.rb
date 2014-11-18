@@ -38,14 +38,14 @@ module RBoss
         @resource_mappings[name] = mapping
         if mapping[:print]
           mapping[:print].each do |print|
-            print[:command] ||= '${PATH}:${READ_RESOURCE}'
+            print[:command] ||= '${path}:${read_resource}'
             if print[:id]
               new_mapping = mapping.dup
               new_mapping[:print] = [print]
               new_mapping[:description] = print[:title]
               new_mapping[:derived] = true
               if print[:path]
-                new_mapping[:path] = print[:path].gsub '${PATH}', mapping[:path]
+                new_mapping[:path] = print[:path].gsub '${path}', mapping[:path]
                 print[:path] = new_mapping[:path]
               end
               new_key = "#{name}-#{print[:id]}"

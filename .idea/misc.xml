@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="IdProvider" IDEtalkID="1EEE3103C92A9F3F24A791D6B22E1653" />
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_3" assert-keyword="false" jdk-15="false" project-jdk-name="RVM: ruby-2.1.2" project-jdk-type="RUBY_SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="RVM: ruby-2.1.2" project-jdk-type="RUBY_SDK" />
 </project>
 
