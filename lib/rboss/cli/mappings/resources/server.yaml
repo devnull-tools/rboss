@@ -52,7 +52,7 @@ print:
 - id: memory
   title: Server Memory Usage
   layout: vertical
-  path: ${PATH}platform-mbean/type=memory
+  path: ${path}platform-mbean/type=memory
   properties:
   - heap-memory-usage -> init
   - heap-memory-usage -> used
@@ -110,7 +110,7 @@ print:
 
 - id: thread
   title: Server Thread Info
-  path: ${PATH}platform-mbean/type=threading
+  path: ${path}platform-mbean/type=threading
   layout: vertical
   properties:
   - thread-contention-monitoring-supported
@@ -161,7 +161,7 @@ print:
 
 - id: config
   title: Server Configuration Resources
-  path: ${PATH}server-environment
+  path: ${path}server-environment
   layout: vertical
   properties:
   - server-name
