@@ -72,8 +72,8 @@ module RBoss
         @domain_host = "/host=#{host}"
       end
 
-      def domain_server=(host)
-        @domain_server = "/server=#{host}"
+      def domain_server=(server)
+        @domain_server = "/server=#{server}"
       end
 
       def server
