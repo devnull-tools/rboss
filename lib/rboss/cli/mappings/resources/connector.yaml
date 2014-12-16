@@ -1,7 +1,7 @@
 ---
 description: Details Connectors
-path: ${domain_host}${domain_server}/subsystem=web/connector=${name}
-scan: ls ${domain_host}${domain_server}/subsystem=web/connector
+path: ${server}/subsystem=web/connector=${name}
+scan: ls ${server}/subsystem=web/connector
 print:
   - title: Connectors
     layout: vertical

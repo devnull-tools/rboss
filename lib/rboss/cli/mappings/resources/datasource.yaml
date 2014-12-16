@@ -1,7 +1,7 @@
 ---
 description: Details Datasource Information
-path: ${domain_host}${domain_server}/subsystem=datasources/data-source=${name}
-scan: ls ${domain_host}${domain_server}/subsystem=datasources/data-source
+path: ${server}/subsystem=datasources/data-source=${name}
+scan: ls ${server}/subsystem=datasources/data-source
 print:
 - id: config
   title: Datasource Details

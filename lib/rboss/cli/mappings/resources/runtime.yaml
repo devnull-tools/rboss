@@ -1,6 +1,6 @@
 ---
 description: Details Runtime Information
-path: ${domain_host}${domain_server}/core-service=platform-mbean/type=runtime
+path: ${server}/core-service=platform-mbean/type=runtime
 print:
   - title: Runtime Information
     layout: vertical

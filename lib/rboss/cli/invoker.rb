@@ -76,6 +76,10 @@ module RBoss
         @domain_server = "/server=#{host}"
       end
 
+      def server
+        "#{@domain_host}#{@domain_server}"
+      end
+
       def command
         command = "#{jboss_cli} --connect"
         command << " --controller=#@server" if @server
