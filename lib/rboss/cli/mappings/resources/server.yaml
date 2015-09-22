@@ -31,7 +31,7 @@ print:
 
 - id: env
   title: Server Environment Information
-  path: ${PATH}server-environment
+  path: ${path}server-environment
   layout: vertical
   properties:
   - server-name
