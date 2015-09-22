@@ -98,7 +98,7 @@ module RBoss
           result = @invoker.result(
               "#{@context[:path]}:read-operation-description(name=#{operation_name})"
           )
-          buff << result['description'].bold.black << $/ * 2
+          buff << result['description'].yellow << $/ * 2
           table.title = 'Request'
           table.header = %w(Parameter Type Required Expression Default)
           table.aliases = %w(name type required expressions-allowed default)
